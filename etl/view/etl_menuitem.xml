@@ -1,0 +1,10 @@
+<?xml version="1.0" ?>
+<odoo>
+    <data>
+        <menuitem id="menu_data"
+                  name="ETL"
+                  sequence="10"
+                  web_icon="etl,static/description/icon.png"
+        />
+    </data>
+</odoo>
