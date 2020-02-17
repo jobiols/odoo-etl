@@ -23,5 +23,9 @@ de odoo para las que vamos a trabajar.
 Con el boton **READ MODELS** se leen los modelos de las instancias Fuente y Destino
 y luego de la carga se pueden ver en la pestaña **External Models**
 
-el boton **GET RECORD NUMBER** lee la cantidad de registros en cada modelo
+El boton **GET RECORD NUMBER** lee la cantidad de registros en cada modelo
 
+Luego con el boton **MATCH MODELS** intenta machear los modelos y los campos de
+los modelos, creando **Acciones**
+
+Las acciones aparecen en gris, verde o azul segun estan *deshabilitadas*, *habilitadas*, o *para analizar*
