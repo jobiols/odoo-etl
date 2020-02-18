@@ -7,16 +7,11 @@
             <field name="model">etl.manager</field>
             <field name="arch" type="xml">
                 <search string="manager">
-                    <field name="name" string="Name"
-                    />
-                    <field name="source_hostname" string="Source Hostname"
-                    />
-                    <field name="source_database" string="Source Database"
-                    />
-                    <field name="target_hostname" string="Target Hostname"
-                    />
-                    <field name="target_database" string="Target Database"
-                    />
+                    <field name="name" string="Name"/>
+                    <field name="source_hostname" string="Source Hostname"/>
+                    <field name="source_database" string="Source Database"/>
+                    <field name="target_hostname" string="Target Hostname"/>
+                    <field name="target_database" string="Target Database"/>
                     <group expand="0" string="Group By">
                     </group>
                 </search>
@@ -35,7 +30,6 @@
                                 class="oe_highlight" type="object"/>
                         <button name="read_models" string="Read Models"
                                 type="object"/>
-                        <!-- <button name="order_source_models" string="Order Source Models" type="object"/> -->
                         <button name="get_records" string="Get Records Number"
                                 type="object"/>
                         <button name="match_models_and_order_actions"
@@ -56,15 +50,16 @@
                         <button name="delete_workflows"
                                 string="Delete Workflows" class="oe_highlight"
                                 type="object"/>
-                        <!-- <button name="update_workflows" string="Update Workflows" class="oe_highlight" type="object"/> -->
                     </header>
                     <sheet string="Manager">
-                        <div class="oe_right oe_button_box" name="buttons">
-                            <button class="oe_inline" type="action"
+                        <div class="oe_button_box" name="button_box">
+                            <button class="oe_stat_button" type="action"
+                                    icon="fa-files-o"
                                     string="Actions"
                                     name="%(etl.action_etl_action_actions)d"
                                     context="{'search_default_manager_id': active_id}"/>
-                            <button class="oe_inline" type="action"
+                            <button class="oe_stat_button" type="action"
+                                    icon="fa-tasks"
                                     string="Value Mapping Fields"
                                     name="%(etl.action_etl_value_mapping_field_value_mapping_fields)d"
                                     context="{'search_default_manager_id': active_id}"/>
@@ -76,33 +71,19 @@
                             <field name="target_id_type"/>
                         </group>
                         <group col="6">
-                            <field name="source_hostname"
-                            />
-                            <field name="source_port"
-                            />
-                            <field name="source_database"
-                            />
-                            <field name="source_login"
-                            />
-                            <field name="source_password"
-                                   password="True"
-                            />
-                            <field name="source_lang"
-                            />
+                            <field name="source_hostname"/>
+                            <field name="source_port"/>
+                            <field name="source_database"/>
+                            <field name="source_login"/>
+                            <field name="source_password" password="True"/>
+                            <field name="source_lang"/>
                             <newline/>
-                            <field name="target_hostname"
-                            />
-                            <field name="target_port"
-                            />
-                            <field name="target_database"
-                            />
-                            <field name="target_login"
-                            />
-                            <field name="target_password"
-                                   password="True"
-                            />
-                            <field name="target_lang"
-                            />
+                            <field name="target_hostname"/>
+                            <field name="target_port"/>
+                            <field name="target_database"/>
+                            <field name="target_login"/>
+                            <field name="target_password" password="True"/>
+                            <field name="target_lang"/>
                             <newline/>
                         </group>
                         <group>
@@ -158,18 +139,12 @@
             <field name="name">etl.manager.tree</field>
             <field name="model">etl.manager</field>
             <field name="arch" type="xml">
-                <tree string="manager"
-                >
-                    <field name="name"
-                    />
-                    <field name="source_hostname"
-                    />
-                    <field name="source_database"
-                    />
-                    <field name="target_hostname"
-                    />
-                    <field name="target_database"
-                    />
+                <tree string="manager">
+                    <field name="name"/>
+                    <field name="source_hostname"/>
+                    <field name="source_database"/>
+                    <field name="target_hostname"/>
+                    <field name="target_database"/>
                 </tree>
             </field>
         </record>
@@ -194,10 +169,10 @@
         </record>
 
         <menuitem name="Manager"
-                id="menu_manager"
-                sequence="10"
-                action="action_etl_manager_manager"
-                parent="menu_data"
+                  id="menu_manager"
+                  sequence="10"
+                  action="action_etl_manager_manager"
+                  parent="menu_data"
         />
 
     </data>
