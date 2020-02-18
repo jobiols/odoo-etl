@@ -46,7 +46,7 @@ class Field(models.Model):
     )
 
     def _name_search(self, cr, uid, name='', args=None, operator='ilike',
-            context=None, limit=100, name_get_uid=None):
+        context=None, limit=100, name_get_uid=None):
         if args is None:
             args = []
         domain = args + ['|',

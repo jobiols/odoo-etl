@@ -22,80 +22,84 @@ class external_model(models.Model):
     sequence = fields.Integer(
         string='Sequence',
         readonly=True
-        )
+    )
     type = fields.Selection(
-        [(u'source', u'Source'), (u'target', u'Target')],
+        [(u'source', u'Source'),
+         (u'target', u'Target')],
         string='Type',
         readonly=True,
         required=True
-        )
+    )
     name = fields.Char(
         string='Name',
         readonly=True,
         required=True
-        )
+    )
     model = fields.Char(
         string='Model',
         readonly=True,
         required=True
-        )
+    )
     order = fields.Integer(
         string='Order',
         readonly=True
-        )
+    )
     records = fields.Integer(
         string='Records',
         readonly=True
-        )
+    )
     fields_to_read = fields.Char(
         string='Fields to read',
         default=['name']
-        )
+    )
     field_ids = fields.One2many(
         'etl.field',
         'model_id',
         string='Fields',
         readonly=True
-        )
+    )
     source_action_ids = fields.One2many(
         'etl.action',
         'source_model_id',
         string='source_action_ids'
-        )
+    )
     target_action_ids = fields.One2many(
         'etl.action',
         'target_model_id',
         string='target_action_ids'
-        )
+    )
     manager_id = fields.Many2one(
         'etl.manager',
         ondelete='cascade',
         string='Manager',
         readonly=True,
         required=True
-        )
+    )
     external_model_record_ids = fields.One2many(
         'etl.external_model_record',
         'external_model_id',
         string='external_model_record_ids'
-        )
+    )
 
-    _constraints = [
-    ]
-
-    def _name_search(self, cr, uid, name='', args=None, operator='ilike', context=None, limit=100, name_get_uid=None):
+    def _name_search(self, cr, uid, name='', args=None, operator='ilike',
+        context=None, limit=100, name_get_uid=None):
         if args is None:
             args = []
-        domain = args + ['|', ('model', operator, name), ('name', operator, name)]
+        domain = args + ['|', ('model', operator, name),
+                         ('name', operator, name)]
         return self.name_get(cr, name_get_uid or uid,
-                             super(external_model, self).search(cr, uid, domain, limit=limit, context=context),
+                             super(external_model, self).search(
+                                 cr, uid, domain, limit=limit,
+                                 context=context),
                              context=context)
 
     @api.one
     def read_records(self):
-        '''Function that reads external id and name field from an external
-        model and save them in migrator database'''
-        (source_connection, target_connection) = self.manager_id.open_connections()
+        """ Function that reads external id and name field from an external
+            model and save them in migrator database
+        """
+        (source_connection, target_connection) = \
+            self.manager_id.open_connections()
         if self.type == 'source':
             connection = source_connection
         else:
@@ -116,8 +120,7 @@ class external_model(models.Model):
         new_external_model_record_data = []
         for record in external_model_record_data:
             # take out item o and init new_record with our own ext id
-            new_record = [
-                'model%i_record_%s' % (self.id, record.pop(0))]
+            new_record = ['model%i_record_%s' % (self.id, record.pop(0))]
             # append readed external id 'id' to new record
             new_record.append(record.pop(0))
             # buid name wit readed fields
@@ -158,7 +161,8 @@ class external_model(models.Model):
             _logger.info('Reading fields %s database, model: %s' % (
                 model.type, model.name))
             if not connection:
-                (source_connection, target_connection) = model.manager_id.open_connections()
+                (source_connection, target_connection) = \
+                    model.manager_id.open_connections()
                 if model.type == 'source':
                     connection = source_connection
                 elif model.type == 'target':
@@ -189,7 +193,7 @@ class external_model(models.Model):
                         required,
                         ttype,
                         function
-                        ]
+                    ]
                     model_field_data.append(field_data)
         _logger.info('Writing fields data...')
         self.env['etl.field'].load(field_fields, model_field_data)

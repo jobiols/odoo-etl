@@ -121,7 +121,7 @@ class Action(models.Model):
             value = False
             if rec.target_id_type == 'builded_id':
                 value = rec.manager_id.name + '_' + \
-                    rec.source_model_id.model.replace('.', '_')
+                        rec.source_model_id.model.replace('.', '_')
             rec.target_id_prefix = value
 
     @api.depends('field_mapping_ids.state')
@@ -223,8 +223,8 @@ class Action(models.Model):
                             state = 'other_class'
                 elif field.ttype == 'datetime' and \
                         target_field.ttype == 'date' or \
-                        field.ttype == 'date' and \
-                        target_field.ttype == 'datetime':
+                            field.ttype == 'date' and \
+                            target_field.ttype == 'datetime':
                     mapping_type = 'date_adapt'
                 elif field.ttype == 'reference':
                     mapping_type = 'reference'
@@ -345,15 +345,13 @@ class Action(models.Model):
             rec.target_model_id.get_records(target_connection)
 
     @api.multi
-    def run_repeated_action(
-        self, source_connection=False, target_connection=False,
-            repeated_action=True):
+    def run_repeated_action(self, source_connection=False,
+        target_connection=False, repeated_action=True):
         return self.run_action(repeated_action=True)
 
     @api.multi
-    def read_source_model(
-        self, source_connection=False, target_connection=False,
-            repeated_action=False, context=None):
+    def read_source_model(self, source_connection=False,
+        target_connection=False, repeated_action=False, context=None):
         readed_model = []
         for action in self:
             if action.source_model_id.id in readed_model:
@@ -376,9 +374,8 @@ class Action(models.Model):
             readed_model.append(action.source_model_id.id)
 
     @api.one
-    def run_action(
-        self, source_connection=False, target_connection=False,
-            repeated_action=False):
+    def run_action(self, source_connection=False, target_connection=False,
+        repeated_action=False):
         _logger.info('Actions to run: %i' % len(self.ids))
         action_obj = self.env['etl.action']
         model_obj = self.env['etl.external_model']
@@ -478,13 +475,13 @@ class Action(models.Model):
                     source_data_m2o = source_model_obj.export_data(
                         [int(source_data_record[0])],
                         ['.id', field.source_field,
-                            field.source_field.replace('/', '.')])['datas']
+                         field.source_field.replace('/', '.')])['datas']
                     new_field_value = False
                     if (field_action.target_id_type == 'source_id' and
                             source_data_m2o[0][1]):
                         new_field_value = source_data_m2o[0][1]
                     elif (field_action.target_id_type == 'builded_id' and
-                          source_data_m2o[0][2]):
+                              source_data_m2o[0][2]):
                         v1 = field_action.target_id_prefix
                         v2 = str(source_data_m2o[0][2])
                         new_field_value = '%s_%s' % (v1, v2)
@@ -517,23 +514,27 @@ class Action(models.Model):
                         if readed_record[1]:
                             for value in readed_record[1].split(','):
                                 value_id = model_data_obj.search(
-                                    [('model', 'ilike', field.source_field_id.relation),
-                                     ('name', 'ilike', value.split('.')[-1])])  # noqa
+                                    [('model', 'ilike',
+                                      field.source_field_id.relation),
+                                     ('name', 'ilike',
+                                      value.split('.')[-1])])  # noqa
                                 if value_id:
                                     value_id = \
-                                    model_data_obj.export_data([value_id[0]],['.id','res_id'])['datas']
+                                        model_data_obj.export_data(
+                                            [value_id[0]], ['.id', 'res_id'])[
+                                            'datas']
                                     value_id = value_id[0][1]
                                 if field_action.target_id_type == 'source_id' and value:
                                     new_field_value = value
                                 elif field_action.target_id_type == 'builded_id' and value_id:
                                     if new_field_value:
                                         new_field_value = new_field_value + ',' + '%s_%s' % (
-                                        field_action.target_id_prefix,
-                                        str(value_id))
+                                            field_action.target_id_prefix,
+                                            str(value_id))
                                     else:
                                         new_field_value = '%s_%s' % (
-                                        field_action.target_id_prefix,
-                                        str(value_id))
+                                            field_action.target_id_prefix,
+                                            str(value_id))
                     source_data_record.append(new_field_value)
 
         _logger.info('Building value mapping mapping...')
@@ -544,8 +545,8 @@ class Action(models.Model):
                                        x.type == 'value_mapping']
         # print 'source_fields_value_mapping', source_fields_value_mapping
         source_data_value_mapping = \
-        source_model_obj.export_data(source_model_ids,
-                                     source_fields_value_mapping)['datas']
+            source_model_obj.export_data(source_model_ids,
+                                         source_fields_value_mapping)['datas']
         # print 'source_data_value_mapping', source_data_value_mapping
         source_value_mapping_id = [x.value_mapping_field_id.id for x in
                                    self.field_mapping_ids
@@ -708,8 +709,10 @@ class Action(models.Model):
                 if (mapping.source_field_id.relation
                     not in action_clean_dependecies) and (
                         mapping.source_field_id.relation in actions_to_order):
-                    if not (mapping.source_field_id.relation == rec.source_model_id.model):
-                        action_clean_dependecies.append(mapping.source_field_id.relation)
+                    if not (
+                            mapping.source_field_id.relation == rec.source_model_id.model):
+                        action_clean_dependecies.append(
+                            mapping.source_field_id.relation)
                         # else:
                         # TODO usar este dato para algo! para macar la clase por ejemplo
             _logger.info('Model: %s, depenencias: %s' % (
@@ -717,7 +720,7 @@ class Action(models.Model):
             dependecies_ok = True
             for action_dependecy in action_clean_dependecies:
                 if (action_dependecy not in ordered_actions) and (
-                    action_dependecy not in exceptions):
+                        action_dependecy not in exceptions):
                     dependecies_ok = False
                     break
             unordered_ids.remove(rec.id)
