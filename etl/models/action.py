@@ -524,11 +524,11 @@ class Action(models.Model):
                                             [value_id[0]], ['.id', 'res_id'])[
                                             'datas']
                                     value_id = value_id[0][1]
-                                if field_action.target_id_type == 'source_id' and value:
+                                if field_action.target_id_type == 'source_id' and value:  # noqa
                                     new_field_value = value
-                                elif field_action.target_id_type == 'builded_id' and value_id:
+                                elif field_action.target_id_type == 'builded_id' and value_id:  # noqa
                                     if new_field_value:
-                                        new_field_value = new_field_value + ',' + '%s_%s' % (
+                                        new_field_value = new_field_value + ',' + '%s_%s' % (  # noqa
                                             field_action.target_id_prefix,
                                             str(value_id))
                                     else:
@@ -571,7 +571,7 @@ class Action(models.Model):
                         ('value_mapping_field_id', '=', value_mapping_id)],
                         limit=1)
                     # if new_fields:
-                    new_field_value = new_field.target_external_model_record_id.ext_id
+                    new_field_value = new_field.target_external_model_record_id.ext_id  # noqa
                 elif value_mapping.type == 'selection':
                     new_field = value_mapping_field_detail_obj.search([
                         ('source_value_id.ext_id', '=', field_value),
@@ -590,7 +590,8 @@ class Action(models.Model):
         # Read and append source values of type 'date_adapt'
         source_fields_date_adapt = [x.source_field for x in
                                     self.field_mapping_ids if
-                                    x.state == state and x.type == 'date_adapt']
+                                    x.state == state and x.type == 'date_adapt'
+                                    ]
         source_data_date_adapt = source_model_obj.export_data(
             source_model_ids, source_fields_date_adapt)['datas']
         source_mapping_date_adapt = [x for x in self.field_mapping_ids
@@ -601,12 +602,12 @@ class Action(models.Model):
             target_record = []
             for field_value, source_mapping in zip(readed_record,
                                                    source_mapping_date_adapt):
-                if source_mapping.source_field_id.ttype == 'datetime' and field_value:
+                if source_mapping.source_field_id.ttype == 'datetime' and field_value:  # noqa
                     if source_mapping.target_field_id.ttype == 'date':
                         # TODO, no estoy seguro si esta forma de truncarlo
                         # funciona bien
                         field_value = field_value[:10]
-                if source_mapping.source_field_id.ttype == 'date' and field_value:
+                if source_mapping.source_field_id.ttype == 'date' and field_value:  # noqa
                     if source_mapping.target_field_id.ttype == 'datetime':
                         field_value = self.date_to_datetime(field_value)
                 target_record.append(field_value)
@@ -709,12 +710,12 @@ class Action(models.Model):
                 if (mapping.source_field_id.relation
                     not in action_clean_dependecies) and (
                         mapping.source_field_id.relation in actions_to_order):
-                    if not (
-                            mapping.source_field_id.relation == rec.source_model_id.model):
+                    if not (mapping.source_field_id.relation == rec.source_model_id.model):  # noqa
                         action_clean_dependecies.append(
                             mapping.source_field_id.relation)
                         # else:
-                        # TODO usar este dato para algo! para macar la clase por ejemplo
+                        # TODO usar este dato para algo! para marcar la clase
+                        # por ejemplo
             _logger.info('Model: %s, depenencias: %s' % (
                 rec.source_model_id.model, action_clean_dependecies))
             dependecies_ok = True
