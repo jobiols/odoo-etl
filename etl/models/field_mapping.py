@@ -6,7 +6,7 @@
 from openerp import models, fields, api, _
 from openerp.exceptions import UserError
 import time
-from openerp.tools.safe_eval import safe_eval as eval
+from openerp.tools.safe_eval import safe_eval
 import logging
 
 _logger = logging.getLogger(__name__)
@@ -133,8 +133,8 @@ class FieldMapping(models.Model):
     @api.multi
     def get_migrated_id(self, rec_id, source_connection=False,
         target_connection=False):
-        """ Get migrated id for field ids  and one rec_id (from source database)
-            For example, for field mapping ids
+        """ Get migrated id for field ids  and one rec_id (from source
+            database) For example, for field mapping ids
         """
         result = []
 
@@ -283,7 +283,7 @@ class FieldMapping(models.Model):
                 raise UserError(_(
                     'Warning. Type expression choosen but not expression set'))
             # nocopy allows to return 'action'
-            eval(field_mapping.expression.strip(), cxt, mode="exec")
+            safe_eval(field_mapping.expression.strip(), cxt, mode="exec")
             if 'result' in cxt['context']:
                 expression_result = cxt['context'].get('result')
             result.append(expression_result)

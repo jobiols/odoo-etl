@@ -257,7 +257,7 @@ class Manager(models.Model):
     def delete_workflows(self):
         for rec in self:
             (source_connection, target_connection) = self.open_connections()
-            target_wf_instance_obj = target_connection.model('workflow.instance')
+            target_wf_instance_obj = target_connection.model('workflow.instance')  # noqa
             res_types = literal_eval(rec.workflow_models)
             target_wf_instance_ids = target_wf_instance_obj.search(
                 [('res_type', 'in', res_types)])
