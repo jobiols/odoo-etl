@@ -1,46 +1,46 @@
 After installing ETL module, navigate to ETL’s manager model and create a new manager
 with the following details:
-- **Name** field contains the name of your manager without any specific restriction for the name.
+**Name** field contains the name of your manager without any specific restriction for the name.
 
-- **Target ID Type** field is a selection field with possible values *Source ID* or *Builded ID*.
+**Target ID Type** field is a selection field with possible values *Source ID* or *Builded ID*.
     When set to *Source ID*, the record XML ID that will be used in the migration process
     will be according to the default source exported external ID. On the other hand,
     when set to *Builded ID*, the record XML ID that will be used in the migration process
     will be customized according to the prefix set later at an additional field. The usage
     of *source ID* is recommended when performing migration process.
 
-- **Source Hostname** field should be the source database host URL that is used to access
+**Source Hostname** field should be the source database host URL that is used to access
     the Odoo database from remote OS. For example: http://192.168.1.101.
 
-- **Source Port** field should be the source database port that is used to access the Odoo
+**Source Port** field should be the source database port that is used to access the Odoo
     database. For example: 8069.
 
-- **Source Database** field should be the source database name.
+**Source Database** field should be the source database name.
 
-- **Source Login** field should be the username that is used to login to the source
+**Source Login** field should be the username that is used to login to the source
     database from the login page. Make sure the user have a full access to all the models.
 
-- **Source Password** field should be the password according to the username that is
+**Source Password** field should be the password according to the username that is
     used to login to the source database from the login page.
 
-- **Source Language** field is the source database default language. It’s recommended to
+**Source Language** field is the source database default language. It’s recommended to
     keep the language as default (en_US).
 
-- **Target Hostname** field should be the target database host URL that is used to access
+**Target Hostname** field should be the target database host URL that is used to access
     the Odoo database from remote OS. For example: http://192.168.1.101.
 
-- **Target Port** field should be the target database port that is used to access the Odoo
+**Target Port** field should be the target database port that is used to access the Odoo
     database. For example: 8069.
 
-- **Target Database** field should be the target database name.
+**Target Database** field should be the target database name.
 
-- **Target Login** field should be the username that is used to login to the target
+**Target Login** field should be the username that is used to login to the target
     database from the login page. Make sure the user have a full access to all the models.
 
-- **Target Password** field should be the password according to the username that is
+**Target Password** field should be the password according to the username that is
     used to login to the target database from the login page.
 
-- **Target Language** field is the target database default language. It’s recommended to
+**Target Language** field is the target database default language. It’s recommended to
     keep the language as default (en_US)
 
 Preparing the Target Database for Migration
@@ -89,13 +89,13 @@ manager.
 
 Following is the details about the fields in the action model:
 
-- **Name** field should be the name of the action which is usually automated from the
+**Name** field should be the name of the action which is usually automated from the
 Match and Order previous action.
 
-- **Source Domain** field is used to apply domain for the source database model when
+**Source Domain** field is used to apply domain for the source database model when
 performing the migration to filter out or include certain records in the migration.
 
-- **Blocked** field is used to block the actions from running instead of having to switch
+**Blocked** field is used to block the actions from running instead of having to switch
 the status to disabled. This field is used when configuring and testing the action on 
 the first run of migration. After done configuring the action, Blocked field will usually 
 be checked then later unchecked when performing the real migration which will be 

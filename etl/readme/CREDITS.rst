@@ -1,5 +1,4 @@
 The development of this module has been financially supported by:
 
-* Ingadhoc
-
 * jeo Software
+* Ingadhoc
