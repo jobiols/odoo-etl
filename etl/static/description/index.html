@@ -368,57 +368,184 @@ ul.auto-toc {
 !! changes will be overwritten.                   !!
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! -->
 <p><a class="reference external" href="https://odoo-community.org/page/development-status"><img alt="Beta" src="https://img.shields.io/badge/maturity-Beta-yellow.png" /></a> <a class="reference external" href="http://www.gnu.org/licenses/agpl-3.0-standalone.html"><img alt="License: AGPL-3" src="https://img.shields.io/badge/licence-AGPL--3-blue.png" /></a> <a class="reference external" href="https://github.com/jobiols/odoo-etl/tree/12.0/etl"><img alt="jobiols/odoo-etl" src="https://img.shields.io/badge/github-jobiols%2Fodoo--etl-lightgray.png?logo=github" /></a></p>
-<p>Odoo data manipulation, like an small ETL (Extract, Transform and Load) for odoo databases.
-The main idea of the project is to give functional users the availability to move data from one odoo database to another odoo database. The design is quite simple, it use native odoo methods (primarily load and export_data).
-The aim of this project is different from odoo migration or OpenUpgrade, it allows to start from a clean database, merging  different odoo databases into a single multicompany db, etc.
-This project was developed by a non developer so for sure you are gonna find lot of ugly statements and ideas.
-It was developed using xmi2oerp tool, thanks Cristian Sebastian Rocha for that great work!</p>
+<p>ETL     is an Odoo module developed to move data between databases easily. It
+can be used for data migration from different Odoo versions not necessarily
+consecutives, data synchronization between Odoo databases, joining of Odoo
+databases, and also cleaning data from Odoo databases.</p>
+<p>ETL is an abbreviation for extraction, transformation and loading.
+The module usually runs in a separate database but can also be installed in
+the target database.</p>
+<p>ETL was migrated from Odoo V8/9 to V11 so it has not been tested on odoo V10.</p>
 <p><strong>Table of contents</strong></p>
 <div class="contents local topic" id="contents">
 <ul class="simple">
-<li><a class="reference internal" href="#installation" id="id5">Installation</a></li>
-<li><a class="reference internal" href="#configuration" id="id6">Configuration</a></li>
-<li><a class="reference internal" href="#usage" id="id7">Usage</a></li>
-<li><a class="reference internal" href="#known-issues-roadmap" id="id8">Known issues / Roadmap</a></li>
-<li><a class="reference internal" href="#changelog" id="id9">Changelog</a><ul>
-<li><a class="reference internal" href="#id1" id="id10">12.0.0.0.0 (2019-12-15)</a></li>
-<li><a class="reference internal" href="#x-y-z-yyyy-mm-dd" id="id11">11.0.x.y.z (YYYY-MM-DD)</a></li>
+<li><a class="reference internal" href="#installation" id="id1">Installation</a></li>
+<li><a class="reference internal" href="#configuration" id="id2">Configuration</a><ul>
+<li><a class="reference internal" href="#preparing-the-target-database-for-migration" id="id3">Preparing the Target Database for Migration</a></li>
+<li><a class="reference internal" href="#read-databases" id="id4">Read Databases</a></li>
+<li><a class="reference internal" href="#mapping" id="id5">Mapping</a></li>
+<li><a class="reference internal" href="#test-actions" id="id6">Test Actions</a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#bug-tracker" id="id12">Bug Tracker</a></li>
-<li><a class="reference internal" href="#credits" id="id13">Credits</a><ul>
-<li><a class="reference internal" href="#authors" id="id14">Authors</a></li>
-<li><a class="reference internal" href="#contributors" id="id15">Contributors</a></li>
-<li><a class="reference internal" href="#other-credits" id="id16">Other credits</a></li>
-<li><a class="reference internal" href="#maintainers" id="id17">Maintainers</a></li>
+<li><a class="reference internal" href="#usage" id="id7">Usage</a><ul>
+<li><a class="reference internal" href="#crear-un-registro-manager" id="id8">1- Crear un registro Manager</a></li>
+<li><a class="reference internal" href="#leer-los-modelos" id="id9">1- Leer los modelos</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#known-issues-roadmap" id="id10">Known issues / Roadmap</a></li>
+<li><a class="reference internal" href="#bug-tracker" id="id11">Bug Tracker</a></li>
+<li><a class="reference internal" href="#credits" id="id12">Credits</a><ul>
+<li><a class="reference internal" href="#authors" id="id13">Authors</a></li>
+<li><a class="reference internal" href="#contributors" id="id14">Contributors</a></li>
+<li><a class="reference internal" href="#other-credits" id="id15">Other credits</a></li>
+<li><a class="reference internal" href="#maintainers" id="id16">Maintainers</a></li>
 </ul>
 </li>
 </ul>
 </div>
 <div class="section" id="installation">
-<h1><a class="toc-backref" href="#id5">Installation</a></h1>
-<dl class="docutils">
-<dt>[ This file must only be present if there are very specific</dt>
-<dd>installation instructions, such as installing non-python
-dependencies. The audience is systems administrators. ]</dd>
-</dl>
-<p>To install this module, you need to:</p>
-<ol class="arabic simple">
-<li>Do this …</li>
-</ol>
+<h1><a class="toc-backref" href="#id1">Installation</a></h1>
+<p>Just intslall the module</p>
 </div>
 <div class="section" id="configuration">
-<h1><a class="toc-backref" href="#id6">Configuration</a></h1>
+<h1><a class="toc-backref" href="#id2">Configuration</a></h1>
+<p>After installing ETL module, navigate to ETL’s manager model and create a new manager
+with the following details:
+<strong>Name</strong> field contains the name of your manager without any specific restriction for the name.</p>
 <dl class="docutils">
-<dt>[ This file is optional, it should explain how to configure</dt>
-<dd>the module before using it; it is aimed at advanced users. ]</dd>
+<dt><strong>Target ID Type</strong> field is a selection field with possible values <em>Source ID</em> or <em>Builded ID</em>.</dt>
+<dd>When set to <em>Source ID</em>, the record XML ID that will be used in the migration process
+will be according to the default source exported external ID. On the other hand,
+when set to <em>Builded ID</em>, the record XML ID that will be used in the migration process
+will be customized according to the prefix set later at an additional field. The usage
+of <em>source ID</em> is recommended when performing migration process.</dd>
+<dt><strong>Source Hostname</strong> field should be the source database host URL that is used to access</dt>
+<dd>the Odoo database from remote OS. For example: <a class="reference external" href="http://192.168.1.101">http://192.168.1.101</a>.</dd>
+<dt><strong>Source Port</strong> field should be the source database port that is used to access the Odoo</dt>
+<dd>database. For example: 8069.</dd>
 </dl>
-<p>To configure this module, you need to:</p>
-<ol class="arabic simple">
-<li>Go to …</li>
-</ol>
-<div class="figure">
-<img alt="alternative description" src="https://raw.githubusercontent.com/jobiols/odoo-etl/12.0/etl/static/description/image.png" style="width: 600px;" />
+<p><strong>Source Database</strong> field should be the source database name.</p>
+<dl class="docutils">
+<dt><strong>Source Login</strong> field should be the username that is used to login to the source</dt>
+<dd>database from the login page. Make sure the user have a full access to all the models.</dd>
+<dt><strong>Source Password</strong> field should be the password according to the username that is</dt>
+<dd>used to login to the source database from the login page.</dd>
+<dt><strong>Source Language</strong> field is the source database default language. It’s recommended to</dt>
+<dd>keep the language as default (en_US).</dd>
+<dt><strong>Target Hostname</strong> field should be the target database host URL that is used to access</dt>
+<dd>the Odoo database from remote OS. For example: <a class="reference external" href="http://192.168.1.101">http://192.168.1.101</a>.</dd>
+<dt><strong>Target Port</strong> field should be the target database port that is used to access the Odoo</dt>
+<dd>database. For example: 8069.</dd>
+</dl>
+<p><strong>Target Database</strong> field should be the target database name.</p>
+<dl class="docutils">
+<dt><strong>Target Login</strong> field should be the username that is used to login to the target</dt>
+<dd>database from the login page. Make sure the user have a full access to all the models.</dd>
+<dt><strong>Target Password</strong> field should be the password according to the username that is</dt>
+<dd>used to login to the target database from the login page.</dd>
+<dt><strong>Target Language</strong> field is the target database default language. It’s recommended to</dt>
+<dd>keep the language as default (en_US)</dd>
+</dl>
+<div class="section" id="preparing-the-target-database-for-migration">
+<h2><a class="toc-backref" href="#id3">Preparing the Target Database for Migration</a></h2>
+<p>Make sure the target database is created and all the modules that will receive the records
+from the source database are installed. For example if you’re performing the migration for HR
+and     Projects, make sure     the     HR and Projects modules are installed in the target/destination
+database and of course the source database.</p>
+</div>
+<div class="section" id="read-databases">
+<h2><a class="toc-backref" href="#id4">Read Databases</a></h2>
+<p>To read the models and get the record counts from the source and the target/destination
+database click <strong>Read and Get Record</strong> from the action bar. The ETL module will now attempt
+to connect and read from the source and destination databases.</p>
+<p>After the process is done, the <strong>External Models</strong> tab from your manager form view should
+contain the list of models that have been read from the source and target database (along
+with its fields when clicked) and record counts.</p>
+</div>
+<div class="section" id="mapping">
+<h2><a class="toc-backref" href="#id5">Mapping</a></h2>
+<p>Matching the source models and the target models along with its fields can be done
+automatically by ETL; however, the result may not be perfectly correct. Some models and
+fields that changes across the version may have to be manually matched which will be
+explained in the next section. To perform an automatic model and fields mapping, simply
+click <strong>Match and Order</strong> from the action bar.</p>
+<p>After the process is done, the Actions tab from your manager form view should contain the
+list of actions (model mappings) that have been matched and ordered by ETL.</p>
+</div>
+<div class="section" id="test-actions">
+<h2><a class="toc-backref" href="#id6">Test Actions</a></h2>
+<p>At the first use of the ETL manager, it’s necessary to test the actions one by one which also
+means the migration will happen model by model for the first time. An action represents a
+migration for a single model at a time. Actions can also be understood as model mapping.
+It’s not necessary to configure all the actions/model mapping implied by the Match and
+Order action, but only the required actions/model mapping necessary for the intended
+migration.</p>
+<p>To be able to configure the actions and test it, simply click it from the list of actions in the
+manager.</p>
+<p>Following is the details about the fields in the action model:</p>
+<p><strong>Name</strong> field should be the name of the action which is usually automated from the
+Match and Order previous action.</p>
+<p><strong>Source Domain</strong> field is used to apply domain for the source database model when
+performing the migration to filter out or include certain records in the migration.</p>
+<p><strong>Blocked</strong> field is used to block the actions from running instead of having to switch
+the status to disabled. This field is used when configuring and testing the action on
+the first run of migration. After done configuring the action, Blocked field will usually
+be checked then later unchecked when performing the real migration which will be
+explained in the next section.</p>
+<p>Sequence field is used to order the action. The order for which action (model) will be
+performed first is really important due to the dependencies between models. For
+example, the sequence of customer tags model should be lower than the customer
+model since migration of the customer model will require the existing records of tags
+when the field of tag_ids is enabled (field configuration will be explained in the next
+section).</p>
+<p>Repeating Action field is a read-only field which will be automatically checked when
+the one of the fields state in the action’s Field Mapping list is set to on_repeating.
+When this field is checked, the Run Repeated Action button will appear in the action
+bar of the Actions model form.</p>
+<p>From Record field is also used to filter out or include records in the migration
+process. The records that will be migrated will start from the value set at this field.
+To disable this feature, simply leave it along with the To Record field to its default
+value 0 (zero).</p>
+<p>To Record field is also used to filter out or include records in the migration process.
+The records that will be migrated will end at the value set at this field. To disable this
+feature, simply leave it along with the From Record field to its default value 0 (zero).
+Copyright © PT. Vikasa Infinity Anugrah. All rights reserved.</p>
+<p>Source Model field contains selections of the source model name.
+source_id_exp field is the field name of the ID field in the source model. Usually is set
+at its default (id).
+Source Records is a read only field counting the number of records at the source
+database in relation to the selected source model. Number of non-active records will
+not be counted, but can still be included in migration by setting the domain [‘|’,
+(‘active’, ‘=’, True), (‘active’, ‘=’, False)]
+Target Model field contains selections of the target model name which will be
+mapped to receive the records from the source model when running the action.
+Target ID Type field have the same function as the Target ID Type field of the
+manager model. The default value will follow the value set at the Target ID Type field
+of the manager model and can be changed in every action according to preference
+(not recommended).
+Target Records is a read only field counting the number of records at the
+destination/target database in relation to the selected target model. Number of non-
+active records will not be counted.
+target_id_prefix field will only appear when the Target ID Type field is set to Builded
+ID allowing the customization of the records XML id instead of using the default
+export external ID.</p>
+<p>The Action fields are usually set correctly by the automatic Match and Order action. Beside
+configuring the fields, it’s very important to set the action’s state which can be changed to
+the following possible state:</p>
+<p>Enabled state should be set to an action that will be included in the migration
+process.</p>
+<p>To Analyse state should be set to an action that require a further analysis and
+testing. When an action is set to this state, it will not be included when running the
+migration process.</p>
+<p>Disabled state should be set to an action that will not be included in the migration
+process.</p>
+<p>No Records state should be set to an action that will not be included in the migration
+process due to 0 records found in the source model.</p>
+<p>After correctly configuring and checking the Action fields, it’s very important to also check
+and configure every line of field mapping in the field mapping list in every actions. The field
+mapping determines which field of the selected model to be included or excluded in the
+migration process. To configure the fields, simply click the field mapping from the field
+mapping list of the action form.</p>
 </div>
 </div>
 <div class="section" id="usage">
@@ -427,41 +554,30 @@ dependencies. The audience is systems administrators. ]</dd>
 <li>It is recommendend to delete all external identifiers on source database for model “res_partner” because when creating a user, odoo simulates partner creation and raise a unique constraint (except the admin user)</li>
 <li>Also could be recommendend to delete external identifiers related to product and product_temlate (except service products)</li>
 <li>Advisable to configure xmlrpc users to timezone zero to avoid errors</li>
+<li>Asegurarse de tener permisos manger para este modulo.</li>
+<li>Es aconsejable quitar las restricciones de timeout poniendo workers=0</li>
 </ul>
+<div class="section" id="crear-un-registro-manager">
+<h2><a class="toc-backref" href="#id8">1- Crear un registro Manager</a></h2>
+<p>En este formulario se ponen los datos de Fuente y Destino de las instancias
+de odoo para las que vamos a trabajar.</p>
+</div>
+<div class="section" id="leer-los-modelos">
+<h2><a class="toc-backref" href="#id9">1- Leer los modelos</a></h2>
+<p>Con el boton <strong>READ MODELS</strong> se leen los modelos de las instancias Fuente y Destino
+y luego de la carga se pueden ver en la pestaña <strong>External Models</strong></p>
+<p>El boton <strong>GET RECORD NUMBER</strong> lee la cantidad de registros en cada modelo</p>
+<p>Luego con el boton <strong>MATCH MODELS</strong> intenta machear los modelos y los campos de
+los modelos, creando <strong>Acciones</strong></p>
+<p>Las acciones aparecen en gris, verde o azul segun estan <em>deshabilitadas</em>, <em>habilitadas</em>, o <em>para analizar</em></p>
+</div>
 </div>
 <div class="section" id="known-issues-roadmap">
-<h1><a class="toc-backref" href="#id8">Known issues / Roadmap</a></h1>
-<dl class="docutils">
-<dt>[ Enumerate known caveats and future potential improvements.</dt>
-<dd>It is mostly intended for end-users, and can also help
-potential new contributors discovering new features to implement. ]</dd>
-</dl>
-<ul class="simple">
-<li>…</li>
-</ul>
-</div>
-<div class="section" id="changelog">
-<h1><a class="toc-backref" href="#id9">Changelog</a></h1>
-<div class="section" id="id1">
-<h2><a class="toc-backref" href="#id10">12.0.0.0.0 (2019-12-15)</a></h2>
-<ul class="simple">
-<li>[BREAKING] Breaking changes come first.
-(<a class="reference external" href="https://github.com/OCA/repo/issues/70">#70</a>)</li>
-<li>[ADD] New feature.
-(<a class="reference external" href="https://github.com/OCA/repo/issues/74">#74</a>)</li>
-<li>[FIX] Correct this.
-(<a class="reference external" href="https://github.com/OCA/repo/issues/71">#71</a>)</li>
-</ul>
-</div>
-<div class="section" id="x-y-z-yyyy-mm-dd">
-<h2><a class="toc-backref" href="#id11">11.0.x.y.z (YYYY-MM-DD)</a></h2>
-<ul class="simple">
-<li>…</li>
-</ul>
-</div>
+<h1><a class="toc-backref" href="#id10">Known issues / Roadmap</a></h1>
+<p>Hacer exportacion e importacion de scripts de migracion para poder ponerlos en git</p>
 </div>
 <div class="section" id="bug-tracker">
-<h1><a class="toc-backref" href="#id12">Bug Tracker</a></h1>
+<h1><a class="toc-backref" href="#id11">Bug Tracker</a></h1>
 <p>Bugs are tracked on <a class="reference external" href="https://github.com/jobiols/odoo-etl/issues">GitHub Issues</a>.
 In case of trouble, please check there if your issue has already been reported.
 If you spotted it first, help us smashing it by providing a detailed and welcomed
@@ -469,35 +585,31 @@ If you spotted it first, help us smashing it by providing a detailed and welcome
 <p>Do not contact contributors directly about support or help with technical issues.</p>
 </div>
 <div class="section" id="credits">
-<h1><a class="toc-backref" href="#id13">Credits</a></h1>
+<h1><a class="toc-backref" href="#id12">Credits</a></h1>
 <div class="section" id="authors">
-<h2><a class="toc-backref" href="#id14">Authors</a></h2>
+<h2><a class="toc-backref" href="#id13">Authors</a></h2>
 <ul class="simple">
 <li>ADHOC SA</li>
 <li>jeo Software</li>
 </ul>
 </div>
 <div class="section" id="contributors">
-<h2><a class="toc-backref" href="#id15">Contributors</a></h2>
+<h2><a class="toc-backref" href="#id14">Contributors</a></h2>
 <ul class="simple">
 <li>Ingadhoc Juan Jose Scarafia &lt;<a class="reference external" href="mailto:jjscarafia&#64;adhoc.com">jjscarafia&#64;adhoc.com</a>&gt;</li>
 <li>Jorge Obiols &lt;<a class="reference external" href="mailto:jorge.obiols&#64;gmail.com">jorge.obiols&#64;gmail.com</a>&gt; (www.jeosoft.com.ar)</li>
 </ul>
 </div>
 <div class="section" id="other-credits">
-<h2><a class="toc-backref" href="#id16">Other credits</a></h2>
-<dl class="docutils">
-<dt>[ This file is optional and contains additional credits, other than</dt>
-<dd>authors, contributors, and maintainers. ]</dd>
-</dl>
+<h2><a class="toc-backref" href="#id15">Other credits</a></h2>
 <p>The development of this module has been financially supported by:</p>
 <ul class="simple">
-<li>Company 1 name</li>
-<li>Company 2 name</li>
+<li>jeo Software</li>
+<li>Ingadhoc</li>
 </ul>
 </div>
 <div class="section" id="maintainers">
-<h2><a class="toc-backref" href="#id17">Maintainers</a></h2>
+<h2><a class="toc-backref" href="#id16">Maintainers</a></h2>
 <p>This module is part of the <a class="reference external" href="https://github.com/jobiols/odoo-etl/tree/12.0/etl">jobiols/odoo-etl</a> project on GitHub.</p>
 <p>You are welcome to contribute.</p>
 </div>

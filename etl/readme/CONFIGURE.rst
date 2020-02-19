@@ -101,24 +101,24 @@ the first run of migration. After done configuring the action, Blocked field wil
 be checked then later unchecked when performing the real migration which will be 
 explained in the next section.
 
-• Sequence field is used to order the action. The order for which action (model) will be 
+Sequence field is used to order the action. The order for which action (model) will be
 performed first is really important due to the dependencies between models. For 
 example, the sequence of customer tags model should be lower than the customer 
 model since migration of the customer model will require the existing records of tags 
 when the field of tag_ids is enabled (field configuration will be explained in the next 
 section).
 
-• Repeating Action field is a read-only field which will be automatically checked when 
+Repeating Action field is a read-only field which will be automatically checked when
 the one of the fields state in the action’s Field Mapping list is set to on_repeating. 
 When this field is checked, the Run Repeated Action button will appear in the action 
 bar of the Actions model form.
 
-• From Record field is also used to filter out or include records in the migration 
+From Record field is also used to filter out or include records in the migration
 process. The records that will be migrated will start from the value set at this field. 
 To disable this feature, simply leave it along with the To Record field to its default 
 value 0 (zero).
 
-• To Record field is also used to filter out or include records in the migration process. 
+To Record field is also used to filter out or include records in the migration process.
 The records that will be migrated will end at the value set at this field. To disable this 
 feature, simply leave it along with the From Record field to its default value 0 (zero). 
 Copyright © PT. Vikasa Infinity Anugrah. All rights reserved. 
@@ -147,17 +147,17 @@ The Action fields are usually set correctly by the automatic Match and Order act
 configuring the fields, it’s very important to set the action’s state which can be changed to 
 the following possible state:
 
-• Enabled state should be set to an action that will be included in the migration 
+Enabled state should be set to an action that will be included in the migration
 process.
 
-• To Analyse state should be set to an action that require a further analysis and 
+To Analyse state should be set to an action that require a further analysis and
 testing. When an action is set to this state, it will not be included when running the 
 migration process.
 
-• Disabled state should be set to an action that will not be included in the migration 
+Disabled state should be set to an action that will not be included in the migration
 process.
 
-• No Records state should be set to an action that will not be included in the migration 
+No Records state should be set to an action that will not be included in the migration
 process due to 0 records found in the source model. 
  
 After correctly configuring and checking the Action fields, it’s very important to also check 
