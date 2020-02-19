@@ -161,9 +161,8 @@
                     Create a manager
                 </p>
                 <p>
-                    El manager define una transformacion de datos entre un
-                    sistema odoo externo como fuente y el sistema odoo donde
-                    esta instalado este modulo como destino.
+                    The manager defines a data transformation between the
+                    two odoo systems, source and target.
                 </p>
             </field>
         </record>

@@ -146,7 +146,8 @@ class external_model(models.Model):
 
     @api.multi
     def read_fields(self, connection=False):
-        ''' Get fields for external models'''
+        """ Get fields for external models
+        """
         field_fields = [
             'id',
             'model_id/.id',

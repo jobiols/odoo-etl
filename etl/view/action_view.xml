@@ -139,9 +139,7 @@
             <field name="search_view_id" ref="view_etl_action_filter"/>
             <field name="context">{'search_default_not_grey':1}</field>
             <field name="help" type="html">
-                <p class="oe_view_nocontent_create">Click to create a
-                    Actions.
-                </p>
+                <p class="o_view_nocontent_smiling_face"> Click to create an Action</p>
             </field>
         </record>
 

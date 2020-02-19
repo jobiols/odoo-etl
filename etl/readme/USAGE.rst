@@ -1,7 +1,11 @@
 * It is recommendend to delete all external identifiers on source database for model "res_partner" because when creating a user, odoo simulates partner creation and raise a unique constraint (except the admin user)
+
 * Also could be recommendend to delete external identifiers related to product and product_temlate (except service products)
+
 * Advisable to configure xmlrpc users to timezone zero to avoid errors
+
 * Asegurarse de tener permisos manger para este modulo.
+
 * Es aconsejable quitar las restricciones de timeout poniendo workers=0
 
 

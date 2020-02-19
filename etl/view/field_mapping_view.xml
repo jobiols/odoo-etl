@@ -124,7 +124,7 @@
             <field name="view_id" ref="view_etl_field_mapping_tree"/>
             <field name="search_view_id" ref="view_etl_field_mapping_filter"/>
             <field name="help" type="html">
-                <p class="oe_view_nocontent_create"> Click to create a Fields Mapping.</p>
+                <p class="o_view_nocontent_smiling_face">Click to create a Fields Mapping.</p>
             </field>
         </record>
 
