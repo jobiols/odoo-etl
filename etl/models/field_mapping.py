@@ -104,16 +104,14 @@ class FieldMapping(models.Model):
         string='Manager'
     )
 
-    _constraints = [
-    ]
-
     @api.onchange('source_field_id')
     def onchange_source_field(self):
         source_field = False
         if self.source_field_id:
             source_field = self.source_field_id.name
-            if self.source_field_id.ttype in (
-                'many2one', 'many2many', 'one2many'):
+            if self.source_field_id.ttype in ['many2one',
+                                              'many2many',
+                                              'one2many']:
                 source_field += '/id'
         self.source_field = source_field
 
@@ -122,8 +120,9 @@ class FieldMapping(models.Model):
         target_field = False
         if self.target_field_id:
             target_field = self.target_field_id.name
-            if self.target_field_id.ttype in (
-                'many2one', 'many2many', 'one2many'):
+            if self.target_field_id.ttype in ['many2one',
+                                              'many2many',
+                                              'one2many']:
                 target_field += '/id'
         self.target_field = target_field
 
@@ -132,10 +131,11 @@ class FieldMapping(models.Model):
         return self.write({'blocked': True})
 
     @api.multi
-    def get_migrated_id(
-        self, rec_id, source_connection=False, target_connection=False):
-        '''Get migrated id for field ids  and one rec_id (from source database)
-        For example, for field mapping ids'''
+    def get_migrated_id(self, rec_id, source_connection=False,
+        target_connection=False):
+        """ Get migrated id for field ids  and one rec_id (from source database)
+            For example, for field mapping ids
+        """
         result = []
 
         for field_mapping in self:
@@ -175,7 +175,8 @@ class FieldMapping(models.Model):
                             module = source_reference_splited[0]
                             external_ref = source_reference_splited[1]
                         try:
-                            # cambiamos a esta manera fea porque el metodo de abajo no andaba
+                            # cambiamos a esta manera fea porque el metodo de
+                            # abajo no andaba
                             target_ids = target_ir_model_data_obj.search([(
                                 'module', '=', module),
                                 ('name', '=', external_ref)])
@@ -183,7 +184,8 @@ class FieldMapping(models.Model):
                                 target_ids, ['res_id'])
                             if target_ids:
                                 target_id = target_ids[0].get('res_id', False)
-                                # target_id = target_ir_model_data_obj.get_object_reference(
+                                # target_id = target_ir_model_data_obj.g
+                                # et_object_reference(
                                 # module, external_ref)[1]
                         except:
                             target_id = False
@@ -231,17 +233,13 @@ class FieldMapping(models.Model):
                                 module = source_ext_id_splited[0]
                                 external_ref = source_ext_id_splited[1]
                             try:
-                                target_id = \
-                                target_ir_model_data_obj.get_object_reference(
-                                    module, external_ref)[1]
+                                target_id = target_ir_model_data_obj.get_object_reference(module, external_ref)[1]  # noqa
                             except:
                                 # Agregamos este nuevo try porque algunas
                                 # veces module no es false si no que es como
                                 # una cadena vacia
                                 try:
-                                    target_id = \
-                                    target_ir_model_data_obj.get_object_reference(
-                                        '', external_ref)[1]
+                                    target_id = target_ir_model_data_obj.get_object_reference('', external_ref)[1]  # noqa
                                 except:
                                     target_id = False
             target_reference = False
