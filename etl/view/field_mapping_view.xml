@@ -97,19 +97,16 @@
             <field name="model">etl.field_mapping</field>
             <field name="arch" type="xml">
                 <tree string="field_mapping"
-                    colors="grey:state == 'disabled';blue:state == 'to_analyze';green:state == 'enabled';red:source_field_ttype!=target_field_ttype;"
-                    >
-                    <field name="blocked"
-                        />
-                    <field name="state"
-                        />
-                    <field name="type"
-                        />
-                    <field name="source_field"
-                        />
+                      decoration-muted="state=='disabled'"
+                      decoration-success="state=='enabled'"
+                      decoration-info="state=='to_analyze'"
+                      decoration-danger="source_field_ttype!=target_field_ttype">
+                    <field name="blocked"/>
+                    <field name="state"/>
+                    <field name="type"/>
+                    <field name="source_field"/>
                     <field name="source_field_ttype" invisible="0"/>
-                    <field name="target_field"
-                        />
+                    <field name="target_field"/>
                     <field name="target_field_ttype" invisible="1"/>
                 </tree>
             </field>
