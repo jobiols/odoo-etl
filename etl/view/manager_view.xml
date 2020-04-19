@@ -77,6 +77,7 @@
                             <field name="source_login"/>
                             <field name="source_password" password="True"/>
                             <field name="source_lang"/>
+                            <field name='odoo_source_version'/>
                             <newline/>
                             <field name="target_hostname"/>
                             <field name="target_port"/>
@@ -84,6 +85,7 @@
                             <field name="target_login"/>
                             <field name="target_password" password="True"/>
                             <field name="target_lang"/>
+                            <field name='odoo_target_version'/>                            
                             <newline/>
                         </group>
                         <group>

@@ -24,29 +24,126 @@ class Action(models.Model):
 
     _order = "sequence"
 
-    blocked = fields.Boolean(
-        string='Blocked',
-        copy=False,
-    )
-    sequence = fields.Integer(
-        string='Sequence'
-    )
     state = fields.Selection(
-        [(u'to_analyze', 'to_analyze'),
-         (u'enabled', 'enabled'),
-         (u'disabled', 'disabled'),
-         (u'no_records', 'no_records')],
-        string='State',
-        required=True
+        [(u'to_analyze', 'To Analyze'),
+         (u'enabled', 'Enabled'),
+         (u'disabled', 'Disabled'),
+         (u'no_records', 'No Records')],
+        required=True,
+        help='To Analyze: The action requires further analysis and testing. '
+             'When an action is set to this state, it will not be included in '
+             'the migration process.\n'
+             'Enabled: The action will be included in the migration process.\n'
+             'Disabled: The action will not be included in the migration '
+             'process.\n'
+             'No Records: The action will not be included in the migration '
+             'process due to 0 records found in the source model.'
     )
     name = fields.Char(
-        string='Name',
-        required=True
+        required=True,
+        help='the name of the action which is usually filled automatically '
+             'for the Match and Order previous action'
     )
     source_domain = fields.Char(
-        string='Source Domain',
         required=True,
-        default='[]'
+        default='[]',
+        help='Used to apply domain for the source database model when '
+             'performing the migration to filter out or include certain '
+             'records in the migration.'
+    )
+    blocked = fields.Boolean(
+        copy=False,
+        help='used to block the actions from running instead of having to '
+             'switch the status to disabled.'
+    )
+    sequence = fields.Integer(
+        help='used to set te execution order or the actions. The order in '
+             'which actions (representing models) will be performed is really '
+             'important due to the dependencies between models.'
+    )
+    repeating_action = fields.Boolean(
+        string='Repeating Action?',
+        store=True,
+        compute='_compute_repeating_action',
+        help='is a read-only field which will be automatically checked when '
+             'one of the fields states in the action’s Field Mapping list is '
+             'set to on_repeating. When this field is checked, the Run '
+             'Repeated Action button will appear in the action bar of the '
+             'Actions model form.'
+    )
+    from_rec_id = fields.Integer(
+        string='From Record',
+        help='is also used to filter out or include records in the migration '
+             'process. The ID records that will be migrated will start from '
+             'the value set at this field. To disable this feature, simply '
+             'leave it along with the To Record field to its default value 0 '
+             '(zero).'
+    )
+    to_rec_id = fields.Integer(
+        string='To Record',
+        help='is also used to filter out or include records in the migration '
+             'process. The records that will be migrated will end at the '
+             'value set at this field. To disable this feature, simply leave '
+             'it along with the From Record field to its default value 0 '
+             '(zero).'
+    )
+    manager_id = fields.Many2one(
+        'etl.manager',
+        ondelete='cascade',
+        string='Manager',
+        required=True,
+        help='The manager'
+    )
+    source_model_id = fields.Many2one(
+        'etl.external_model',
+        string='Source Model',
+        required=True,
+        ondelete='cascade',
+        help='the source model to migrate. The Match and Order action will '
+             'try to fill this field.'
+    )
+    source_id_exp = fields.Char(
+        string='source_id_exp',
+        required=True,
+        default='id',
+        help='is the field name of the ID field in the source model. Usually '
+             'set at its default (id).'
+    )
+    source_records = fields.Integer(
+        related='source_model_id.records',
+        readonly=True,
+        help='read only field counting the number of records at the source '
+             'database in relation to the selected source model. The number '
+             'of non-active records will not be counted, but can still be '
+             'included in migration by setting the domain: \n'
+             '[‘|’, (‘active’, ‘=’, True), (‘active’, ‘=’, False)]'
+    )
+    target_model_id = fields.Many2one(
+        'etl.external_model',
+        string='Target Model',
+        ondelete='cascade',
+        help='the target model name which will be mapped to receive the '
+             'records from the source model when running the action. '
+    )
+    target_records = fields.Integer(
+        related='target_model_id.records',
+        readonly=True,
+        help='read only field counting the number of records at the target '
+             'database in relation to the selected target model. The number '
+             'of the non-active records will not be counted. '
+    )
+
+    # TODO candidato a desaparecer del form
+    target_id_type = fields.Selection(
+        [(u'source_id', 'source_id'),
+         (u'builded_id', 'builded_id')],
+        string='Target ID Type',
+        required=True,
+        related='manager_id.target_id_type',
+        help='have the same function as the manager model‘s *Target ID Type*. '
+             'The default value will follow the value set at the manager '
+             'model‘s Target ID Type and can be changed in every action '
+             'according to preference (not recommended).'
     )
     log = fields.Text(
         string='Log'
@@ -54,65 +151,15 @@ class Action(models.Model):
     note = fields.Html(
         string='Notes'
     )
-    repeating_action = fields.Boolean(
-        string='Repeating Action?',
-        store=True,
-        compute='_compute_repeating_action',
-    )
-    source_id_exp = fields.Char(
-        string='source_id_exp',
-        required=True,
-        default='id'
-    )
-    target_id_type = fields.Selection(
-        [(u'source_id', 'source_id'),
-         (u'builded_id', 'builded_id')],
-        string='Target ID Type',
-        required=True,
-        related='manager_id.target_id_type'
-    )
-    from_rec_id = fields.Integer(
-        string='From Record'
-    )
-    to_rec_id = fields.Integer(
-        string='To Record'
-    )
     target_id_prefix = fields.Char(
         string='target_id_prefix',
         compute='_compute_action_prefix'
-    )
-    manager_id = fields.Many2one(
-        'etl.manager',
-        ondelete='cascade',
-        string='Manager',
-        required=True
     )
     field_mapping_ids = fields.One2many(
         'etl.field_mapping',
         'action_id',
         string='Fields Mapping',
         copy=False,
-    )
-    source_model_id = fields.Many2one(
-        'etl.external_model',
-        string='Source Model',
-        required=True,
-        ondelete='cascade',
-    )
-    target_model_id = fields.Many2one(
-        'etl.external_model',
-        string='Target Model',
-        ondelete='cascade',
-    )
-    source_records = fields.Integer(
-        related='source_model_id.records',
-        readonly=True,
-        string='Source Records',
-    )
-    target_records = fields.Integer(
-        related='target_model_id.records',
-        readonly=True,
-        string='Target Records',
     )
 
     @api.depends('source_model_id.model', 'target_id_type')

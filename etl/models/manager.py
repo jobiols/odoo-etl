@@ -14,57 +14,99 @@ _logger = logging.getLogger(__name__)
 
 class Manager(models.Model):
     _name = 'etl.manager'
-    _description = 'manager'
+    _description = 'etl manager'
 
     name = fields.Char(
         string='Name',
-        required=True
-        )
+        required=True,
+        help='Contains the name of your manager without any specific '
+               'restriction.'
+    )
+    target_id_type = fields.Selection(
+        [(u'source_id', 'Source ID'), 
+        (u'builded_id', 'Builded ID')],
+        string='Target ID Type',
+        required=True,
+        default='source_id',
+        help='Selection on how the Target Records ID''s will be build:\n'
+             'Source ID will keep the ID (external_id) from the source.\n'
+             'Builded ID - every external ID will be build as concatenation '
+             'of Manager Name + _ + Source Model.\n'
+             ' Source ID is recommended when performing a migration process.'
+    )
     source_hostname = fields.Char(
         string='Source Hostname',
         required=True,
         default='http://localhost',
-        )
+        help='The source database host URL that is used to access the Odoo '
+             'database from remote OS. i.e.: http://192.168.1.101.'
+    )
     source_port = fields.Integer(
         string='Source Port',
-        required=True
-        )
+        required=True,
+        default=80,
+        help='The source database port that is used to access the Odoo '
+             'database. i.e.: 8069.'
+    )
     source_database = fields.Char(
         string='Source Database',
-        required=True
-        )
+        required=True,
+        help='The source database name'
+    )
     source_login = fields.Char(
         string='Source Login',
-        required=True
-        )
+        required=True,
+        help='The username used to login to the source database from the '
+             'login page. Make sure this user have full access to all the '
+             'models.'
+    )
     source_password = fields.Char(
         string='Source Password',
-        required=True
-        )
+        required=True,
+        help='the password, what else?.'
+    )
+    source_lang = fields.Char(
+        'Source Language',
+        required=True,
+        default='en_US',
+        # TODO improove this and load all translations for tranlatable fields
+        help='The source database default language. It’s recommended to keep '
+             'the language as default (en_US)'
+    )
     target_hostname = fields.Char(
         string='Target Hostname',
         required=True,
         default='http://localhost',
-        )
+        help='the target database host URL that is used to access the Odoo '
+             'database from remote OS. i.e.: http://192.168.1.101.'
+    )
     target_port = fields.Integer(
         string='Target Port',
-        required=True
-        )
+        required=True,
+        default=80,
+        help='The target database port that is used to access the Odoo '
+             'database. i.e.: 8069.'
+    )
     target_database = fields.Char(
         string='Target Database',
-        required=True
-        )
+        required=True,
+        help='the target database name.'
+    )
     target_login = fields.Char(
         string='Target Login',
-        required=True
-        )
+        required=True,
+        help='the username used to login to the target database from the '
+             'login page. Make sure this user have full access to all the '
+             'models.'
+    )
     target_password = fields.Char(
         string='Target Password',
-        required=True
-        )
+        required=True,
+        help='the password, what else?.'
+    )
     log = fields.Text(
         string='Log'
-        )
+    )
     model_disable_default = fields.Text(
         string='Models Disabled by Default',
         # TODO move this default to another model
@@ -98,19 +140,19 @@ class Manager(models.Model):
                 "'account_analytic_analysis.summary.user',"
                 "'account_analytic_analysis.summary.month','res.groups',"
                 "'mail.alias']"
-        )
+    )
     field_disable_default = fields.Text(
         string='Fields Disable by Default',
         # TODO move this default to another model
         default="['lang','printed_vat','context_lang','context_department_id',"
                 "'groups_id','alias_defaults','alias_id','alias_model_id',"
                 "'create_date','calendar_last_notif_ack',]",
-        )
+    )
     model_exception_words = fields.Char(
         string='Model Exception Words',
         # TODO move this default to another model
         default="['report','ir.logging','ir.qweb']",
-        )
+    )
     model_analyze_default = fields.Text(
         string='Models Analyze by Default',
         # TODO move this default to another model
@@ -134,15 +176,15 @@ class Manager(models.Model):
                 "'sale.shop','document.storage','document.directory',"
                 "'document.directory.dctx','document.directory.content.type',"
                 "'document.directory.content','account.voucher',]",
-        )
+    )
     note = fields.Html(
         string='Notes'
-        )
+    )
     field_analyze_default = fields.Text(
         string='Fields Analize by Default',
         # TODO move this default to another model
         default="['reconcile_partial_id','reconcile_id']",
-        )
+    )
     repeating_models = fields.Text(
         string='Repeating Models',
         # TODO move this default to another model
@@ -150,70 +192,59 @@ class Manager(models.Model):
                 "'account.fiscalyear','product.template','product.product',"
                 "'purchase.order','sale.order','hr.employee','project.task',"
                 "'procurement.order']",
-        )
+    )
     field_disable_words = fields.Text(
         string='Fields Disable by Default Words',
         # TODO move this default to another model
         default="['in_group','sel_groups_','rml_header','rml_foot',]",
-        )
+    )
     modules_to_install = fields.Text(
         string='Modules To Install',
         default=[]
-        )
+    )
     workflow_models = fields.Char(
         string='Models to delete Workflows',
         required=True,
         default='[]'
-        )
+    )
     action_ids = fields.One2many(
         'etl.action',
         'manager_id',
         string='Actions',
         domain=[('state', 'in', ['to_analyze', 'enabled'])],
         copy=False,
-        )
+    )
     external_model_ids = fields.One2many(
         'etl.external_model',
         'manager_id',
         string='External Models',
         readonly=True,
         copy=False,
-        )
+    )
     value_mapping_field_ids = fields.One2many(
         'etl.value_mapping_field',
         'manager_id',
         string='Value Mapping Fields',
         copy=False,
-        )
-    source_lang = fields.Char(
-        'Source Language',
-        required=True,
-        default='en_US',
-        # TODO improove this and load all translations for tranlatable fields
-        help='Language used on source database translatable fields'
-        )
+    )
     target_lang = fields.Char(
         'Target Language',
         required=True,
         default='en_US',
         # TODO improove this and load all translations for tranlatable fields
-        help='Language used on target database translatable fields'
-        )
-    target_id_type = fields.Selection(
-        [(u'source_id', 'Source ID'), (u'builded_id', 'Builded ID')],
-        string='Target ID Type',
-        required=True,
-        default='builded_id',
-        help="Selection on how the Records target ID's will be build:\n\t"
-             "    - Source ID - will keep the source ID (external_id)\n\t"
-             "    - Builded ID - every external ID will be build as "
-             "concatenation of Manager Name + _ + Source Model"
+        help='the target database default language. It’s recommended to keep '
+             'the language as default (en_US).'
     )
     odoo_target_version = fields.Integer(
         default=lambda self: self.get_current_version(),
+        required=True,
+        help='the target odoo major version, default is the odoo version '
+        'where this module is installed'
     )
     odoo_source_version = fields.Integer(
-        default=8
+        required=True,
+        default=8,
+        help='the source odoo major version, default 8'
     )
 
     def get_current_version(self):
@@ -267,7 +298,13 @@ class Manager(models.Model):
         for rec in self:
             (source_connection, target_connection) = self.open_connections()
             target_module_obj = target_connection.model("ir.module.module")
-            modules = literal_eval(rec.modules_to_install)
+            try:
+                modules = literal_eval(rec.modules_to_install)
+            except ValueError:
+                raise UserError('Enter the technical names of the modules '
+                                 'to install in quotes and comma separated '
+                                 'with the syntax of a python list.\n\n'
+                                 'i.e. ["crm","stock","hr"]')
             domain = [('name', 'in', modules)]
             target_module_ids = target_module_obj.search(domain)
             target_module_obj.button_immediate_install(target_module_ids)
@@ -350,7 +387,7 @@ class Manager(models.Model):
                 model.id,
                 target_model and target_model.id or False,
                 self.id
-                ]
+            ]
 
             # look if this id should be blocked
             if [vals[0]] in blocked_model_ext_ids:
@@ -363,7 +400,7 @@ class Manager(models.Model):
         action_fields = [
             'id', 'state', 'name', 'sequence', 'source_model_id/.id',
             'target_model_id/.id', 'manager_id/.id'
-            ]
+        ]
         _logger.info('Loading actions match for manager %s' % self.name)
         import_result = self.env['etl.action'].load(action_fields, data)
 
@@ -490,7 +527,7 @@ class Manager(models.Model):
                     str(manager.id),
                     relation_type,
                     str(record[1]).replace('.', '_')
-                    )
+                )
                 external_model_data.append(record)
 
             # Load external_model_data to external models model
