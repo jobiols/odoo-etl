@@ -369,13 +369,22 @@ ul.auto-toc {
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! -->
 <p><a class="reference external" href="https://odoo-community.org/page/development-status"><img alt="Beta" src="https://img.shields.io/badge/maturity-Beta-yellow.png" /></a> <a class="reference external" href="http://www.gnu.org/licenses/agpl-3.0-standalone.html"><img alt="License: AGPL-3" src="https://img.shields.io/badge/licence-AGPL--3-blue.png" /></a> <a class="reference external" href="https://github.com/jobiols/odoo-etl/tree/12.0/etl"><img alt="jobiols/odoo-etl" src="https://img.shields.io/badge/github-jobiols%2Fodoo--etl-lightgray.png?logo=github" /></a></p>
 <p>ETL     is an Odoo module developed to move data between databases easily. It
-can be used for data migration from different Odoo versions not necessarily
+can be used for data migration from different Odoo versions Not necessarily
 consecutives, data synchronization between Odoo databases, joining of Odoo
 databases, and also cleaning data from Odoo databases.</p>
 <p>ETL is an abbreviation for extraction, transformation and loading.
 The module usually runs in a separate database but can also be installed in
 the target database.</p>
-<p>ETL was migrated from Odoo V8/9 to V11 so it has not been tested on odoo V10.</p>
+<p>ETL was migrated from Odoo V8/9 to V12 so it has not been tested on odoo prior
+odoo versions.</p>
+<p>There are advantages of using the ETL module such as the following:</p>
+<ul class="simple">
+<li>Can be used by functional consultants.</li>
+<li>Simple development, native Odoo methods.</li>
+<li>is an Odoo module.</li>
+<li>Works in most Odoo version 12.</li>
+<li>Multiple uses as mentioned earlier.</li>
+</ul>
 <p><strong>Table of contents</strong></p>
 <div class="contents local topic" id="contents">
 <ul class="simple">
@@ -385,171 +394,586 @@ the target database.</p>
 <li><a class="reference internal" href="#read-databases" id="id4">Read Databases</a></li>
 <li><a class="reference internal" href="#mapping" id="id5">Mapping</a></li>
 <li><a class="reference internal" href="#test-actions" id="id6">Test Actions</a></li>
+<li><a class="reference internal" href="#cleaning-the-target-and-etl-database" id="id7">Cleaning the Target and ETL Database</a></li>
+<li><a class="reference internal" href="#perform-migration" id="id8">Perform Migration</a></li>
+<li><a class="reference internal" href="#manually-mapping" id="id9">Manually Mapping</a></li>
+<li><a class="reference internal" href="#error-handling-for-selection-fields-and-value-mapping" id="id10">Error Handling for Selection Fields and Value Mapping</a></li>
+<li><a class="reference internal" href="#value-mapping-fields" id="id11">Value Mapping Fields</a></li>
+<li><a class="reference internal" href="#python-expression" id="id12">Python Expression</a></li>
+<li><a class="reference internal" href="#error-handling-for-relational-field-using-raw-integer-as-id" id="id13">Error Handling for Relational Field Using Raw Integer as ID</a></li>
+<li><a class="reference internal" href="#error-handling-for-create-date-field" id="id14">Error Handling for Create Date Field</a></li>
+<li><a class="reference internal" href="#error-handling-for-many-to-many-field-migration" id="id15">Error Handling for Many to Many Field Migration</a></li>
+<li><a class="reference internal" href="#more-about-etls-migration-method" id="id16">More about ETL’s Migration Method</a></li>
+<li><a class="reference internal" href="#about-the-erppeek" id="id17">About the ERPpeek</a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#usage" id="id7">Usage</a><ul>
-<li><a class="reference internal" href="#crear-un-registro-manager" id="id8">1- Crear un registro Manager</a></li>
-<li><a class="reference internal" href="#leer-los-modelos" id="id9">1- Leer los modelos</a></li>
+<li><a class="reference internal" href="#usage" id="id18">Usage</a><ul>
+<li><a class="reference internal" href="#crear-un-registro-manager" id="id19">1- Crear un registro Manager</a></li>
+<li><a class="reference internal" href="#leer-los-modelos" id="id20">1- Leer los modelos</a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#known-issues-roadmap" id="id10">Known issues / Roadmap</a></li>
-<li><a class="reference internal" href="#bug-tracker" id="id11">Bug Tracker</a></li>
-<li><a class="reference internal" href="#credits" id="id12">Credits</a><ul>
-<li><a class="reference internal" href="#authors" id="id13">Authors</a></li>
-<li><a class="reference internal" href="#contributors" id="id14">Contributors</a></li>
-<li><a class="reference internal" href="#other-credits" id="id15">Other credits</a></li>
-<li><a class="reference internal" href="#maintainers" id="id16">Maintainers</a></li>
+<li><a class="reference internal" href="#known-issues-roadmap" id="id21">Known issues / Roadmap</a></li>
+<li><a class="reference internal" href="#bug-tracker" id="id22">Bug Tracker</a></li>
+<li><a class="reference internal" href="#credits" id="id23">Credits</a><ul>
+<li><a class="reference internal" href="#authors" id="id24">Authors</a></li>
+<li><a class="reference internal" href="#contributors" id="id25">Contributors</a></li>
+<li><a class="reference internal" href="#other-credits" id="id26">Other credits</a></li>
+<li><a class="reference internal" href="#maintainers" id="id27">Maintainers</a></li>
 </ul>
 </li>
 </ul>
 </div>
 <div class="section" id="installation">
 <h1><a class="toc-backref" href="#id1">Installation</a></h1>
-<p>Just intslall the module</p>
+<p>Make sure the erppeek library is available in the server.</p>
+<p>sudo pip install erppeek</p>
 </div>
 <div class="section" id="configuration">
 <h1><a class="toc-backref" href="#id2">Configuration</a></h1>
-<p>After installing ETL module, navigate to ETL’s manager model and create a new manager
-with the following details:
-<strong>Name</strong> field contains the name of your manager without any specific restriction for the name.</p>
-<dl class="docutils">
-<dt><strong>Target ID Type</strong> field is a selection field with possible values <em>Source ID</em> or <em>Builded ID</em>.</dt>
-<dd>When set to <em>Source ID</em>, the record XML ID that will be used in the migration process
-will be according to the default source exported external ID. On the other hand,
-when set to <em>Builded ID</em>, the record XML ID that will be used in the migration process
-will be customized according to the prefix set later at an additional field. The usage
-of <em>source ID</em> is recommended when performing migration process.</dd>
-<dt><strong>Source Hostname</strong> field should be the source database host URL that is used to access</dt>
-<dd>the Odoo database from remote OS. For example: <a class="reference external" href="http://192.168.1.101">http://192.168.1.101</a>.</dd>
-<dt><strong>Source Port</strong> field should be the source database port that is used to access the Odoo</dt>
-<dd>database. For example: 8069.</dd>
-</dl>
-<p><strong>Source Database</strong> field should be the source database name.</p>
-<dl class="docutils">
-<dt><strong>Source Login</strong> field should be the username that is used to login to the source</dt>
-<dd>database from the login page. Make sure the user have a full access to all the models.</dd>
-<dt><strong>Source Password</strong> field should be the password according to the username that is</dt>
-<dd>used to login to the source database from the login page.</dd>
-<dt><strong>Source Language</strong> field is the source database default language. It’s recommended to</dt>
-<dd>keep the language as default (en_US).</dd>
-<dt><strong>Target Hostname</strong> field should be the target database host URL that is used to access</dt>
-<dd>the Odoo database from remote OS. For example: <a class="reference external" href="http://192.168.1.101">http://192.168.1.101</a>.</dd>
-<dt><strong>Target Port</strong> field should be the target database port that is used to access the Odoo</dt>
-<dd>database. For example: 8069.</dd>
-</dl>
-<p><strong>Target Database</strong> field should be the target database name.</p>
-<dl class="docutils">
-<dt><strong>Target Login</strong> field should be the username that is used to login to the target</dt>
-<dd>database from the login page. Make sure the user have a full access to all the models.</dd>
-<dt><strong>Target Password</strong> field should be the password according to the username that is</dt>
-<dd>used to login to the target database from the login page.</dd>
-<dt><strong>Target Language</strong> field is the target database default language. It’s recommended to</dt>
-<dd>keep the language as default (en_US)</dd>
-</dl>
+<p>After installing ETL module, navigate to ETL’s manager model and create a new
+manager with the following details:</p>
+<ul class="simple">
+<li><strong>Name</strong> field contains the name of your manager without any specific
+restriction for the name.</li>
+<li><strong>Target ID Type</strong> is a selection field where you can choose <em>Source ID</em>
+or <em>Builded ID</em>. When set to <em>Source ID</em>, the record XML ID that will be used
+in the migration process will be according to the default source exported
+external ID. On the other hand, when set to <em>Builded ID</em>, the record XML ID
+that will be used in the migration process will be customized according to
+the prefix set later at an additional field.
+<strong>The usage of source ID is recommended when performing migration process.</strong></li>
+<li><strong>Source Hostname</strong> should be the source database host URL that is used
+to access the Odoo database from remote OS. For example: <a class="reference external" href="http://192.168.1.101">http://192.168.1.101</a>.</li>
+<li><strong>Source Port</strong> should be the source database port that is used to access
+the Odoo database. For example: 8069.</li>
+<li><strong>Source Database</strong> should be the source database name.</li>
+<li><strong>Source Login</strong> should be the username that is used to login to the source
+database from the login page. Make sure this user have full access to all
+the models.</li>
+<li><strong>Source Password</strong> should be the password according to the username that is
+used to login to the source database from the login page.</li>
+<li><strong>Source Language</strong> field is the source database default language. It’s
+recommended to keep the language as default (en_US).</li>
+<li><strong>Target Hostname</strong> should be the target database host URL that is used
+to access the Odoo database from remote OS. For example: <a class="reference external" href="http://192.168.1.101">http://192.168.1.101</a>.</li>
+<li><strong>Target Port</strong> should be the target database port that is used to
+access the Odoo database. For example: 8069.</li>
+<li><strong>Target Database</strong> should be the target database name.</li>
+<li><strong>Target Login</strong> should be the username that is used to login to the
+target database from the login page. Make sure the user have a full access to
+all the models.</li>
+<li><strong>Target Password</strong> should be the password according to the username
+that is used to login to the target database from the login page.</li>
+<li><strong>Target Language</strong> is the target database default language. It’s recommended
+to keep the language as default (en_US)</li>
+</ul>
 <div class="section" id="preparing-the-target-database-for-migration">
 <h2><a class="toc-backref" href="#id3">Preparing the Target Database for Migration</a></h2>
-<p>Make sure the target database is created and all the modules that will receive the records
-from the source database are installed. For example if you’re performing the migration for HR
-and     Projects, make sure     the     HR and Projects modules are installed in the target/destination
-database and of course the source database.</p>
+<p>Make sure the target database is created and all the modules that will receive
+the records from the source database are installed. For example if you’re
+performing the migration for HR and Projects, make sure the HR and Projects
+modules are installed in the target/destination database and of course the
+source database.</p>
 </div>
 <div class="section" id="read-databases">
 <h2><a class="toc-backref" href="#id4">Read Databases</a></h2>
-<p>To read the models and get the record counts from the source and the target/destination
-database click <strong>Read and Get Record</strong> from the action bar. The ETL module will now attempt
-to connect and read from the source and destination databases.</p>
-<p>After the process is done, the <strong>External Models</strong> tab from your manager form view should
-contain the list of models that have been read from the source and target database (along
-with its fields when clicked) and record counts.</p>
+<p>To read the models and get the record counts from the source and the
+target/destination database click <strong>Read and Get Record</strong> from the action bar.
+The ETL module will now attempt to connect and read from the source and
+destination databases.</p>
+<p>After the process is done, the <strong>External Models</strong> tab from your manager form
+view should contain the list of models that have been read from the source and
+target database (along with its fields when clicked) and record counts.</p>
 </div>
 <div class="section" id="mapping">
 <h2><a class="toc-backref" href="#id5">Mapping</a></h2>
-<p>Matching the source models and the target models along with its fields can be done
-automatically by ETL; however, the result may not be perfectly correct. Some models and
-fields that changes across the version may have to be manually matched which will be
-explained in the next section. To perform an automatic model and fields mapping, simply
-click <strong>Match and Order</strong> from the action bar.</p>
-<p>After the process is done, the Actions tab from your manager form view should contain the
-list of actions (model mappings) that have been matched and ordered by ETL.</p>
+<p>Matching the source models and the target models along with its fields can be
+done automatically by ETL; however, the result may not be perfectly correct.
+Some models and fields that changes across the version may have to be manually
+matched which will be explained in the next section. To perform an automatic
+model and fields mapping, simply click <strong>Match and Order</strong> from the action bar.</p>
+<p>After the process is done, the Actions tab from your manager form view should
+contain the list of actions (model mappings) that have been matched and
+ordered by ETL.</p>
 </div>
 <div class="section" id="test-actions">
 <h2><a class="toc-backref" href="#id6">Test Actions</a></h2>
-<p>At the first use of the ETL manager, it’s necessary to test the actions one by one which also
-means the migration will happen model by model for the first time. An action represents a
-migration for a single model at a time. Actions can also be understood as model mapping.
-It’s not necessary to configure all the actions/model mapping implied by the Match and
-Order action, but only the required actions/model mapping necessary for the intended
-migration.</p>
-<p>To be able to configure the actions and test it, simply click it from the list of actions in the
-manager.</p>
+<p>At the first use of the ETL manager, it’s necessary to test the actions one by
+one which also means the migration will happen model by model for the first
+time. An action represents a migration for a single model at a time. Actions
+can also be understood as model mapping. It’s not necessary to configure all
+the actions/model mapping implied by the Match and Order action, but only the
+required actions/model mapping necessary for the intended migration.</p>
+<p>To be able to configure the actions and test it, simply click it from the list
+of actions in the manager.</p>
 <p>Following is the details about the fields in the action model:</p>
-<p><strong>Name</strong> field should be the name of the action which is usually automated from the
-Match and Order previous action.</p>
-<p><strong>Source Domain</strong> field is used to apply domain for the source database model when
-performing the migration to filter out or include certain records in the migration.</p>
-<p><strong>Blocked</strong> field is used to block the actions from running instead of having to switch
-the status to disabled. This field is used when configuring and testing the action on
-the first run of migration. After done configuring the action, Blocked field will usually
-be checked then later unchecked when performing the real migration which will be
-explained in the next section.</p>
-<p>Sequence field is used to order the action. The order for which action (model) will be
-performed first is really important due to the dependencies between models. For
-example, the sequence of customer tags model should be lower than the customer
-model since migration of the customer model will require the existing records of tags
-when the field of tag_ids is enabled (field configuration will be explained in the next
-section).</p>
-<p>Repeating Action field is a read-only field which will be automatically checked when
-the one of the fields state in the action’s Field Mapping list is set to on_repeating.
-When this field is checked, the Run Repeated Action button will appear in the action
-bar of the Actions model form.</p>
-<p>From Record field is also used to filter out or include records in the migration
-process. The records that will be migrated will start from the value set at this field.
-To disable this feature, simply leave it along with the To Record field to its default
-value 0 (zero).</p>
-<p>To Record field is also used to filter out or include records in the migration process.
-The records that will be migrated will end at the value set at this field. To disable this
-feature, simply leave it along with the From Record field to its default value 0 (zero).
-Copyright © PT. Vikasa Infinity Anugrah. All rights reserved.</p>
-<p>Source Model field contains selections of the source model name.
-source_id_exp field is the field name of the ID field in the source model. Usually is set
-at its default (id).
-Source Records is a read only field counting the number of records at the source
+<ul class="simple">
+<li><strong>Name</strong> should be the name of the action which is usually automated from the
+Match and Order previous action.</li>
+<li><strong>Source Domain</strong> is used to apply domain for the source database model
+when performing the migration to filter out or include certain records in the
+migration.</li>
+<li><strong>Blocked</strong> is used to block the actions from running instead of having
+to switch the status to disabled. This field is used when configuring and
+testing the action on the first run of migration. After done configuring the
+action, Blocked field will usually be checked then later unchecked when
+performing the real migration which will be explained in the next section.</li>
+<li><strong>Sequence</strong> is used to order the action. The order for which action (model)
+will be performed first is really important due to the dependencies between
+models. For example, the sequence of customer tags model should be lower than
+the customer model since migration of the customer model will require the
+existing records of tags when the field of tag_ids is enabled (field
+configuration will be explained in the next section).</li>
+<li><strong>Repeating Action</strong> is a read-only field which will be automatically
+checked when the one of the fields state in the action’s Field Mapping list
+is set to on_repeating. When this field is checked, the Run Repeated Action
+button will appear in the action bar of the Actions model form.</li>
+<li><strong>From Record</strong> is also used to filter out or include records in the
+migration process. The records that will be migrated will start from the
+value set at this field. To disable this feature, simply leave it along with
+the To Record field to its default value 0 (zero).</li>
+<li><strong>To Record</strong> is also used to filter out or include records in the migration
+process. The records that will be migrated will end at the value set at this
+field. To disable this feature, simply leave it along with the From Record
+field to its default value 0 (zero).</li>
+<li><strong>Source Model</strong> contains selections of the source model name.</li>
+<li><strong>source_id_exp</strong> is the field name of the ID field in the source model.
+Usually is set at its default (id).</li>
+<li><strong>Source Records</strong> is a read only field counting the number of records at the source
 database in relation to the selected source model. Number of non-active records will
 not be counted, but can still be included in migration by setting the domain [‘|’,
-(‘active’, ‘=’, True), (‘active’, ‘=’, False)]
-Target Model field contains selections of the target model name which will be
-mapped to receive the records from the source model when running the action.
-Target ID Type field have the same function as the Target ID Type field of the
-manager model. The default value will follow the value set at the Target ID Type field
-of the manager model and can be changed in every action according to preference
-(not recommended).
-Target Records is a read only field counting the number of records at the
-destination/target database in relation to the selected target model. Number of non-
-active records will not be counted.
-target_id_prefix field will only appear when the Target ID Type field is set to Builded
-ID allowing the customization of the records XML id instead of using the default
-export external ID.</p>
-<p>The Action fields are usually set correctly by the automatic Match and Order action. Beside
-configuring the fields, it’s very important to set the action’s state which can be changed to
-the following possible state:</p>
-<p>Enabled state should be set to an action that will be included in the migration
-process.</p>
-<p>To Analyse state should be set to an action that require a further analysis and
-testing. When an action is set to this state, it will not be included when running the
-migration process.</p>
-<p>Disabled state should be set to an action that will not be included in the migration
-process.</p>
-<p>No Records state should be set to an action that will not be included in the migration
-process due to 0 records found in the source model.</p>
-<p>After correctly configuring and checking the Action fields, it’s very important to also check
-and configure every line of field mapping in the field mapping list in every actions. The field
-mapping determines which field of the selected model to be included or excluded in the
-migration process. To configure the fields, simply click the field mapping from the field
+(‘active’, ‘=’, True), (‘active’, ‘=’, False)]</li>
+<li><strong>Target Model</strong> contains selections of the target model name which will be
+mapped to receive the records from the source model when running the action.</li>
+<li><strong>Target ID Type</strong> have the same function as the <em>Target ID Type</em> field of the
+manager model. The default value will follow the value set at the Target ID
+Type field of the manager model and can be changed in every action according
+to preference (not recommended).</li>
+<li><strong>Target Records</strong> is a read only field counting the number of records at the
+destination/target database in relation to the selected target model. Number
+of non-active records will not be counted.</li>
+<li><strong>target_id_prefix</strong> field will only appear when the Target ID Type field is
+set to Builded ID allowing the customization of the records XML id instead of
+using the default export external ID.</li>
+</ul>
+<p>The <em>Action</em> fields are usually set correctly by the automatic Match and Order
+action. Beside configuring the fields, it’s very important to set the action’s
+state which can be changed to the following possible states:</p>
+<ul class="simple">
+<li><strong>Enabled</strong> should be set to an action that will be included in the migration
+process.</li>
+<li><strong>To Analyse</strong> should be set to an action that require a further analysis
+and testing. When an action is set to this state, it will not be included
+when running the migration process.</li>
+<li><strong>Disabled</strong> state should be set to an action that will not be included in
+the migration process.</li>
+<li><strong>No Records</strong> should be set to an action that will not be included in the
+migration process due to 0 records found in the source model.</li>
+</ul>
+<p>After correctly configuring and checking the <em>Action</em> fields, it’s very
+important to also check and configure every line of field mapping in the field
+mapping list in every actions. The field mapping determines which field of the
+selected model to be included or excluded in the migration process.
+To configure the fields, simply click the field mapping from the field
 mapping list of the action form.</p>
+<p>Following is the details about the default fields in the field mapping model:</p>
+<ul class="simple">
+<li><strong>Blocked</strong> works in a similar way with the Blocked field of the action model
+which in this case is used to block fields that have been analysed so that
+the data of this field is not included when running the testing.</li>
+<li><strong>Source Type</strong> is a selection field which is set to the default value field
+for standard field data migration. Other source types will be explained in
+the next section.</li>
+<li><strong>Source Field</strong> is the selection of source field names in respect to the
+selected source model in the action model form.</li>
+<li><strong>Source Exp.</strong> is a short description of the selected source field.</li>
+<li><strong>Target Field</strong> is the selection of target field names in respect to the
+selected target model in the action model form.</li>
+<li><strong>Target Exp.</strong> is a short description of the selected target field.</li>
+<li><strong>Notes</strong> is a field prepared for ETL users to write a longer notes for
+each field mapping.</li>
+</ul>
+<p>Field mapping also have a state similar to that of actions and it’s also very
+important to set the field mapping’s state which can be changed to the
+following possible state:</p>
+<ul class="simple">
+<li><strong>Enabled</strong> should be set to a field mapping that will be included in the
+action testing process and or migration process.</li>
+<li><strong>To Analyse</strong> should be set to a field mapping that require a further
+analysis and testing. When a field mapping is set to this state, it will not
+be included when running the action testing process and or migration process.</li>
+<li><strong>Disabled</strong> should be set to a field mapping that will not be included in
+the action testing process and or migration process.</li>
+<li><strong>Other Class</strong> should be set to a field mapping that involves a relational
+field in which the record will be migrated from the other model.</li>
+<li><strong>On Repeating</strong> should be set to a field mapping that usually involves a
+relational field that requires its own records such as parent/child relation
+or records from other models having a higher action sequence. This
+field data will be migrated after the first migration iteration by clicking
+<strong>Run Repeated Action</strong> in terms of action testing or <strong>Run Repeated Actions</strong>
+while running migration from the manager later after completing the action
+testing.</li>
+</ul>
+<p>After configuring all the field mapping and the configuration for a specific
+action, test the action by clicking the <strong>Run Action</strong> button at the action
+bar for that specific action.</p>
+<p>To see the result of the test, check the value of <strong>Target Records</strong>. If it
+increases after the process in regards to the <strong>Source Records</strong>, then the
+migration can be considered to be successful. To further confirm and check
+for errors, click the Log tab of the Actions form. When the test is
+successful, the logs will show an array of new created database id for the
+migrated records; otherwise, error messages will be shown. Address the error
+by reconfiguring the setting and field mappings of that specific
+action then re-run the test.</p>
+</div>
+<div class="section" id="cleaning-the-target-and-etl-database">
+<h2><a class="toc-backref" href="#id7">Cleaning the Target and ETL Database</a></h2>
+<p>After correctly configuring and testing all the actions/model mapping, disable
+the other actions that will not be necessary for the intended migration and
+unblock all the actions. Before proceeding, do not forget to backup your ETL
+database.</p>
+<p>Since the target database have been used for the testing, it’s recommended to
+drop the database and recreate it. Make sure the modules are also installed
+again. If the target database name is changed, don’t forget to change the
+Target Database at the ETL manager.</p>
+</div>
+<div class="section" id="perform-migration">
+<h2><a class="toc-backref" href="#id8">Perform Migration</a></h2>
+<p>To perform the migration, simply click <strong>Run Actions</strong> button at the action bar
+of the manager form view. This will run all the actions according to our
+configuration in order. When process is completed, try checking for errors at
+every action’s log since errors may still happen due to little misconfiguration.</p>
+<p>When errors are found, try to address the errors accordingly by reconfiguring
+the fields then re-run the migration.</p>
+<p>When no errors are found, click <strong>Run Repeated Actions</strong> button at the action
+bar of the manager form view as well to migrate the field mappings where state
+is set to On Repeating.</p>
+<p>Re-check for error at the action logs and try to address them if there is one
+or more. After addressing the error, re-run the <strong>Run Repeated Actions</strong> action.</p>
+<p>When no errors are found, migration can be considered to be successful.</p>
+</div>
+<div class="section" id="manually-mapping">
+<h2><a class="toc-backref" href="#id9">Manually Mapping</a></h2>
+<p>Manual mapping for both models and fields are possible when the automatic
+<strong>Match and Order</strong> action is inaccurate.</p>
+<p>To manually map a model, navigate to the actions list view and create a new
+action/model mapping. Select the manager in the <strong>Manager</strong> field of the action
+then enter the detail of the action fields accordingly as described in Step 10
+of the migration process. If the Source Model and the Target Model selection is
+empty, make sure the Manager field is set to the correct manager that have
+perform the <strong>Read and Get Records</strong> action.</p>
+<p>After creating the action, click <strong>Add an item</strong> at the <strong>Field Mapping</strong> tab
+of that specific action to create the field mapping. Enter the detail of the
+field mapping fields accordingly as described in Step 10 of the migration
+process.</p>
+</div>
+<div class="section" id="error-handling-for-selection-fields-and-value-mapping">
+<h2><a class="toc-backref" href="#id10">Error Handling for Selection Fields and Value Mapping</a></h2>
+<p>Selection fields may cause confusing errors during migration since the source
+field valid selection values may be different with the target field valid
+selection values.</p>
+<p>For example, in OpenERP version 7.0, the <strong>priority</strong> field of the project.task
+model have the following selection range: “Very Low”, “Low”, “Medium”,
+“Important”, “Very Important”. In Odoo version 9.0, however, the selection
+range of the same field allows a different selection range such as following:
+“Normal”, “High”.</p>
+<p>In this case, we need to utilize ETL’s Value Mapping Fields.</p>
+<blockquote>
+Source Field –&gt; Value Mapping –&gt; Target Field</blockquote>
+</div>
+<div class="section" id="value-mapping-fields">
+<h2><a class="toc-backref" href="#id11">Value Mapping Fields</a></h2>
+<p>To use value mapping fields, navigate to the value mapping fields list view
+and click create. Set a name to the value mapping field at the <strong>Field Name</strong>
+field then set the type value to <strong>Selection</strong>. Set the <strong>manager_id</strong> field
+value to the specific manager that will be used for the migration.</p>
+<p>For every possible selection values (both at source and at destination),
+create a <strong>Mapping Value</strong> record by clicking <strong>Add an item</strong> at the
+<strong>Mapping Values</strong> list. <strong>Key</strong> should be the real selection value and
+<strong>Help Name</strong> can be a short description for that specific selection value or
+simply the same value with <strong>Key</strong>.</p>
+<p>For example, the <strong>Mapping Values</strong> for the <strong>project.task priority</strong> field
+will be as following:</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="50%" />
+<col width="50%" />
+</colgroup>
+<thead valign="bottom">
+<tr><th class="head">Key</th>
+<th class="head">Help Name</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr><td>Very Important</td>
+<td>Very Important</td>
+</tr>
+<tr><td>Important</td>
+<td>Important</td>
+</tr>
+<tr><td>Medium</td>
+<td>Medium</td>
+</tr>
+<tr><td>Low</td>
+<td>Low</td>
+</tr>
+<tr><td>Very Low</td>
+<td>Very Low</td>
+</tr>
+<tr><td>Normal</td>
+<td>Normal</td>
+</tr>
+<tr><td>High</td>
+<td>High</td>
+</tr>
+</tbody>
+</table>
+<p>After setting the Mapping Values, do not directly do the Details list. Click save, then edit to
+continue entering the Details list. The value mapping will be done in the Details list
+according to the Source Value and Target Value.</p>
+<p>For example, the Details for the project.task priority field will be as following:</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="50%" />
+<col width="50%" />
+</colgroup>
+<thead valign="bottom">
+<tr><th class="head">Source Value</th>
+<th class="head">Target Value</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr><td>Very Low</td>
+<td>Normal</td>
+</tr>
+<tr><td>Low</td>
+<td>Normal</td>
+</tr>
+<tr><td>Medium</td>
+<td>Normal</td>
+</tr>
+<tr><td>Important</td>
+<td>High</td>
+</tr>
+<tr><td>Very Important</td>
+<td>High</td>
+</tr>
+</tbody>
+</table>
+<p>Click <strong>Save</strong> to save the <strong>Value Mapping Fields</strong> record.
+When the Value Mapping Field for a specific selection field is have been
+created, navigate to the action containing that specific field mapping, click
+the intended field mapping, then set the <strong>Source Type</strong> field to <strong>Value
+Mapping</strong> and set the <strong>Value Mapping Field</strong> to the specific value mapping
+field record that have been created. Save the changes that have been made.</p>
+<p>The value mapping example for the <strong>project.task priority</strong> selection field is
+shown according to the following image:</p>
+<p>image</p>
+</div>
+<div class="section" id="python-expression">
+<h2><a class="toc-backref" href="#id12">Python Expression</a></h2>
+<p>Some field mappings may be enhanced with python code to allow more dynamic
+values at the target field. To utilize expressions field mapping, navigate to
+the field mapping that will the require the expression then changing the
+<strong>Source Type</strong> into <strong>expression</strong>. After setting the type into expression, an
+additional field expression will appear. The python expression will be coded
+inside this field.</p>
+<blockquote>
+Source Field –&gt; Expression –&gt; Target Field</blockquote>
+<p>Following python code from <strong>field_mapping.py</strong> located inside the ETL addons
+directory shows possible objects that can be accessed from the expressions:</p>
+<pre class="literal-block">
+&#64;api.multi
+def run_expressions(self, rec_id, source_connection=False, target_connection=False):
+    result = []
+    for field_mapping in self:
+        expression_result = False
+        if not source_connection or not target_connection:
+            (source_connection, target_connection) = field_mapping.action_id.manager_id.open_connections()
+        source_model_obj = source_connection.model(field_mapping.action_id.source_model_id.model)
+        target_model_obj = target_connection.model(field_mapping.action_id.target_model_id.model)
+        obj_pool = source_model_obj
+        cxt = {
+                'self': obj_pool, #to be replaced by target_obj
+                'source_obj': source_model_obj,
+                'source_connection': source_connection,
+                'target_obj': target_model_obj,
+                'target_connection': target_connection,
+                'rec_id': rec_id,
+                'pool': self.pool,
+                'time': time,
+                'cr': self._cr,
+                # copy context to prevent side-effects of eval
+                'context': dict(self._context),
+                'uid': self.env.user.id,
+                'user': self.env.user,
+        }
+        if not field_mapping.expression:
+            raise Warning(_('Warning. Type expression choosen buy not expression set'))
+        # nocopy allows to return 'action'
+        eval(field_mapping.expression.strip(), cxt, mode=&quot;exec&quot;)
+
+        if 'result' in cxt['context']:
+            expression_result = cxt['context'].get('result')
+        result.append(expression_result)
+
+    return result
+</pre>
+<p>For further details, please open field_mapping.py at the addons folder of the
+ETL module.</p>
+</div>
+<div class="section" id="error-handling-for-relational-field-using-raw-integer-as-id">
+<h2><a class="toc-backref" href="#id13">Error Handling for Relational Field Using Raw Integer as ID</a></h2>
+<p>Some models such as <strong>mail.followers</strong> has a field such as res_id that stores
+the ID of the resource/record it attached to in a raw integer type (int)
+instead of relational type (many2one / one2many / many2many). Hence, when it’s
+migrated, there will be no technical error but the res_id remains the resource
+ID of the source database which may change in the destination database. This
+error can be solved by using python expressions in the field mapping.
+Following is the python expressions used to solve this issue related to the
+<strong>mail.followers res_id</strong>:</p>
+<pre class="literal-block">
+source_ip = str(source_connection._server).split(&quot;://&quot;)[1].split(&quot;:&quot;)[0]
+destination_ip =
+str(target_connection._server).split(&quot;://&quot;)[1].split(&quot;:&quot;)[0]
+source_db = str(source_connection).split(&quot;#&quot;)[1].split(&quot;'&quot;)[0]
+destination_db = str(target_connection).split(&quot;#&quot;)[1].split(&quot;'&quot;)[0]
+cr.execute(&quot;&quot;&quot;SELECT destination.res_id as destination_res_id FROM
+dblink('dbname='%s' port=5432 host='%s' user=leonardo
+password=123','select a.id, a.res_model, a.res_id, b.name from
+mail_followers a left join ir_model_data b on a.res_model = b.model and
+a.res_id = b.res_id') AS source(id integer, res_model varchar, res_id
+integer, name varchar), dblink('dbname='%s' port=5432 host='%s'
+user=postgres password=123','select res_id, name from ir_model_data') AS
+destination(res_id integer, name varchar) WHERE source.res_model in
+(SELECT * FROM dblink('dbname='%s' port=5432 host='%s' user=postgres
+password=123','select model from ir_model') AS model(model varchar)) AND
+source.name = destination.name AND source.id = %s&quot;&quot;&quot;,(source_db,
+source_ip, destination_db, destination_ip, destination_db, destination_ip,
+rec_id,))
+
+try:
+    context['result']= [r for r in cr.fetchall()][0][0]
+except:
+    context['result']= False
+</pre>
+<p>Do note that the above python code uses the <strong>dblink</strong> extension function from
+Postgres which require details such as database port, user, and password.
+In above case, source Postgres database have the following credential:</p>
+<pre class="literal-block">
+DB User     : leonardo
+DB Password : 123
+DB Port     : 5432
+</pre>
+<p>In above case, the destination Postgres database have the following credential:</p>
+<pre class="literal-block">
+DB User     : postgres
+DB Password : 123
+DB Port     : 5432
+</pre>
+<p>It is very crucial to execute the following SQL at the ETL’s PostgreSQL
+database (not source or destination) before using the expressions containing
+the dblink Postgres function:</p>
+<p>CREATE EXTENSION dblink;</p>
+</div>
+<div class="section" id="error-handling-for-create-date-field">
+<h2><a class="toc-backref" href="#id14">Error Handling for Create Date Field</a></h2>
+<p>ETL does not support the migration of the create and write date for all the
+Odoo models. After running the migration, create and write date will be set to
+the migration date. It is in fact that this create or write date field can be
+ignored in some modules, but for some other modules it may be crucial. In that
+case it’s necessary to manipulate the create and or write date with python
+expressions to allow the accurate migration for create and or write date.
+Following is the python expression used to solve the create date issue related
+to the <strong>crm.lead</strong> model in which create date is crucial:</p>
+<pre class="literal-block">
+source_ip = str(source_connection._server).split(&quot;://&quot;)[1].split(&quot;:&quot;)[0]
+destination_ip =
+str(target_connection._server).split(&quot;://&quot;)[1].split(&quot;:&quot;)[0]
+source_db = str(source_connection).split(&quot;#&quot;)[1].split(&quot;'&quot;)[0]
+destination_db = str(target_connection).split(&quot;#&quot;)[1].split(&quot;'&quot;)[0]
+cr.execute(&quot;&quot;&quot;SELECT destination.id, source.create_date FROM
+dblink('dbname='%s' port=5432 host='%s' user=leonardo
+password=123','SELECT a.id, b.name, a.create_date FROM crm_lead a,
+ir_model_data b WHERE a.id = b.res_id and b.model = ''crm.lead''') AS
+source(id integer, name varchar, create_date timestamp),
+dblink('dbname='%s' port=5432 host='%s' user=postgres
+password=123','SELECT a.id, b.name, a.create_date FROM crm_lead a,
+ir_model_data b WHERE a.id = b.res_id and b.model = ''crm.lead''') AS
+destination(id integer, name varchar, create_date timestamp) WHERE
+source.name = destination.name AND source.id = %s&quot;&quot;&quot;,(source_db,
+source_ip, destination_db, destination_ip, rec_id,))
+matching_record = [r for r in cr.fetchall()][0]
+dest_id = matching_record[0]
+create_date = matching_record[1]
+cr.execute(&quot;&quot;&quot;SELECT dblink_exec('dbname='%s' port=5432 host='%s'
+user=postgres password=123','UPDATE crm_lead SET create_date = TIMESTAMP
+'%s' WHERE id = %s')&quot;&quot;&quot;,(destination_db, destination_ip, create_date,
+dest_id))
+context['result']= str(create_date)
+</pre>
+<p>Do note that the above python code uses the dblink extension function from
+Postgres which require details such as database port, user, and password.
+In above case, source Postgres database have the following credential:</p>
+<pre class="literal-block">
+DB User     : leonardo
+DB Password : 123
+DB Port     : 5432
+</pre>
+<p>In above case, the destination Postgres database have the following credential:</p>
+<pre class="literal-block">
+DB User     : postgres
+DB Password : 123
+DB Port     : 5432
+</pre>
+<p>It is very crucial to execute the following SQL at the ETL’s PostgreSQL
+database (not source or destination) before using the expressions containing
+the dblink Postgres function:</p>
+<p>CREATE EXTENSION dblink;</p>
+</div>
+<div class="section" id="error-handling-for-many-to-many-field-migration">
+<h2><a class="toc-backref" href="#id15">Error Handling for Many to Many Field Migration</a></h2>
+<p>The ETL module source code contains a bug related to the migration of many to
+many field type. This can be solved by modifying the action.py python script
+at line 471 located at the ETL addons folder.</p>
+<p>Replace:</p>
+<blockquote>
+new_field_value = value</blockquote>
+<p>Into:</p>
+<blockquote>
+<dl class="docutils">
+<dt>if new_field_value:</dt>
+<dd>new_field_value = new_field_value + ‘,’ + value</dd>
+<dt>else:</dt>
+<dd>new_field_value = value</dd>
+</dl>
+</blockquote>
+</div>
+<div class="section" id="more-about-etls-migration-method">
+<h2><a class="toc-backref" href="#id16">More about ETL’s Migration Method</a></h2>
+<p>As mentioned earlier, one of the advantages of ETL is that it uses the native
+Odoo method. This can be found at the <strong>action.py python</strong> script at line
+580 (unmodified action.py) located at the ETL addons folder.</p>
+<p>ETL calls the load function of OpenERP to load the data into the target model.
+The load function can be found at the models.py python script starting at line
+1022 (unmodified models.py at Odoo version 9) located at the OpenERP directory
+of Odoo.</p>
+</div>
+<div class="section" id="about-the-erppeek">
+<h2><a class="toc-backref" href="#id17">About the ERPpeek</a></h2>
+<p>Every connection made from the ETL database to the source and target database
+uses the methods from python library called ERPpeek in which ERPpeek itself
+uses xmlrpc to communicate with the databases. The source and target
+destination is called as a class object Client. Actions done at those databases
+are also done using methods from ERPpeek.</p>
+<blockquote>
+A &lt;–&gt; ERPpeek &lt;–&gt; ETL &lt;–&gt; ERPpeek</blockquote>
+<p>The ERPpeek python code can be viewed at the following link:
+<a class="reference external" href="https://github.com/tinyerp/erppeek/blob/master/erppeek.py">https://github.com/tinyerp/erppeek/blob/master/erppeek.py</a>.</p>
 </div>
 </div>
 <div class="section" id="usage">
-<h1><a class="toc-backref" href="#id7">Usage</a></h1>
+<h1><a class="toc-backref" href="#id18">Usage</a></h1>
 <ul class="simple">
 <li>It is recommendend to delete all external identifiers on source database for model “res_partner” because when creating a user, odoo simulates partner creation and raise a unique constraint (except the admin user)</li>
 <li>Also could be recommendend to delete external identifiers related to product and product_temlate (except service products)</li>
@@ -558,12 +982,12 @@ mapping list of the action form.</p>
 <li>Es aconsejable quitar las restricciones de timeout poniendo workers=0</li>
 </ul>
 <div class="section" id="crear-un-registro-manager">
-<h2><a class="toc-backref" href="#id8">1- Crear un registro Manager</a></h2>
+<h2><a class="toc-backref" href="#id19">1- Crear un registro Manager</a></h2>
 <p>En este formulario se ponen los datos de Fuente y Destino de las instancias
 de odoo para las que vamos a trabajar.</p>
 </div>
 <div class="section" id="leer-los-modelos">
-<h2><a class="toc-backref" href="#id9">1- Leer los modelos</a></h2>
+<h2><a class="toc-backref" href="#id20">1- Leer los modelos</a></h2>
 <p>Con el boton <strong>READ MODELS</strong> se leen los modelos de las instancias Fuente y Destino
 y luego de la carga se pueden ver en la pestaña <strong>External Models</strong></p>
 <p>El boton <strong>GET RECORD NUMBER</strong> lee la cantidad de registros en cada modelo</p>
@@ -573,11 +997,11 @@ los modelos, creando <strong>Acciones</strong></p>
 </div>
 </div>
 <div class="section" id="known-issues-roadmap">
-<h1><a class="toc-backref" href="#id10">Known issues / Roadmap</a></h1>
+<h1><a class="toc-backref" href="#id21">Known issues / Roadmap</a></h1>
 <p>Hacer exportacion e importacion de scripts de migracion para poder ponerlos en git</p>
 </div>
 <div class="section" id="bug-tracker">
-<h1><a class="toc-backref" href="#id11">Bug Tracker</a></h1>
+<h1><a class="toc-backref" href="#id22">Bug Tracker</a></h1>
 <p>Bugs are tracked on <a class="reference external" href="https://github.com/jobiols/odoo-etl/issues">GitHub Issues</a>.
 In case of trouble, please check there if your issue has already been reported.
 If you spotted it first, help us smashing it by providing a detailed and welcomed
@@ -585,23 +1009,23 @@ If you spotted it first, help us smashing it by providing a detailed and welcome
 <p>Do not contact contributors directly about support or help with technical issues.</p>
 </div>
 <div class="section" id="credits">
-<h1><a class="toc-backref" href="#id12">Credits</a></h1>
+<h1><a class="toc-backref" href="#id23">Credits</a></h1>
 <div class="section" id="authors">
-<h2><a class="toc-backref" href="#id13">Authors</a></h2>
+<h2><a class="toc-backref" href="#id24">Authors</a></h2>
 <ul class="simple">
 <li>ADHOC SA</li>
 <li>jeo Software</li>
 </ul>
 </div>
 <div class="section" id="contributors">
-<h2><a class="toc-backref" href="#id14">Contributors</a></h2>
+<h2><a class="toc-backref" href="#id25">Contributors</a></h2>
 <ul class="simple">
 <li>Ingadhoc Juan Jose Scarafia &lt;<a class="reference external" href="mailto:jjscarafia&#64;adhoc.com">jjscarafia&#64;adhoc.com</a>&gt;</li>
 <li>Jorge Obiols &lt;<a class="reference external" href="mailto:jorge.obiols&#64;gmail.com">jorge.obiols&#64;gmail.com</a>&gt; (www.jeosoft.com.ar)</li>
 </ul>
 </div>
 <div class="section" id="other-credits">
-<h2><a class="toc-backref" href="#id15">Other credits</a></h2>
+<h2><a class="toc-backref" href="#id26">Other credits</a></h2>
 <p>The development of this module has been financially supported by:</p>
 <ul class="simple">
 <li>jeo Software</li>
@@ -609,7 +1033,7 @@ If you spotted it first, help us smashing it by providing a detailed and welcome
 </ul>
 </div>
 <div class="section" id="maintainers">
-<h2><a class="toc-backref" href="#id16">Maintainers</a></h2>
+<h2><a class="toc-backref" href="#id27">Maintainers</a></h2>
 <p>This module is part of the <a class="reference external" href="https://github.com/jobiols/odoo-etl/tree/12.0/etl">jobiols/odoo-etl</a> project on GitHub.</p>
 <p>You are welcome to contribute.</p>
 </div>
