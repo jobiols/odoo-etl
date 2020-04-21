@@ -207,5 +207,5 @@ class external_model(models.Model):
             _logger.info('%i records on model %s' % (
                 len(model_ids), self.name))
             self.write(vals)
-        except:
-            _logger.error('Error getting records')
+        except Exception as e:
+            _logger.error('Error getting records %s' % e.faultCode)
