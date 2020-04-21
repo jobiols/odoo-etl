@@ -15,8 +15,14 @@
                     <field name="manager_id" string="Manager"/>
                     <field name="source_model_id" string="Source Model"/>
                     <field name="target_model_id" string="Target Model"/>
-                    <filter name="not_grey" string="Not Grey"
+                    <filter name="not_disabled" string="Not Disabled"
                             domain="[('state','not in',['disabled','no_records'])]"/>
+                    <filter name="enabled" string="Enabled"
+                            domain="[('state','in',['enabled'])]"/>
+                    <filter name="to_analyze" string="To Analyze"
+                            domain="[('state','in',['to_analyze'])]"/>
+                    <filter name="no_records" string="No Records"
+                            domain="[('state','in',['no_records'])]"/>
                     <group expand="0" string="Group By">
                     </group>
                 </search>
@@ -48,9 +54,9 @@
                         <field name="state" widget="statusbar"
                                clickable="True"/>
                     </header>
-                    <sheet string="action">
-                        <div class="oe_right oe_button_box" name="buttons">
-                            <button class="oe_inline" type="action"
+                    <sheet string="Action">
+                        <div class="oe_button_box" name="button_box">
+                            <button class="oe_stat_button" type="action" icon="fa-stack-exchange"
                                     string="Fields Mapping"
                                     name="%(etl.action_etl_field_mapping_fields_mapping)d"
                                     context="{'search_default_action_id': active_id}"/>
@@ -137,7 +143,7 @@
             <field name="view_mode">tree,form</field>
             <field name="view_id" ref="view_etl_action_tree"/>
             <field name="search_view_id" ref="view_etl_action_filter"/>
-            <field name="context">{'search_default_not_grey':1}</field>
+            <field name="context">{'search_default_not_disabled':1}</field>
             <field name="help" type="html">
                 <p class="o_view_nocontent_smiling_face"> Click to create an Action</p>
             </field>
