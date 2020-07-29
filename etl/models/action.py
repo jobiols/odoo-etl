@@ -8,9 +8,8 @@ import sys
 import pytz
 from ast import literal_eval
 from datetime import datetime
-from openerp.tools import \
-    DEFAULT_SERVER_DATE_FORMAT, \
-    DEFAULT_SERVER_DATETIME_FORMAT
+from openerp.tools import DEFAULT_SERVER_DATE_FORMAT, \
+     DEFAULT_SERVER_DATETIME_FORMAT
 import logging
 
 _logger = logging.getLogger(__name__)
@@ -21,7 +20,6 @@ class Action(models.Model):
 
     _name = 'etl.action'
     _description = 'action'
-
     _order = "sequence"
 
     state = fields.Selection(

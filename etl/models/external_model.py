@@ -159,7 +159,7 @@ class external_model(models.Model):
         model_field_data = []
         for model in self:
             _logger.info('Reading fields %s database, model: %s' % (
-                model.type, model.name))
+                model.type, model.model))
             if not connection:
                 (source_connection, target_connection) = \
                     model.manager_id.open_connections()
@@ -169,7 +169,12 @@ class external_model(models.Model):
                     connection = target_connection
                 else:
                     raise UserError(_('Error getting connection'))
-            external_model_obj = connection.model(model.model)
+            try:
+                external_model_obj = connection.model(model.model)
+            except:
+                _logger.info('Model database, model: %s not found !!!',
+                                model.model)
+                continue
             try:
                 external_model_fields = external_model_obj.fields_get()
             except:
@@ -207,5 +212,5 @@ class external_model(models.Model):
             _logger.info('%i records on model %s' % (
                 len(model_ids), self.name))
             self.write(vals)
-        except Exception as e:
-            _logger.error('Error getting records %s' % e.faultCode)
+        except Exception as ex:
+            _logger.error('Error getting records %s', str(ex))

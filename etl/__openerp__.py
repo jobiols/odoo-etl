@@ -24,8 +24,9 @@
     'version': u'12.0.0.0.0',
     'license': 'AGPL-3',
     'name': u'odoo ETL',
+    "development_status": "Beta",  # "Alpha|Beta|Production/Stable|Mature"
     'test': [],
-    'website': 'www.adhoc.com.ar',
+    'website': 'www.jeosoft.com.ar',
     'depends': ['base'],
     'data': [
         u'security/etl_group.xml',
