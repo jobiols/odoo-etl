@@ -24,19 +24,19 @@ can be used for data migration from different Odoo versions Not necessarily
 consecutives, data synchronization between Odoo databases, joining of Odoo
 databases, and also cleaning data from Odoo databases.
 
-ETL is an abbreviation for extraction, transformation and loading.
-The module usually runs in a separate database but can also be installed in
-the target database.
+It was originally developed by jjscarafia at ADHOC for Odoo V8/9 the original
+project can be found at https://github.com/ingadhoc/odoo-etl
+Since 2019 the project was continued and maintained by jobiols <jorge.obiols@gmail.com> at jeo Software.
 
-ETL was migrated from Odoo V8/9 to V12 so it has not been tested on odoo prior 
-odoo versions.
+ETL is an abbreviation for extraction, transformation and loading.
+The module usually runs in a separate database but can also be installed in the target database.
 
 There are advantages of using the ETL module such as the following:
 
 - Can be used by functional consultants.
 - Simple development, native Odoo methods.
 - is an Odoo module.
-- Works in most Odoo version 12.
+- Works from odoo V12 and can read databases from odoo V8.
 - Multiple uses as mentioned earlier.
 
 **Table of contents**
@@ -86,6 +86,10 @@ manager with the following details:
 - **Source Language** field is the source database default language. It’s 
   recommended to keep the language as default (en_US).
 
+- **Odoo Source Version** The source odoo major version. Default is 8. 
+  
+  NOTE: This module was NOT Tested with source versions earlier than 8
+
 - **Target Hostname** should be the target database host URL that is used 
   to access the Odoo database from remote OS. For example: http://192.168.1.101.
 
@@ -104,74 +108,98 @@ manager with the following details:
 - **Target Language** is the target database default language. It’s recommended 
   to keep the language as default (en_US)
 
+- **Odoo Target Version** The target odoo major version. Default is the odoo 
+  version where this module was installed. 
+  
+  NOTE: You can install this module in
+  a odoo instance that is neither the source nor the target. In this case please
+  be sure to change the Target Version for the target's odoo major version.
+
 Preparing the Target Database for Migration
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Make sure the target database is created and all the modules that will receive 
-the records from the source database are installed. For example if you’re 
-performing the migration for HR and Projects, make sure the HR and Projects 
-modules are installed in the target/destination database and of course the 
-source database.
+Make sure you have a clean target database, with no modules and without demo 
+data. All the modules that will receive the records from the source database 
+must be declared in the notes tab. Then press the **INSTALL MODULES** button.
 
 Read Databases
 ~~~~~~~~~~~~~~
 
-To read the models and get the record counts from the source and the 
-target/destination database click **Read and Get Record** from the action bar. 
-The ETL module will now attempt to connect and read from the source and 
-destination databases.
+This process reads all the models, record count and fields inside each model 
+from source and target databases.
 
-After the process is done, the **External Models** tab from your manager form 
-view should contain the list of models that have been read from the source and 
-target database (along with its fields when clicked) and record counts.
+To start click **READ AND GET RECORDS** from the action bar. The ETL module 
+will now attempt to connect and read data from the source and destination 
+databases.
 
-Mapping
-~~~~~~~
+You can do this in two steps with the two following buttons **READ MODELS** and 
+**GET RECORD NUMBERS** getting the same resuls.
 
-Matching the source models and the target models along with its fields can be 
-done automatically by ETL; however, the result may not be perfectly correct. 
-Some models and fields that changes across the version may have to be manually 
-matched which will be explained in the next section. To perform an automatic 
-model and fields mapping, simply click **Match and Order** from the action bar.
+After the process is done, in the **External Models** tab from your manager 
+form view you can see the list of models just read from source and target 
+databases and record counts. As a bonus you can click on a model to see the
+fields.
+
+Mapping source and target models
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Matching the source and target models along with its fields can be done 
+automatically by ETL; however, the result may not be perfectly correct if you
+are moving data from different odoo versions. 
+
+Some models and fields change between odoo versions, in this case you may have 
+to manually adjust the migration, this is explained in the next section. 
+To perform an automatic mapping of models and fields, just click 
+**Match and Order** in the action bar.
 
 After the process is done, the Actions tab from your manager form view should 
 contain the list of actions (model mappings) that have been matched and 
-ordered by ETL.
+ordered by ETL. 
+The models that etl could not match are flagged **To Analyze** the ones that
+cout match are flagged **Enabled**
 
-Test Actions
-~~~~~~~~~~~~
+After the actions have been generated, matched or not, it is necessary to order 
+them since there are dependencies, some models depend on others and things 
+must be executed in order. Just press **ORDER ACTIONS**
+
+Test Actions (The hard work begins)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 At the first use of the ETL manager, it’s necessary to test the actions one by 
-one which also means the migration will happen model by model for the first 
-time. An action represents a migration for a single model at a time. Actions 
-can also be understood as model mapping. It’s not necessary to configure all 
-the actions/model mapping implied by the Match and Order action, but only the 
+one, which also means the migration will happen model by model for the first 
+time. 
+An action represents a migration for a single model at a time. Actions can also 
+be understood as model mappings. It’s not necessary to configure all the 
+actions/model mapping implied by the Match and Order action, but only the 
 required actions/model mapping necessary for the intended migration. 
  
-To be able to configure the actions and test it, simply click it from the list 
+To be able to configure an actions and test it, simply click it from the list 
 of actions in the manager.
 
 Following is the details about the fields in the action model:
 
 - **Name** should be the name of the action which is usually automated from the
-  Match and Order previous action.
+  Match and Order previous action. Leave it as is.
 
-- **Source Domain** is used to apply domain for the source database model 
-  when performing the migration to filter out or include certain records in the 
-  migration.
+- **Source Domain** is used to apply domain for the source database model when 
+  performing the migration to filter out or include certain records in the 
+  migration. The non active records (i.e. archived) are not considered, if you 
+  can get use [‘|’, (‘active’, ‘=’, True), (‘active’, ‘=’, False)] as domain.
 
-- **Blocked** is used to block the actions from running instead of having 
-  to switch the status to disabled. This field is used when configuring and 
-  testing the action on the first run of migration. After done configuring the 
-  action, Blocked field will usually be checked then later unchecked when 
+- **Blocked** is used to block the action from running instead of having to 
+  switch the status to disabled. This field is used when configuring and testing 
+  the action on the first run of migration. After the configuration of the action
+  is done. Blocked field will usually be checked then later unchecked when 
   performing the real migration which will be explained in the next section.
 
-- **Sequence** is used to order the action. The order for which action (model) 
+- **Sequence** is used to order the actions. The order for which action (model) 
   will be performed first is really important due to the dependencies between 
   models. For example, the sequence of customer tags model should be lower than 
   the customer model since migration of the customer model will require the 
   existing records of tags when the field of tag_ids is enabled (field 
   configuration will be explained in the next section).
+  In the actions view, the actions are ordered by sequence and can be reordered
+  by drag and drop.
 
 - **Repeating Action** is a read-only field which will be automatically 
   checked when the one of the fields state in the action’s Field Mapping list 
@@ -193,10 +221,12 @@ Following is the details about the fields in the action model:
 - **source_id_exp** is the field name of the ID field in the source model. 
   Usually is set at its default (id). 
 
-- **Source Records** is a read only field counting the number of records at the source 
-  database in relation to the selected source model. Number of non-active records will 
-  not be counted, but can still be included in migration by setting the domain [‘|’, 
-  (‘active’, ‘=’, True), (‘active’, ‘=’, False)] 
+- **Records** is a read only field counting the number of records at the
+  source database in relation to the selected source model. 
+  
+  Number of non-active (i.e. archived) records will not be counted, but can 
+  still be included in migration by setting the domain 
+  [‘|’, (‘active’, ‘=’, True), (‘active’, ‘=’, False)]
 
 - **Target Model** contains selections of the target model name which will be 
   mapped to receive the records from the source model when running the action. 
@@ -208,14 +238,14 @@ Following is the details about the fields in the action model:
 
 - **Target Records** is a read only field counting the number of records at the 
   destination/target database in relation to the selected target model. Number 
-  of non-active records will not be counted. 
+  of non-active records will not be counted.
 
-- **target_id_prefix** field will only appear when the Target ID Type field is 
-  set to Builded ID allowing the customization of the records XML id instead of 
-  using the default export external ID. 
+- **target_id_prefix** this field will only appear when the Target ID Type field 
+  is set to Builded ID allowing the customization of the records XML id instead 
+  of using the default export external ID.
  
 The *Action* fields are usually set correctly by the automatic Match and Order 
-action. Beside configuring the fields, it’s very important to set the action’s 
+operation. Beside configuring the fields, it’s very important to set the action’s 
 state which can be changed to the following possible states:
 
 - **Enabled** should be set to an action that will be included in the migration
@@ -289,7 +319,6 @@ migrated records; otherwise, error messages will be shown. Address the error
 by reconfiguring the setting and field mappings of that specific
 action then re-run the test. 
  
- 
 Cleaning the Target and ETL Database
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
  
@@ -299,9 +328,9 @@ unblock all the actions. Before proceeding, do not forget to backup your ETL
 database. 
  
 Since the target database have been used for the testing, it’s recommended to 
-drop the database and recreate it. Make sure the modules are also installed 
-again. If the target database name is changed, don’t forget to change the 
-Target Database at the ETL manager.
+drop the database and recreate it. Make sure to install the modules with the
+**INSTALL MODULES** button. If the target database name is changed, don’t 
+forget to change the Target Database at the ETL manager.
 
 Perform Migration
 ~~~~~~~~~~~~~~~~~
