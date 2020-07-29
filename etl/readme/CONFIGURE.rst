@@ -1,12 +1,14 @@
 After installing ETL module, navigate to ETL’s manager model and create a new 
 manager with the following details:
 
-- **Name** contains the name of your manager without any specific restriction.
+- **Name** contains the name of your manager without any specific restriction for the name.
 
-- **Target ID Type** Selection on how the Target Records ID's will be build:
-  
-  - *Source ID* will keep the ID (external_id) from the source. 
-  - *Builded ID* every external ID will be build as concatenation of Manager Name + _ + Source Model.
+- **Target ID Type** is a selection field where you can choose *Source ID* 
+  or *Builded ID*. When set to *Source ID*, the record XML ID that will be used 
+  in the migration process will be according to the default source exported 
+  external ID. On the other hand, when set to *Builded ID*, the record XML ID 
+  that will be used in the migration process will be customized according to 
+  the prefix set later at an additional field. 
   
   **Source ID is recommended when performing a migration process.**
 
@@ -28,6 +30,10 @@ manager with the following details:
 - **Source Language** the source database default language. It’s recommended 
   to keep the language as default (en_US).
 
+- **Odoo Source Version** The source odoo major version. Default is 8.
+
+  NOTE: This module was NOT Tested with source versions earlier than 8
+
 - **Target Hostname** the target database host URL that is used to access the 
   Odoo database from remote OS. i.e.: http://192.168.1.101.
 
@@ -44,10 +50,12 @@ manager with the following details:
 - **Target Language** the target database default language. It’s recommended 
   to keep the language as default (en_US).
 
-- **Odoo Source Version** the source odoo major version, default is 8
-
 - **Odoo Target Version** the target odoo major version, default is the odoo 
     version where this module is installed
+
+  NOTE: You can install this module in
+  a odoo instance that is neither the source nor the target. In this case please
+  be sure to change the Target Version for the target's odoo major version.
 
 - **Models to delete Workflows**
 
@@ -72,10 +80,10 @@ Read Databases
 ~~~~~~~~~~~~~~
 
 To read the models and get the record counts from the source and the target 
-database click **Read and Get Records** from the action bar. 
+database click **READ AND GET RECORDS** from the action bar. 
 The following two buttons make both actions individually so to speak, pressing
-**Read Models** and then **Get Record Numbers** is the same to press 
-**Read and Get Records**
+**READ MODELS** and then **GET RECORD NUMBERS** is the same to press 
+**READ AND GET RECORDS**
 
 The ETL module will now attempt to connect and read from the source and 
 destination databases.
@@ -84,21 +92,30 @@ After the process is done, the **External Models** tab from your manager form
 view should contain the list of models that have been read from the source and 
 target database (along with its fields when clicked) and record counts.
 
-Mapping
-~~~~~~~
+Mapping source and target models
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Matching the source models and the target models along with its fields can be 
-done automatically by ETL; however, the result may not be perfectly correct. 
-Some models and fields that changes across the version may have to be manually 
-matched which will be explained in the next section. To perform an automatic 
-model and fields mapping, simply click **Match and Order** from the action bar.
+Matching the source and target models along with its fields can be done 
+automatically by ETL; however, the result may not be perfectly correct if you
+are moving data from different odoo versions. 
 
-After the process is done, the **Actions** tab from your manager form view 
-should contain the list of actions (model mappings) that have been matched and 
-ordered by ETL.
+Some models and fields change between odoo versions, in this case you may have 
+to manually adjust the migration, this is explained in the next section. 
+To perform an automatic mapping of models and fields, just click 
+**Match and Order** in the action bar.
 
-Testing Actions
-~~~~~~~~~~~~~~~
+After the process is done, the Actions tab from your manager form view should 
+contain the list of actions (model mappings) that have been matched and 
+ordered by ETL. 
+The models that etl could not match are flagged **To Analyze** the ones that
+cout match are flagged **Enabled**
+
+After the actions have been generated, matched or not, it is necessary to order 
+them since there are dependencies, some models depend on others and things 
+must be executed in order. Just press **ORDER ACTIONS**
+
+Testing Actions (The hard work begins)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 At the first use of the ETL manager, it’s necessary to test the actions one by 
 one which also means the migration will happen model by model for the first 
@@ -110,7 +127,7 @@ required actions/model mapping necessary for the intended migration.
 To be able to configure the actions and test it, simply click it from the list 
 of actions in the manager.
 
-Following is the details about the fields in the action model:
+Following are the details about the fields in the action model:
 
 - **Name** the name of the action which is usually filled automatically for 
   the **Match and Order** previous action.
@@ -125,19 +142,13 @@ Following is the details about the fields in the action model:
   action, Blocked field will usually be checked then later unchecked when 
   performing the real migration which will be explained in the next section.
 
-
-
-
-revisar
 - **Sequence** used to set te execution order or the actions. The order in 
   which actions (representing models) will be performed is really important 
   due to the dependencies between models. i.e. The sequence of customer tags 
   model should be lower than the customer model since customer 
   model's migration will require the existing records of tags when the 
   field tag_ids is enabled (configuration field will be explained in the next 
-  section).
-
-
+  section). When actions are in list view it can be reordeed with drag and drop.
 
 - **Repeating Action** is a read-only field which will be automatically 
   checked when one of the fields states in the action’s Field Mapping list 

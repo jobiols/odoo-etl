@@ -24,19 +24,19 @@ can be used for data migration from different Odoo versions Not necessarily
 consecutives, data synchronization between Odoo databases, joining of Odoo
 databases, and also cleaning data from Odoo databases.
 
-It was originally developed by jjscarafia at ADHOC for Odoo V8/9 the original
-project can be found at https://github.com/ingadhoc/odoo-etl
-Since 2019 the project was continued and maintained by jobiols <jorge.obiols@gmail.com> at jeo Software.
-
 ETL is an abbreviation for extraction, transformation and loading.
-The module usually runs in a separate database but can also be installed in the target database.
+The module usually runs in a separate database but can also be installed in
+the target database.
+
+ETL was migrated from Odoo V8/9 to V12 so it has not been tested on odoo prior 
+odoo versions.
 
 There are advantages of using the ETL module such as the following:
 
 - Can be used by functional consultants.
 - Simple development, native Odoo methods.
 - is an Odoo module.
-- Works from odoo V12 and can read databases from odoo V8.
+- Works in most Odoo version 12.
 - Multiple uses as mentioned earlier.
 
 **Table of contents**
@@ -48,8 +48,18 @@ Installation
 ============
 
 Make sure the erppeek library is available in the server.
-
 sudo pip install erppeek
+
+You can install odoo-etl on the target system, however you can install on an 
+intermediate system with some benefits. That intermediate odoo would connect 
+with the source and the target. That way the migration information will be 
+saved in the intermediate system and can be used to move data from other 
+systems. If the installation is done on the destination system once the 
+migration is complete, the most natural thing would be to eliminate the 
+odoo-etl module, which would erase all the know-how of the migration.
+
+Is advisable to set workers=0 and limit_time_real = 1200 in the odoo.conf file 
+to get rid of timeout problems and please, keep an eye open to the logs.
 
 Configuration
 =============
@@ -57,8 +67,7 @@ Configuration
 After installing ETL module, navigate to ETL’s manager model and create a new 
 manager with the following details:
 
-- **Name** field contains the name of your manager without any specific 
-  restriction for the name.
+- **Name** contains the name of your manager without any specific restriction for the name.
 
 - **Target ID Type** is a selection field where you can choose *Source ID* 
   or *Builded ID*. When set to *Source ID*, the record XML ID that will be used 
@@ -66,79 +75,88 @@ manager with the following details:
   external ID. On the other hand, when set to *Builded ID*, the record XML ID 
   that will be used in the migration process will be customized according to 
   the prefix set later at an additional field. 
-  **The usage of source ID is recommended when performing migration process.**
-
-- **Source Hostname** should be the source database host URL that is used 
-  to access the Odoo database from remote OS. For example: http://192.168.1.101.
-
-- **Source Port** should be the source database port that is used to access 
-  the Odoo database. For example: 8069.
-
-- **Source Database** should be the source database name.
-
-- **Source Login** should be the username that is used to login to the source 
-  database from the login page. Make sure this user have full access to all 
-  the models.
-
-- **Source Password** should be the password according to the username that is
-  used to login to the source database from the login page.
-
-- **Source Language** field is the source database default language. It’s 
-  recommended to keep the language as default (en_US).
-
-- **Odoo Source Version** The source odoo major version. Default is 8. 
   
+  **Source ID is recommended when performing a migration process.**
+
+- **Source Hostname** the source database host URL that is used 
+  to access the Odoo database from remote OS. i.e.: http://192.168.1.101.
+  NOTE: For some unknown reason for me, the connection must be done with the
+  ip address. Trying with the URL does not work. Maybe a nginx problem...
+
+- **Source Port** the source database port that is used to access 
+  the Odoo database. i.e.: 80.
+
+- **Source Database** The source database name.
+
+- **Source Login** the username used to login to the source database from the 
+  login page. Make sure this user have full access to all the models.
+
+- **Source Password** the password, what else?.
+
+- **Source Language** the source database default language. It’s recommended 
+  to keep the language as default (en_US).
+
+- **Odoo Source Version** The source odoo major version. Default is 8.
+
   NOTE: This module was NOT Tested with source versions earlier than 8
 
-- **Target Hostname** should be the target database host URL that is used 
-  to access the Odoo database from remote OS. For example: http://192.168.1.101.
+- **Target Hostname** the target database host URL that is used to access the 
+  Odoo database from remote OS. i.e.: http://192.168.1.101.
 
-- **Target Port** should be the target database port that is used to 
-  access the Odoo database. For example: 8069.
+- **Target Port** the target database port that is used to access the Odoo 
+  database. i.e.: 8069.
 
-- **Target Database** should be the target database name.
+- **Target Database** the target database name.
 
-- **Target Login** should be the username that is used to login to the 
-  target database from the login page. Make sure the user have a full access to 
-  all the models.
+- **Target Login** the username used to login to the target database from the 
+  login page. Make sure this user have full access to all the models.
 
-- **Target Password** should be the password according to the username 
-  that is used to login to the target database from the login page.
+- **Target Password** the password to access target system.
 
-- **Target Language** is the target database default language. It’s recommended 
-  to keep the language as default (en_US)
+- **Target Language** the target database default language. It’s recommended 
+  to keep the language as default (en_US).
 
-- **Odoo Target Version** The target odoo major version. Default is the odoo 
-  version where this module was installed. 
-  
+- **Odoo Target Version** the target odoo major version, default is the odoo 
+    version where this module is installed
+
   NOTE: You can install this module in
   a odoo instance that is neither the source nor the target. In this case please
   be sure to change the Target Version for the target's odoo major version.
 
-Preparing the Target Database for Migration
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+- **Models to delete Workflows**
 
-Make sure you have a clean target database, with no modules and without demo 
-data. All the modules that will receive the records from the source database 
-must be declared in the notes tab. Then press the **INSTALL MODULES** button.
+Notes Tab
+~~~~~~~~~
+
+If you started from a fresh target system you can define the modules to install
+in the **Notes** tab filling a python list of modules. You should use the
+technical names. With the button **Install Modules** you can install it and 
+test target system connectivity. Besides you can write down some notes about
+the migration in the notepad field.
+
+Checking Source and Target connectivity
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+After filling all the Manager form data you can test connection to the source 
+and target system with the button **Read models**, Then all the models from both
+system will be read (be sure to set suitable timeouts in the odoo.conf)
+You can see the models read in the **External models** tab.
 
 Read Databases
 ~~~~~~~~~~~~~~
 
-This process reads all the models, record count and fields inside each model 
-from source and target databases.
+To read the models and get the record counts from the source and the target 
+database click **READ AND GET RECORDS** from the action bar. 
+The following two buttons make both actions individually so to speak, pressing
+**READ MODELS** and then **GET RECORD NUMBERS** is the same to press 
+**READ AND GET RECORDS**
 
-To start click **READ AND GET RECORDS** from the action bar. The ETL module 
-will now attempt to connect and read data from the source and destination 
-databases.
+The ETL module will now attempt to connect and read from the source and 
+destination databases.
 
-You can do this in two steps with the two following buttons **READ MODELS** and 
-**GET RECORD NUMBERS** getting the same resuls.
-
-After the process is done, in the **External Models** tab from your manager 
-form view you can see the list of models just read from source and target 
-databases and record counts. As a bonus you can click on a model to see the
-fields.
+After the process is done, the **External Models** tab from your manager form 
+view should contain the list of models that have been read from the source and 
+target database (along with its fields when clicked) and record counts.
 
 Mapping source and target models
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -162,52 +180,49 @@ After the actions have been generated, matched or not, it is necessary to order
 them since there are dependencies, some models depend on others and things 
 must be executed in order. Just press **ORDER ACTIONS**
 
-Test Actions (The hard work begins)
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Testing Actions (The hard work begins)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 At the first use of the ETL manager, it’s necessary to test the actions one by 
-one, which also means the migration will happen model by model for the first 
-time. 
-An action represents a migration for a single model at a time. Actions can also 
-be understood as model mappings. It’s not necessary to configure all the 
-actions/model mapping implied by the Match and Order action, but only the 
+one which also means the migration will happen model by model for the first 
+time. An action represents a migration for a single model at a time. Actions 
+can also be understood as model mapping. It’s not necessary to configure all 
+the actions/model mapping implied by the Match and Order action, but only the 
 required actions/model mapping necessary for the intended migration. 
  
-To be able to configure an actions and test it, simply click it from the list 
+To be able to configure the actions and test it, simply click it from the list 
 of actions in the manager.
 
-Following is the details about the fields in the action model:
+Following are the details about the fields in the action model:
 
-- **Name** should be the name of the action which is usually automated from the
-  Match and Order previous action. Leave it as is.
+- **Name** the name of the action which is usually filled automatically for 
+  the **Match and Order** previous action.
 
-- **Source Domain** is used to apply domain for the source database model when 
-  performing the migration to filter out or include certain records in the 
-  migration. The non active records (i.e. archived) are not considered, if you 
-  can get use [‘|’, (‘active’, ‘=’, True), (‘active’, ‘=’, False)] as domain.
+- **Source Domain** used to apply domain for the source database model 
+  when performing the migration to filter out or include certain records in the 
+  migration.
 
-- **Blocked** is used to block the action from running instead of having to 
-  switch the status to disabled. This field is used when configuring and testing 
-  the action on the first run of migration. After the configuration of the action
-  is done. Blocked field will usually be checked then later unchecked when 
+- **Blocked** used to block the actions from running instead of having 
+  to switch the status to disabled. This field is used when configuring and 
+  testing the action on the first run of migration. After done configuring the 
+  action, Blocked field will usually be checked then later unchecked when 
   performing the real migration which will be explained in the next section.
 
-- **Sequence** is used to order the actions. The order for which action (model) 
-  will be performed first is really important due to the dependencies between 
-  models. For example, the sequence of customer tags model should be lower than 
-  the customer model since migration of the customer model will require the 
-  existing records of tags when the field of tag_ids is enabled (field 
-  configuration will be explained in the next section).
-  In the actions view, the actions are ordered by sequence and can be reordered
-  by drag and drop.
+- **Sequence** used to set te execution order or the actions. The order in 
+  which actions (representing models) will be performed is really important 
+  due to the dependencies between models. i.e. The sequence of customer tags 
+  model should be lower than the customer model since customer 
+  model's migration will require the existing records of tags when the 
+  field tag_ids is enabled (configuration field will be explained in the next 
+  section). When actions are in list view it can be reordeed with drag and drop.
 
 - **Repeating Action** is a read-only field which will be automatically 
-  checked when the one of the fields state in the action’s Field Mapping list 
+  checked when one of the fields states in the action’s Field Mapping list 
   is set to on_repeating. When this field is checked, the Run Repeated Action 
   button will appear in the action bar of the Actions model form.
 
 - **From Record** is also used to filter out or include records in the 
-  migration process. The records that will be migrated will start from the 
+  migration process. The ID records that will be migrated will start from the 
   value set at this field. To disable this feature, simply leave it along with 
   the To Record field to its default value 0 (zero).
 
@@ -216,50 +231,46 @@ Following is the details about the fields in the action model:
   field. To disable this feature, simply leave it along with the From Record 
   field to its default value 0 (zero). 
 
-- **Source Model** contains selections of the source model name.
+- **Source Model** the source model to migrate. The **Match and Order**
+  action will try to fill this field.
 
-- **source_id_exp** is the field name of the ID field in the source model. 
-  Usually is set at its default (id). 
+- **source_id_exp** field name of the ID field in the source model. 
+  Usually set at its default (id). 
 
-- **Records** is a read only field counting the number of records at the
-  source database in relation to the selected source model. 
-  
-  Number of non-active (i.e. archived) records will not be counted, but can 
-  still be included in migration by setting the domain 
-  [‘|’, (‘active’, ‘=’, True), (‘active’, ‘=’, False)]
+- **Source Records** read only field counting the number of records at the 
+  source database in relation to the selected source model. The number of 
+  non-active records will not be counted, but can still be included in migration 
+  by setting the domain [‘|’, (‘active’, ‘=’, True), (‘active’, ‘=’, False)] 
 
-- **Target Model** contains selections of the target model name which will be 
-  mapped to receive the records from the source model when running the action. 
+- **Target Model** the target model name which will be mapped to receive the 
+  records from the source model when running the action. 
 
-- **Target ID Type** have the same function as the *Target ID Type* field of the 
-  manager model. The default value will follow the value set at the Target ID 
-  Type field of the manager model and can be changed in every action according 
-  to preference (not recommended). 
+- **Target ID Type** have the same function as the manager model‘s 
+  *Target ID Type*. The default value will follow the value set at the manager 
+  model‘s Target ID Type and can be changed in every action according to 
+  preference (not recommended). 
 
-- **Target Records** is a read only field counting the number of records at the 
-  destination/target database in relation to the selected target model. Number 
-  of non-active records will not be counted.
+- **Target Records** read only field counting the number of records at the 
+  target database in relation to the selected target model. The number 
+  of the non-active records will not be counted. 
 
-- **target_id_prefix** this field will only appear when the Target ID Type field 
-  is set to Builded ID allowing the customization of the records XML id instead 
-  of using the default export external ID.
+- **target_id_prefix** field will only appear when the Target ID Type field is 
+  set to Builded ID allowing the customization of the records XML id instead of 
+  using the default export external ID. 
  
-The *Action* fields are usually set correctly by the automatic Match and Order 
-operation. Beside configuring the fields, it’s very important to set the action’s 
+The *Action* fields are usually set correctly by the automatic **Match and Order** 
+action. Beside configuring the fields, it’s very important to set the action’s 
 state which can be changed to the following possible states:
 
-- **Enabled** should be set to an action that will be included in the migration
-  process.
+- **Enabled** The action will be included in the migration process.
 
-- **To Analyse** should be set to an action that require a further analysis 
-  and testing. When an action is set to this state, it will not be included 
-  when running the migration process.
+- **To Analyse** The action requires further analysis and testing. and will 
+  not be included in the migration process.
 
-- **Disabled** state should be set to an action that will not be included in 
-  the migration process.
+- **Disabled** The action will not be included in the migration process.
 
-- **No Records** should be set to an action that will not be included in the 
-  migration process due to 0 records found in the source model. 
+- **No Records** The action will not be included in the migration process due 
+  to 0 records found in the source model. 
  
 After correctly configuring and checking the *Action* fields, it’s very 
 important to also check and configure every line of field mapping in the field 
@@ -318,7 +329,7 @@ successful, the logs will show an array of new created database id for the
 migrated records; otherwise, error messages will be shown. Address the error 
 by reconfiguring the setting and field mappings of that specific
 action then re-run the test. 
- 
+  
 Cleaning the Target and ETL Database
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
  
@@ -328,9 +339,9 @@ unblock all the actions. Before proceeding, do not forget to backup your ETL
 database. 
  
 Since the target database have been used for the testing, it’s recommended to 
-drop the database and recreate it. Make sure to install the modules with the
-**INSTALL MODULES** button. If the target database name is changed, don’t 
-forget to change the Target Database at the ETL manager.
+drop the database and recreate it. Make sure the modules are also installed 
+again. If the target database name is changed, don’t forget to change the 
+Target Database at the ETL manager.
 
 Perform Migration
 ~~~~~~~~~~~~~~~~~
@@ -386,7 +397,6 @@ range of the same field allows a different selection range such as following:
 In this case, we need to utilize ETL’s Value Mapping Fields. 
  
     Source Field --> Value Mapping --> Target Field
- 
  
 Value Mapping Fields 
 ~~~~~~~~~~~~~~~~~~~~
@@ -742,10 +752,9 @@ Contributors
 Other credits
 ~~~~~~~~~~~~~
 
-The development of this module has been financially supported by:
-
-* jeo Software
-* Ingadhoc
+It was originally developed by jjscarafia at ADHOC for Odoo V8/9 the original
+project can be found at https://github.com/ingadhoc/odoo-etl
+Since 2019 the project was continued and maintained by jobiols <jorge.obiols@gmail.com> at jeo Software.
 
 Maintainers
 ~~~~~~~~~~~
