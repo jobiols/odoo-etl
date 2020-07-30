@@ -1,7 +1,7 @@
 #
 ##############################################################################
 #
-#    Copyright (C) 2015  ADHOC SA  (http://www.adhoc.com.ar)
+#    Copyright (C) 2020  jeo Software  (http://jeosoft.com.ar)
 #    All Rights Reserved.
 #
 #    This program is free software: you can redistribute it and/or modify
@@ -19,14 +19,14 @@
 #
 ##############################################################################
 {
-    'author': u'ADHOC SA, jeo Software',
+    'author': u'INFINITY SOLUTIONS, ADHOC SA, jeo Software',
     'category': u'Tools',
     'version': u'12.0.0.0.0',
     'license': 'AGPL-3',
     'name': u'odoo ETL',
-    "development_status": "Beta",  # "Alpha|Beta|Production/Stable|Mature"
+    "development_status": "Alpha",  # "Alpha|Beta|Production/Stable|Mature"
     'test': [],
-    'website': 'www.jeosoft.com.ar',
+    'website': 'http://jeosoft.com.ar',
     'depends': ['base'],
     'data': [
         u'security/etl_group.xml',
