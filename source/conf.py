@@ -19,12 +19,12 @@
 
 # -- Project information -----------------------------------------------------
 
-project = u'The odoo-etl Project'
+project = u'The Odoo-ETL Project'
 copyright = u'2020, Jeo Software'
 author = u'Jorge Obiols'
 
 # The short X.Y version
-version = u'12.0'
+version = u''
 # The full version, including alpha/beta/rc tags
 release = u'12.0.0.0'
 
