@@ -1,5 +1,5 @@
-Documentation for odoo-etl module for Odoo V12
-==============================================
+Documentation Odoo-ETL V12
+==========================
 
 It is a data manipulation, like an small ETL (Extract, Transform and Load) for
 odoo databases.
