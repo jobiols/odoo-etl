@@ -1,8 +1,8 @@
-Documentation of odoo-etl module
+Documentation for odoo-etl module
 ================================
 
-odoo-etl is a data manipulation, like an small ETL (Extract, Transform and Load) 
-for odoo databases.
+It is a data manipulation, like an small ETL (Extract, Transform and Load) for
+odoo databases.
 
 The main idea of the project is to give functional users the availability to 
 move data from one odoo database to another odoo database. The design is quite 
@@ -12,8 +12,9 @@ The aim of this project is different from odoo migration or OpenUpgrade, it
 allows to start from a clean database, merging  different odoo databases into 
 a single multicompany db, etc.
 
-The proyect lives in `odoo-etl-project`_ Any feedback is welcome, if someone 
-likes the idea, please don't hesitate to contact me so we can work together.
+The proyect lives in `github.com/jobiols/odoo-etl`_ Any feedback is welcome, 
+if someone likes the idea, please don't hesitate to contact me so we can work 
+together.
 
 
 .. toctree::
@@ -26,4 +27,4 @@ likes the idea, please don't hesitate to contact me so we can work together.
    examples/sparatebranch
    aboutmakefile
 
-.. _odoo-etl-project: https://github.com/jobiols/odoo-etl
+.. _github.com/jobiols/odoo-etl: https://github.com/jobiols/odoo-etl
