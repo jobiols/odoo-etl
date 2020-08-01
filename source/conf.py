@@ -19,14 +19,14 @@
 
 # -- Project information -----------------------------------------------------
 
-project = u'Sphinx Page GitHub Action'
-copyright = u'2019, Sean Zheng'
-author = u'Sean Zheng'
+project = u'The odoo-etl Project'
+copyright = u'2020, Jeo Software'
+author = u'Jorge Obiols'
 
 # The short X.Y version
-version = u''
+version = u'12.0'
 # The full version, including alpha/beta/rc tags
-release = u''
+release = u'12.0.0.0'
 
 
 # -- General configuration ---------------------------------------------------

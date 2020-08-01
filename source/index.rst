@@ -1,5 +1,5 @@
-Documentation of sphinx-pages GitHub Action
-===========================================
+Documentation of odoo-etl module
+================================
 
 `Sphinx Pages`_ build html documentation by Sphinx, and push to GitHub Pages..
 
