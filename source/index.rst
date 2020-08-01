@@ -1,7 +1,7 @@
 Documentation of sphinx-pages GitHub Action
 ===========================================
 
-`Sphinx Pages`_ build html documentation by Sphinx, and push to GitHub Pages.
+`Sphinx Pages`_ build html documentation by Sphinx, and push to GitHub Pages..
 
 .. toctree::
    :maxdepth: 1
