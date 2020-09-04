@@ -1,4 +1,4 @@
-Make sure the erppeek library is available in the server.
+Make sure the ERPpeek library is available in the server.
 sudo pip install erppeek
 
 You can install odoo-etl on the target system, however you can install on an 

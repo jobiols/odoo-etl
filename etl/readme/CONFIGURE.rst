@@ -1,7 +1,8 @@
 After installing ETL module, navigate to ETL’s manager model and create a new 
 manager with the following details:
 
-- **Name** contains the name of your manager without any specific restriction for the name.
+- **Name** contains the name of your manager without any specific restriction 
+  for the name.
 
 - **Target ID Type** is a selection field where you can choose *Source ID* 
   or *Builded ID*. When set to *Source ID*, the record XML ID that will be used 
@@ -13,12 +14,11 @@ manager with the following details:
   **Source ID is recommended when performing a migration process.**
 
 - **Source Hostname** the source database host URL that is used 
-  to access the Odoo database from remote OS. i.e.: http://192.168.1.101.
-  NOTE: For some unknown reason for me, the connection must be done with the
-  ip address. Trying with the URL does not work. Maybe a nginx problem...
+  to access the Odoo database from remote OS. i.e.: http://my.odoo.com
+  or https://my.odoo.com 
 
 - **Source Port** the source database port that is used to access 
-  the Odoo database. i.e.: 80.
+  the Odoo database. i.e.: 80 or 443 if https is used.
 
 - **Source Database** The source database name.
 
@@ -35,10 +35,10 @@ manager with the following details:
   NOTE: This module was NOT Tested with source versions earlier than 8
 
 - **Target Hostname** the target database host URL that is used to access the 
-  Odoo database from remote OS. i.e.: http://192.168.1.101.
+  Odoo database from remote OS. i.e.: http://my.odoo.com or https://my.odoo.com
 
 - **Target Port** the target database port that is used to access the Odoo 
-  database. i.e.: 8069.
+  database. i.e.: 80 or 443 if https is used.
 
 - **Target Database** the target database name.
 
