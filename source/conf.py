@@ -19,7 +19,7 @@
 
 # -- Project information -----------------------------------------------------
 
-project = 'DevNet Create Demo'
+project = 'DevNet Create Demo no more!'
 copyright = '2019, Anne Gentle'
 author = 'Anne Gentle'
 
