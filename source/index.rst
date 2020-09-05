@@ -10,8 +10,14 @@ Welcome to odoo-etl's documentation!
    :maxdepth: 2
    :caption: Contents:
 
-   introduction
-
+   description
+   configure
+   install
+   contributors
+   credits
+   history
+   roadmap
+   usage   
 
 Indices and tables
 ==================
