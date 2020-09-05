@@ -130,7 +130,7 @@ latex_elements = {
 # (source start file, target name, title,
 #  author, documentclass [howto, manual, or own class]).
 latex_documents = [
-    (master_doc, 'DevNetCreateDemo.tex', 'DevNet Create Demo Documentation',
+    (master_doc, 'odoo-etl-doc.tex', 'Odoo ETL Documentation',
      'Anne Gentle', 'manual'),
 ]
 
@@ -140,7 +140,7 @@ latex_documents = [
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
 man_pages = [
-    (master_doc, 'devnetcreatedemo', 'DevNet Create Demo Documentation',
+    (master_doc, 'odoo-etl-doc', 'Odoo ETL Documentation',
      [author], 1)
 ]
 
@@ -151,7 +151,7 @@ man_pages = [
 # (source start file, target name, title, author,
 #  dir menu entry, description, category)
 texinfo_documents = [
-    (master_doc, 'DevNetCreateDemo', 'DevNet Create Demo Documentation',
+    (master_doc, 'odoo-etl-doc', 'Odoo ETL Documentation',
      author, 'DevNetCreateDemo', 'One line description of project.',
      'Miscellaneous'),
 ]
