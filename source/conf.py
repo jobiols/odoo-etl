@@ -19,14 +19,14 @@
 
 # -- Project information -----------------------------------------------------
 
-project = 'DevNet Create Demo no more!'
-copyright = '2019, Anne Gentle'
-author = 'Anne Gentle'
+project = 'Odoo ETL'
+copyright = '2020, Jorge Obiols'
+author = 'Jorge Obiols'
 
 # The short X.Y version
-version = ''
+version = '0.0'
 # The full version, including alpha/beta/rc tags
-release = '1.0'
+release = '0.0'
 
 
 # -- General configuration ---------------------------------------------------
