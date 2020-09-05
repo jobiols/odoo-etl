@@ -5,7 +5,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>12.0.0.0.0 (2019-10-16) &#8212; Odoo ETL 12.0 documentation</title>
+    <title>1- Crear un registro Manager &#8212; Odoo ETL 12.0 documentation</title>
     <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
@@ -15,8 +15,7 @@
     <script src="_static/language_data.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="&lt;no title&gt;" href="roadmap.html" />
-    <link rel="prev" title="&lt;no title&gt;" href="credits.html" />
+    <link rel="prev" title="&lt;no title&gt;" href="roadmap.html" />
    
   <link rel="stylesheet" href="_static/custom.css" type="text/css" />
   
@@ -33,31 +32,26 @@
 
           <div class="body" role="main">
             
-  <div class="section" id="id1">
-<h1>12.0.0.0.0 (2019-10-16)<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h1>
-<ul class="simple">
-<li><p>[MIG] migrate.
-(<a class="reference external" href="https://github.com/jobiols/odoo-etl/issues/3">#3</a>)</p></li>
+  <ul class="simple">
+<li><p>It is recommendend to delete all external identifiers on source database for model “res_partner” because when creating a user, odoo simulates partner creation and raise a unique constraint (except the admin user)</p></li>
+<li><p>Also could be recommendend to delete external identifiers related to product and product_temlate (except service products)</p></li>
+<li><p>Advisable to configure xmlrpc users to timezone zero to avoid errors</p></li>
+<li><p>Asegurarse de tener permisos manger para este modulo.</p></li>
+<li><p>Es aconsejable quitar las restricciones de timeout poniendo workers=0</p></li>
 </ul>
+<div class="section" id="crear-un-registro-manager">
+<h1>1- Crear un registro Manager<a class="headerlink" href="#crear-un-registro-manager" title="Permalink to this headline">¶</a></h1>
+<p>En este formulario se ponen los datos de Fuente y Destino de las instancias
+de odoo para las que vamos a trabajar.</p>
 </div>
-<div class="section" id="id3">
-<h1>9.0 (2015-??)<a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h1>
-<ul class="simple">
-<li><p>[MIG] Support and migration</p></li>
-</ul>
-</div>
-<div class="section" id="id4">
-<h1>8.0 (2014-??)<a class="headerlink" href="#id4" title="Permalink to this headline">¶</a></h1>
-<ul class="simple">
-<li><p>[MIG] Support and migration</p></li>
-<li><p>Taking project at ADHOC by jjscarafia</p></li>
-</ul>
-</div>
-<div class="section" id="lost-in-time">
-<h1>7.0 (????-??-??) Lost in time<a class="headerlink" href="#lost-in-time" title="Permalink to this headline">¶</a></h1>
-<ul class="simple">
-<li><p>Starting proyect by Infinity Solutions</p></li>
-</ul>
+<div class="section" id="leer-los-modelos">
+<h1>1- Leer los modelos<a class="headerlink" href="#leer-los-modelos" title="Permalink to this headline">¶</a></h1>
+<p>Con el boton <strong>READ MODELS</strong> se leen los modelos de las instancias Fuente y Destino
+y luego de la carga se pueden ver en la pestaña <strong>External Models</strong></p>
+<p>El boton <strong>GET RECORD NUMBER</strong> lee la cantidad de registros en cada modelo</p>
+<p>Luego con el boton <strong>MATCH MODELS</strong> intenta machear los modelos y los campos de
+los modelos, creando <strong>Acciones</strong></p>
+<p>Las acciones aparecen en gris, verde o azul segun estan <em>deshabilitadas</em>, <em>habilitadas</em>, o <em>para analizar</em></p>
 </div>
 
 
@@ -96,20 +90,19 @@
 <li class="toctree-l1"><a class="reference internal" href="configure.html#error-handling-for-many-to-many-field-migration">Error Handling for Many to Many Field Migration</a></li>
 <li class="toctree-l1"><a class="reference internal" href="configure.html#more-about-etls-migration-method">More about ETL’s Migration Method</a></li>
 <li class="toctree-l1"><a class="reference internal" href="configure.html#about-the-erppeek">About the ERPpeek</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">12.0.0.0.0 (2019-10-16)</a></li>
-<li class="toctree-l1"><a class="reference internal" href="#id3">9.0 (2015-??)</a></li>
-<li class="toctree-l1"><a class="reference internal" href="#id4">8.0 (2014-??)</a></li>
-<li class="toctree-l1"><a class="reference internal" href="#lost-in-time">7.0 (????-??-??) Lost in time</a></li>
-<li class="toctree-l1"><a class="reference internal" href="usage.html">1- Crear un registro Manager</a></li>
-<li class="toctree-l1"><a class="reference internal" href="usage.html#leer-los-modelos">1- Leer los modelos</a></li>
+<li class="toctree-l1"><a class="reference internal" href="history.html">12.0.0.0.0 (2019-10-16)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="history.html#id3">9.0 (2015-??)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="history.html#id4">8.0 (2014-??)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="history.html#lost-in-time">7.0 (????-??-??) Lost in time</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">1- Crear un registro Manager</a></li>
+<li class="toctree-l1"><a class="reference internal" href="#leer-los-modelos">1- Leer los modelos</a></li>
 </ul>
 
 <div class="relations">
 <h3>Related Topics</h3>
 <ul>
   <li><a href="index.html">Documentation overview</a><ul>
-      <li>Previous: <a href="credits.html" title="previous chapter">&lt;no title&gt;</a></li>
-      <li>Next: <a href="roadmap.html" title="next chapter">&lt;no title&gt;</a></li>
+      <li>Previous: <a href="roadmap.html" title="previous chapter">&lt;no title&gt;</a></li>
   </ul></li>
 </ul>
 </div>
@@ -143,7 +136,7 @@
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
       |
-      <a href="_sources/history.rst.txt"
+      <a href="_sources/usage.rst.txt"
           rel="nofollow">Page source</a>
     </div>
 
