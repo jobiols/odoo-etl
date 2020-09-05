@@ -1,3 +1,3 @@
 GitHub Pages of [jobiols/odoo-etl](https://github.com/jobiols/odoo-etl.git)
 ===
-Sphinx html documentation of [c36953d1](https://github.com/jobiols/odoo-etl/tree/c36953d170ed599cf2bd4b052aff536f9de16b0b)
+Sphinx html documentation of [9acb85ab](https://github.com/jobiols/odoo-etl/tree/9acb85ab1f2ae98442b88a89ecbc7eee6a64e382)
