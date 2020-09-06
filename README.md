@@ -1,4 +1,5 @@
-[![Build Status](https://travis-ci.org/jobiols/odoo-etl.svg?branch=13.0)](https://travis-ci.org/jobiols/odoo-etl)
+[![Build Status](https://travis-ci.org/jobiols/odoo-etl.svg?branch=12.0)](https://travis-ci.org/jobiols/odoo-etl)
+[![codecov](https://codecov.io/gh/jobiols/odoo-etl/branch/12.0/graph/badge.svg)](https://codecov.io/gh/jobiols/odoo-etl)
 [![CodeFactor](https://www.codefactor.io/repository/github/jobiols/odoo-etl/badge)](https://www.codefactor.io/repository/github/jobiols/odoo-etl)
 
 ## odoo-etl Ported from v9 to v13 by jeo Software
