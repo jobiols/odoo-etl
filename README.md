@@ -2,7 +2,7 @@
 [![codecov](https://codecov.io/gh/jobiols/odoo-etl/branch/12.0/graph/badge.svg)](https://codecov.io/gh/jobiols/odoo-etl)
 [![CodeFactor](https://www.codefactor.io/repository/github/jobiols/odoo-etl/badge)](https://www.codefactor.io/repository/github/jobiols/odoo-etl)
 
-## odoo-etl Ported from v9 to v13 by jeo Software
+## odoo-etl Ported from v9 to v13 by jeo Software.
 
 Odoo data manipulation, like an small ETL (Extract, Transform and Load) for odoo databases.
 
