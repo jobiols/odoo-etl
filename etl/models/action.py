@@ -3,8 +3,8 @@
 # For copyright and license notices, see __openerp__.py file in module root
 # directory
 ##############################################################################
-from openerp import models, fields, api, SUPERUSER_ID
 import sys
+from openerp import models, fields, api, SUPERUSER_ID
 import pytz
 from ast import literal_eval
 from datetime import datetime
@@ -144,7 +144,6 @@ class Action(models.Model):
              'according to preference (not recommended).'
     )
     log = fields.Text(
-        string='Log'
     )
     note = fields.Html(
         string='Notes'

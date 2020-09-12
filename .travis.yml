@@ -2,6 +2,7 @@ language: python
 
 python:
   - "3.6"
+
 sudo: false
 cache: pip
 
@@ -14,11 +15,14 @@ addons:
       - python-simplejson
       - python-serial
       - python-yaml
+      - cups
+      - libcups2-dev
+      - python3-dev
 
 env:
   global:
   - VERSION="12.0" TESTS="0" LINT_CHECK="0" MAKEPOT="0"
-  - PHANTOMJS_VERSION="latest"
+  - WKHTMLTOPDF_VERSION="0.12.4"
 
   matrix:
   - LINT_CHECK="1"
@@ -28,8 +32,7 @@ git:
   depth: 1
 
 install:
-  - pip install -r requirements.txt
-  - git clone --depth=1 https://github.com/jobiols/maintainer-quality-tools.git ${HOME}/maintainer-quality-tools
+  - git clone --depth=1 https://github.com/oca/maintainer-quality-tools.git ${HOME}/maintainer-quality-tools
   - export PATH=${HOME}/maintainer-quality-tools/travis:${PATH}
   - travis_install_nightly
 
