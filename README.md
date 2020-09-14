@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/jobiols/odoo-etl.svg?branch=12.0)](https://travis-ci.org/jobiols/odoo-etl)
+[![Build Status](https://travis-ci.com/jobiols/odoo-etl.svg?branch=12.0)](https://travis-ci.com/jobiols/odoo-etl)
 [![codecov](https://codecov.io/gh/jobiols/odoo-etl/branch/12.0/graph/badge.svg)](https://codecov.io/gh/jobiols/odoo-etl)
 [![Maintainability](https://api.codeclimate.com/v1/badges/0b6ff580f00ba4b0fb21/maintainability)](https://codeclimate.com/github/jobiols/odoo-etl/maintainability)
 [![CodeFactor](https://www.codefactor.io/repository/github/jobiols/odoo-etl/badge)](https://www.codefactor.io/repository/github/jobiols/odoo-etl)

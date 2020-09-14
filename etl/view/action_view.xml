@@ -42,7 +42,7 @@
                                 type="object"/>
                         <button name="run_action" string="Run Action"
                                 class="oe_highlight" type="object"/>
-                        <button name="updata_records_number"
+                        <button name="update_records_number"
                                 string="Update Records Number" type="object"/>
                         <button name="run_repeated_action" class="oe_highlight"
                                 string="Run Repeated Action" type="object"

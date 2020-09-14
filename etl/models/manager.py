@@ -286,11 +286,9 @@ class Manager(models.Model):
 
     def read_active_source_models(self):
         for rec in self:
-            (source_connection, target_connection) = self.open_connections()
-            actions = self.env['etl.action'].search(
-                [('manager_id', '=', rec.id),
-                 ('state', '=', 'enabled')],
-                order='sequence')
+            source_connection, target_connection = self.open_connections()
+            domain = [('manager_id', '=', rec.id), ('state', '=', 'enabled')]
+            actions = self.env['etl.action'].search(domain, order='sequence')
             actions.read_source_model(source_connection, target_connection)
 
     def delete_workflows(self):
@@ -321,24 +319,20 @@ class Manager(models.Model):
         """ Run all actions (none repeating)
         """
         for rec in self:
-            (source_connection, target_connection) = self.open_connections()
-            actions = self.env['etl.action'].search(
-                [('manager_id', '=', rec.id),
-                 ('state', '=', 'enabled')],
-                order='sequence')
-            actions.run_action(source_connection, target_connection)
+            domain = [('manager_id', '=', rec.id), ('state', '=', 'enabled')]
+            actions = self.env['etl.action'].search(domain, order='sequence')
+            actions.run_action()
 
     def run_repeated_actions(self):
         """ Run all repeating actions
         """
         for rec in self:
-            (source_connection, target_connection) = self.open_connections()
             actions = self.env['etl.action'].search([
                 ('manager_id', '=', rec.id),
                 ('repeating_action', '=', True),
                 ('state', '=', 'enabled')],
-                order='sequence')
-            actions.run_repeated_action(source_connection, target_connection)
+                                                    order='sequence')
+            actions.run_repeated_action()
 
     def match_models_and_order_actions(self):
         """ Match models and order the actions
@@ -420,36 +414,35 @@ class Manager(models.Model):
                          import_result['ids'], rec.name)
             self.env['etl.action'].browse(import_result['ids']).match_fields()
 
-    @api.one
     def order_actions(self):
-        '''Order actions for ids managers'''
-        # Get enabled actions
-        actions = self.env['etl.action'].search([
-            ('manager_id', '=', self.id),
-            ('state', 'in', ['to_analyze', 'enabled'])])
+        """ Order actions for ids managers. """
+        for rec in self:
+            # Get enabled actions
+            actions = self.env['etl.action'].search([
+                ('manager_id', '=', rec.id),
+                ('state', 'in', ['to_analyze', 'enabled'])])
 
-        # If repeating_mdodels defined on the manager, take them as exceptions
-        exceptions = []
-        if self.repeating_models:
-            repeating_models = self.repeating_models
-            exceptions = literal_eval(repeating_models)
+            # If repeating_models defined on the manager, take them as exceptions
+            exceptions = []
+            if rec.repeating_models:
+                repeating_models = rec.repeating_models
+                exceptions = literal_eval(repeating_models)
 
-        # Get unordered and ordered ids from action model
-        (unordered_ids, ordered_ids) = actions.order_actions(exceptions)
+            # Get unordered and ordered ids from action model
+            unordered_ids, ordered_ids = actions.order_actions(exceptions)
 
-        # get unordered and ordered actions names to write in log. Write log
-        ordered_actions = []
-        unordered_actions = []
-        for ordered_action in self.env['etl.action'].browse(ordered_ids):
-            ordered_actions.append(ordered_action.source_model_id.model)
-        for unordered_action in self.env['etl.action'].browse(unordered_ids):
-            unordered_actions.append(unordered_action.source_model_id.model)
-        self.log = 'Ordered actions: %s\n\nUnordered actions: %s' % (
-            str(ordered_actions), str(unordered_actions))
+            # get unordered and ordered actions names to write in log. Write log
+            ordered_actions = unordered_actions = []
+            for ordered_action in self.env['etl.action'].browse(ordered_ids):
+                ordered_actions.append(ordered_action.source_model_id.model)
+            for unordered_action in self.env['etl.action'].browse(unordered_ids):
+                unordered_actions.append(unordered_action.source_model_id.model)
+            rec.log = 'Ordered actions: %s\n\nUnordered actions: %s' % (
+                str(ordered_actions), str(unordered_actions))
 
-        # check actions depends if no unordered_ids
-        if not unordered_ids:
-            actions.check_m2o_depends()
+            # check actions depends if no unordered_ids
+            if not unordered_ids:
+                actions.check_m2o_depends()
 
     def read_and_get(self):
         """ Read source and target models and get records number

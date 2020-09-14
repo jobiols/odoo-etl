@@ -333,69 +333,67 @@ class Action(models.Model):
         # return self.check_m2o_depends(cr, uid, ids, context=context)
         # return True
 
-    @api.one
     def check_m2o_depends(self):
-        """ Check if there are fields that should be load in a repeating action
-        If there is at least one mapping field with repeating,
-        make the action repeating """
-        data = []
-
-        # Look for enabled or to analize future actions of this manager and
-        # this action
-        future_actions = self.search([
-            ('manager_id', '=', self.manager_id.id),
-            ('sequence', '>=', self.sequence),
-            ('state', 'in', ['enabled', 'to_analyze'])])
-        future_models = []
-        for future_action in future_actions:
-            future_models.append(future_action.source_model_id.model)
-
-        # Look for active fields of this action
-        field_mapping_domain = [
-            ('blocked', '!=', True),
-            ('action_id', '=', self.id),
-            ('source_field_id.ttype', '=', 'many2one'),
-            ('state', 'in', ['enabled', 'to_analyze', 'on_repeating']),
-            ('type', '=', 'field')]
-        field_mappings = self.env['etl.field_mapping'].search(
-            field_mapping_domain)
-
-        # If there are mappings with future depends make them 'on_repeating'
-        for mapping in field_mappings:
-            dependency = mapping.source_field_id.relation
-            if dependency in future_models:
-                state = 'on_repeating'
-                vals = [
-                    'field_mapping_%s_%s' % (
-                        str(self.id),
-                        str(mapping.source_field_id.id)),
-                    state]
-                data.append(vals)
-        fields = ['id', 'state']
-
-        # if there is any repeating mapping field, then make action
-        # 'repeating action'
-        import_result = self.env['etl.field_mapping'].load(fields, data)
-        vals = {
-            'log': import_result,
-        }
-        self.write(vals)
-
-    def updata_records_number(self):
+        """
+            Check if there are fields that should be load in a repeating action
+            If there is at least one mapping field with repeating,
+            make the action repeating
+        """
         for rec in self:
-            (source_connection, target_connection) = \
+            data = []
+            # Look for enabled or to analize future actions of this manager and
+            # this action
+            future_actions = self.search([
+                ('manager_id', '=', rec.manager_id.id),
+                ('sequence', '>=', rec.sequence),
+                ('state', 'in', ['enabled', 'to_analyze'])])
+            future_models = []
+            for future_action in future_actions:
+                future_models.append(future_action.source_model_id.model)
+
+            # Look for active fields of this action
+            field_mapping_domain = [
+                ('blocked', '!=', True),
+                ('action_id', '=', rec.id),
+                ('source_field_id.ttype', '=', 'many2one'),
+                ('state', 'in', ['enabled', 'to_analyze', 'on_repeating']),
+                ('type', '=', 'field')]
+            field_mappings = self.env['etl.field_mapping'].search(
+                field_mapping_domain)
+
+            # If there are mappings with future depends make them 'on_repeating'
+            for mapping in field_mappings:
+                dependency = mapping.source_field_id.relation
+                if dependency in future_models:
+                    state = 'on_repeating'
+                    vals = [
+                        'field_mapping_%s_%s' % (
+                            str(rec.id),
+                            str(mapping.source_field_id.id)),
+                        state]
+                    data.append(vals)
+
+            # if there is any repeating mapping field, then make action
+            # 'repeating action'
+            _fields = ['id', 'state']
+            import_result = self.env['etl.field_mapping'].load(_fields, data)
+            rec.log = import_result
+
+    def update_records_number(self):
+        for rec in self:
+            source_connection, target_connection = \
                 rec.manager_id.open_connections()
             rec.source_model_id.get_records(source_connection)
             rec.target_model_id.get_records(target_connection)
 
     @api.multi
-    def run_repeated_action(self, source_connection=False,
-        target_connection=False, repeated_action=True):
+    def run_repeated_action(self, repeated_action=True):
         return self.run_action(repeated_action=True)
 
     @api.multi
     def read_source_model(self, source_connection=False,
-        target_connection=False, repeated_action=False, context=None):
+                          target_connection=False, repeated_action=False, 
+                          context=None):
         readed_model = []
         for action in self:
             if action.source_model_id.id in readed_model:
@@ -418,18 +416,20 @@ class Action(models.Model):
             readed_model.append(action.source_model_id.id)
 
     @api.one
-    def run_action(self, source_connection=False, target_connection=False,
-        repeated_action=False):
-        _logger.info('Actions to run: %i' % len(self.ids))
+    def run_action(self, repeated_action=False):
+
+        import wdb;wdb.set_trace()
+        
+        source_connection, target_connection = \
+            self.manager_id.open_connections()
+
+        _logger.info('Actions to run: %i', len(self.ids))
         action_obj = self.env['etl.action']
         model_obj = self.env['etl.external_model']
         field_mapping_obj = self.env['etl.field_mapping']
         value_mapping_field_detail_obj = self.env[
             'etl.value_mapping_field_detail']
         value_mapping_field_obj = self.env['etl.value_mapping_field']
-        if not source_connection or not target_connection:
-            (source_connection,
-             target_connection) = self.manager_id.open_connections()
         # add language to connections context
         source_connection.context = {'lang': self.manager_id.source_lang}
         target_connection.context = {'lang': self.manager_id.target_lang}
@@ -700,8 +700,6 @@ class Action(models.Model):
 
         _logger.info('Removing auxliaria .id')
         target_model_data = []
-        # print source_model_data
-        # print ''
         for record in source_model_data:
             if self.target_id_type == 'source_id':
                 target_model_data.append(record[1:])
@@ -721,25 +719,23 @@ class Action(models.Model):
         self.write(vals)
         self.target_model_id.get_records(target_connection)
 
-    @api.multi
     def order_actions(self, exceptions=None):
-        _logger.info('Lines to order %i' % len(self.ids))
+        _logger.info('Lines to order %i', len(self.ids))
         if exceptions is None:
             exceptions = []
         # field_mapping_obj = self.pool.get('etl.field_mapping')
-        ordered_actions = []
-        ordered_ids = []
+        ordered_actions = ordered_ids = []
 
         # We exclude de exceptions
         unordered_ids = self.search([
             ('id', 'in', self.ids),
             ('source_model_id.model', 'not in', exceptions)]).ids
-        _logger.info('Request IDS: %s' % str(self.ids))
-        _logger.info('Request IDS without exceptions: %s' % str(unordered_ids))
+        _logger.info('Request IDS: %s', str(self.ids))
+        _logger.info('Request IDS without exceptions: %s', str(unordered_ids))
 
         actions_to_order = [
             x.source_model_id.model for x in self.browse(unordered_ids)]
-        _logger.info('Actions_to_order %s' % actions_to_order)
+        _logger.info('Actions_to_order %s', actions_to_order)
         count = 0
         count_max = len(self) * 2
         while unordered_ids and (count < count_max):
@@ -760,8 +756,8 @@ class Action(models.Model):
                         # else:
                         # TODO usar este dato para algo! para marcar la clase
                         # por ejemplo
-            _logger.info('Model: %s, depenencias: %s' % (
-                rec.source_model_id.model, action_clean_dependecies))
+            _logger.info('Model: %s, depenencias: %s',
+                rec.source_model_id.model, action_clean_dependecies)
             dependecies_ok = True
             for action_dependecy in action_clean_dependecies:
                 if (action_dependecy not in ordered_actions) and (
@@ -777,8 +773,8 @@ class Action(models.Model):
                 _logger.info('Break, dependency false!')
                 unordered_ids.append(rec.id)
 
-        _logger.info('Unordered Models: %s' % str(unordered_ids))
-        _logger.info('New Order: %s' % str(ordered_actions))
+        _logger.info('Unordered Models: %s', str(unordered_ids))
+        _logger.info('New Order: %s', str(ordered_actions))
 
         # Add sequence to exception actions
         sequence = 0
@@ -811,6 +807,9 @@ class Action(models.Model):
         :param str userdate: date string in in user time zone
         :return: UTC datetime string for server-side use
         """
+        
+        import wdb;wdb.set_trace()
+        
         # TODO: move to fields.datetime in server after 7.0
         user_date = datetime.strptime(userdate, DEFAULT_SERVER_DATE_FORMAT)
         context = self._context
