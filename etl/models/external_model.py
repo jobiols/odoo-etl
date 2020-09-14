@@ -158,8 +158,8 @@ class external_model(models.Model):
             'function']
         model_field_data = []
         for model in self:
-            _logger.info('Reading fields %s database, model: %s' % (
-                model.type, model.model))
+            _logger.info('Reading fields %s database, model: %s',
+                         model.type, model.model)
             if not connection:
                 (source_connection, target_connection) = \
                     model.manager_id.open_connections()
@@ -173,7 +173,7 @@ class external_model(models.Model):
                 external_model_obj = connection.model(model.model)
             except:
                 _logger.info('Model database, model: %s not found !!!',
-                                model.model)
+                             model.model)
                 continue
             try:
                 external_model_fields = external_model_obj.fields_get()
@@ -203,14 +203,12 @@ class external_model(models.Model):
         _logger.info('Writing fields data...')
         self.env['etl.field'].load(field_fields, model_field_data)
 
-    @api.one
     def get_records(self, connection):
-        try:
-            model_obj = connection.model(self.model)
-            model_ids = model_obj.search([])
-            vals = {'records': len(model_ids)}
-            _logger.info('%i records on model %s' % (
-                len(model_ids), self.name))
-            self.write(vals)
-        except Exception as ex:
-            _logger.error('Error getting records %s', str(ex))
+        for rec in self:
+            try:
+                model_obj = connection.model(rec.model)
+                count = model_obj.search_count([])
+                _logger.info('%i records on model %s', count, rec.name)
+                rec.records = count
+            except Exception as ex:  # noqa
+                _logger.error('Error getting records %s', str(ex))

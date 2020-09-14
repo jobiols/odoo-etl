@@ -150,9 +150,17 @@ class Manager(models.Model):
     )
     model_exception_words = fields.Char(
         string='Model Exception Words',
+        # TODO parecen ser los modelos que no queremos cargar jeo.
         # TODO move this default to another model
         default="['report','ir.logging','ir.qweb']",
     )
+    model_wanted_words = fields.Char(
+        # TODO parecen ser los modelos que queremos cargar jeo.
+        # TODO move this default to another model
+        # TODO Tener en cuenta que pueden llamarse distinto en distintas vers
+        default="['product.product','product.template']",
+    )
+
     model_analyze_default = fields.Text(
         string='Models Analyze by Default',
         # TODO move this default to another model
@@ -235,22 +243,22 @@ class Manager(models.Model):
         help='the target database default language. It’s recommended to keep '
              'the language as default (en_US).'
     )
-    odoo_target_version = fields.Integer(
-        default=lambda self: self.get_current_version(),
-        required=True,
-        help='the target odoo major version, default is the odoo version '
-        'where this module is installed'
-    )
-    odoo_source_version = fields.Integer(
-        required=True,
-        default=8,
-        help='the source odoo major version, default 8'
-    )
+    # odoo_target_version = fields.Integer(
+    #     default=lambda self: self.get_current_version(),
+    #     required=True,
+    #     help='the target odoo major version, default is the odoo version '
+    #     'where this module is installed'
+    # )
+    # odoo_source_version = fields.Integer(
+    #     required=True,
+    #     default=8,
+    #     help='the source odoo major version, default 8'
+    # )
 
-    def get_current_version(self):
-        base = self.env['ir.module.module']
-        ver = base.search([('name', '=', 'base')]).latest_version
-        return int(ver[:ver.find('.')])
+    # def get_current_version(self):
+    #     base = self.env['ir.module.module']
+    #     ver = base.search([('name', '=', 'base')]).latest_version
+    #     return int(ver[:ver.find('.')])
 
     def open_connections(self):
         self.ensure_one()
@@ -339,78 +347,78 @@ class Manager(models.Model):
             rec.match_models()
             rec.order_actions()
 
-    @api.one
     def match_models(self):
-        '''Match models'''
-        _logger.info('Matching models for manager %s' % self.name)
-        # read all source models
-        source_domain = [('manager_id', '=', self.id), ('type', '=', 'source')]
-        source_models = self.env['etl.external_model'].search(source_domain)
+        """ Match models """
+        for rec in self:
+            _logger.info('Matching models for manager %s', rec.name)
+            # read all source models
+            source_domain = [('manager_id', '=', rec.id), ('type', '=', 'source')]
+            source_models = self.env['etl.external_model'].search(source_domain)
 
-        # get disable and to analyze models
-        data = []
-        model_disable_default = []
-        model_analyze_default = []
-        if self.model_disable_default:
-            model_disable_default = literal_eval(self.model_disable_default)
-        if self.model_analyze_default:
-            model_analyze_default = literal_eval(self.model_analyze_default)
+            # get disable and to analyze models
+            data = []
+            model_disable_default = []
+            model_analyze_default = []
+            if rec.model_disable_default:
+                model_disable_default = literal_eval(rec.model_disable_default)
+            if rec.model_analyze_default:
+                model_analyze_default = literal_eval(rec.model_analyze_default)
 
-        # get blocked external ids models
-        blocked_models = self.env['etl.action'].search(
-            [('blocked', '=', True), ('manager_id', '=', self.id)])
-        blocked_model_ext_ids = blocked_models.export_data(['id'])['datas']
+            # get blocked external ids models
+            blocked_models = self.env['etl.action'].search(
+                [('blocked', '=', True), ('manager_id', '=', self.id)])
+            blocked_model_ext_ids = blocked_models.export_data(['id'])['datas']
 
-        # for each source model look for a target model and give state
-        for model in source_models:
-            target_domain = [
-                ('manager_id', '=', self.id),
-                ('type', '=', 'target'), ('model', '=', model.model)]
-            target_model = self.env['etl.external_model'].search(
-                target_domain, limit=1)
+            # for each source model look for a target model and give state
+            for model in source_models:
+                target_domain = [
+                    ('manager_id', '=', rec.id),
+                    ('type', '=', 'target'), ('model', '=', model.model)]
+                target_model = self.env['etl.external_model'].search(
+                    target_domain, limit=1)
 
-            # give right state to model mapping
-            state = 'enabled'
-            if model.model in model_disable_default:
-                state = 'disabled'
-            elif model.model in model_analyze_default or not target_model:
-                state = 'to_analyze'
-            if model.records == 0:
-                state = 'no_records'
+                # give right state to model mapping
+                state = 'enabled'
+                if model.model in model_disable_default:
+                    state = 'disabled'
+                elif model.model in model_analyze_default or not target_model:
+                    state = 'to_analyze'
+                if model.records == 0:
+                    state = 'no_records'
 
-            # get vals for action mapping and create and id
-            vals = [
-                'model_mapping_' + str(self.id) + '_' + str(model.id),
-                state,
-                model.name + ' (' + model.model + ')',
-                model.order,
-                model.id,
-                target_model and target_model.id or False,
-                self.id
+                # get vals for action mapping and create and id
+                vals = [
+                    'model_mapping_' + str(rec.id) + '_' + str(model.id),
+                    state,
+                    model.name + ' (' + model.model + ')',
+                    model.order,
+                    model.id,
+                    target_model and target_model.id or False,
+                    rec.id
+                ]
+
+                # look if this id should be blocked
+                if [vals[0]] in blocked_model_ext_ids:
+                    continue
+
+                # append if not to data
+                data.append(vals)
+
+            # write actions with data an fields, give result to log
+            action_fields = [
+                'id', 'state', 'name', 'sequence', 'source_model_id/.id',
+                'target_model_id/.id', 'manager_id/.id'
             ]
+            _logger.info('Loading actions match for manager %s', rec.name)
+            import_result = self.env['etl.action'].load(action_fields, data)
 
-            # look if this id should be blocked
-            if [vals[0]] in blocked_model_ext_ids:
-                continue
+            # write log on manager
+            rec.log = import_result
 
-            # append if not to data
-            data.append(vals)
-
-        # write actions with data an fields, give result to log
-        action_fields = [
-            'id', 'state', 'name', 'sequence', 'source_model_id/.id',
-            'target_model_id/.id', 'manager_id/.id'
-        ]
-        _logger.info('Loading actions match for manager %s' % self.name)
-        import_result = self.env['etl.action'].load(action_fields, data)
-
-        # write log on manager
-        self.log = import_result
-
-        # call for match fields
-        _logger.info('Matching fields for models %s of manager %s' % (
-            import_result['ids'], self.name))
-        self.env['etl.action'].browse(import_result['ids']).match_fields()
+            # call for match fields
+            _logger.info('Matching fields for models %s of manager %s',
+                         import_result['ids'], rec.name)
+            self.env['etl.action'].browse(import_result['ids']).match_fields()
 
     @api.one
     def order_actions(self):
@@ -446,7 +454,7 @@ class Manager(models.Model):
     def read_and_get(self):
         """ Read source and target models and get records number
         """
-        self.ensure_one
+        self.ensure_one()
         self.read_models()
         self.get_records()
 
@@ -454,11 +462,14 @@ class Manager(models.Model):
         """ Get number of records for source and target models
         """
         for rec in self:
-            (source_connection, target_connection) = self.open_connections()
-            source_models = self.env['etl.external_model'].search(
-                [('type', '=', 'source'), ('manager_id', '=', rec.id)])
-            target_models = self.env['etl.external_model'].search(
-                [('type', '=', 'target'), ('manager_id', '=', rec.id)])
+            source_connection, target_connection = self.open_connections()
+
+            domain = [('type', '=', 'source'), ('manager_id', '=', rec.id)]
+            source_models = self.env['etl.external_model'].search(domain)
+
+            domain = [('type', '=', 'target'), ('manager_id', '=', rec.id)]
+            target_models = self.env['etl.external_model'].search(domain)
+
             source_models.get_records(source_connection)
             target_models.get_records(target_connection)
 
@@ -467,12 +478,15 @@ class Manager(models.Model):
         """
         for rec in self:
             (source_connection, target_connection) = self.open_connections()
-            rec.read_model(source_connection, 'source')[rec.id]
-            rec.read_model(target_connection, 'target')[rec.id]
+            rec.read_model(source_connection, 'source')
+            rec.read_model(target_connection, 'target')
+
             source_external_models = rec.env['etl.external_model'].search([
                 ('manager_id', '=', rec.id), ('type', '=', 'source')])
+
             target_external_models = rec.env['etl.external_model'].search([
                 ('manager_id', '=', rec.id), ('type', '=', 'target')])
+
             source_external_models.read_fields(source_connection)
             target_external_models.read_fields(target_connection)
 
@@ -484,11 +498,12 @@ class Manager(models.Model):
             external_model_obj = connection.model("ir.model")
 
             # obtener la main version del odoo que estamos accediendo
-            base_obj = connection.model('ir.module.module')
-            ids = base_obj.search([('name', '=', 'base')])
-            data = base_obj.export_data(ids, ['latest_version'])
-            data = data['datas'][0][0]
-            ver = int(data[:data.find('.')])
+            # base_obj = connection.model('ir.module.module')
+            # ids = base_obj.search([('name', '=', 'base')])
+            # data = base_obj.export_data(ids, ['latest_version'])
+            # data = data['datas'][0][0]
+            # ver = int(data[:data.find('.')])
+            ver = int(float(connection.major_version))
 
             # TODO en 12 es models.TransientModel ver que hacemos con esto
             # osv_memory = False for not catching transients models
@@ -496,13 +511,19 @@ class Manager(models.Model):
                 domain = [('osv_memory', '=', False)]
             else:
                 domain = []
+            
+            # catch de models exceptions words and append to search domain
+            # words_exception = manager.model_exception_words
+            # if words_exception:
+            #     words_exception = literal_eval(words_exception)
+            #     for exception in words_exception:
+            #         domain.append(('model', 'not like', exception))
 
-            # catch de models excpections worlds and append to search domain
-            words_exception = manager.model_exception_words
-            if words_exception:
-                words_exception = literal_eval(words_exception)
-                for exception in words_exception:
-                    domain.append(('model', 'not like', exception))
+            # catch the models to load and append to search domain
+            words_wanted = manager.model_wanted_words
+            if words_wanted:
+                words_wanted = literal_eval(words_wanted)
+                domain.append(('model', 'in', words_wanted))
 
             # get external model ids
             external_model_ids = external_model_obj.search(domain)
