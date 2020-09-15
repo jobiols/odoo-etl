@@ -158,7 +158,7 @@ class Manager(models.Model):
         # TODO parecen ser los modelos que queremos cargar jeo.
         # TODO move this default to another model
         # TODO Tener en cuenta que pueden llamarse distinto en distintas vers
-        default="['product.product','product.template']",
+        default="['res.partner']",
     )
 
     model_analyze_default = fields.Text(

@@ -97,10 +97,13 @@
                         </group>
                         <notebook>
                             <page string="Actions">
-                                <group col="1">
-                                    <field name="repeating_models"/>
+                                <group>
+                                    <field name="repeating_models" />
+                                </group>
+                                <group>
                                     <field name="action_ids"
-                                           context="{'from_manager':True}"/>
+                                           context="{'from_manager':True}"
+                                           nolabel="1"/>
                                 </group>
                             </page>
                             <page string="Exceptions">

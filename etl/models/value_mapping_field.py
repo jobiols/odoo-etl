@@ -7,9 +7,6 @@ from openerp import models, fields, api
 
 
 class ValueMappingField(models.Model):
-    """
-    """
-
     _name = 'etl.value_mapping_field'
     _description = 'value_mapping_field'
 
@@ -52,32 +49,29 @@ class ValueMappingField(models.Model):
         required=True
     )
 
-    _constraints = [
-    ]
-
-    @api.one
     def map_record(self):
-        value_mapping_data = []
-        for source_record in self.source_model_id.external_model_record_ids:
-            domain = [
-                ('external_model_id', '=', self.target_model_id.id),
-                ('name', 'ilike', source_record.name)]
-            target_record = self.env[
-                'etl.external_model_record'].search(domain, limit=1)
-            value_mapping_data.append([
-                'value_mapping_' + str(source_record.id),
-                source_record.id,
-                target_record and target_record.id or False,
-                self.id,
-            ])
+        for rec in self:
+            value_mapping_data = []
+            for source_record in rec.source_model_id.external_model_record_ids:
+                domain = [
+                    ('external_model_id', '=', rec.target_model_id.id),
+                    ('name', 'ilike', source_record.name)]
+                target_record = self.env[
+                    'etl.external_model_record'].search(domain, limit=1)
+                value_mapping_data.append([
+                    'value_mapping_' + str(source_record.id),
+                    source_record.id,
+                    target_record and target_record.id or False,
+                    rec.id,
+                ])
 
-        value_mapping_fields = [
-            'id',
-            'source_external_model_record_id/.id',
-            'target_external_model_record_id/.id',
-            'value_mapping_field_id/.id']
-        import_result = self.env['etl.value_mapping_field_detail'].load(
-            value_mapping_fields, value_mapping_data)
+            value_mapping_fields = [
+                'id',
+                'source_external_model_record_id/.id',
+                'target_external_model_record_id/.id',
+                'value_mapping_field_id/.id']
+            import_result = self.env['etl.value_mapping_field_detail'].load(
+                value_mapping_fields, value_mapping_data)
 
-        # write log and domain if active field exist
-        self.log = import_result
+            # write log and domain if active field exist
+            rec.log = import_result

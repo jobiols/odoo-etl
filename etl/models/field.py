@@ -41,19 +41,18 @@ class Field(models.Model):
     )
     type = fields.Selection(
         related='model_id.type',
-        string='Type',
         readonly=True,
     )
 
-    def _name_search(self, cr, uid, name='', args=None, operator='ilike',
-        context=None, limit=100, name_get_uid=None):
-        if args is None:
-            args = []
-        domain = args + ['|',
-                         ('field_description', operator, name),
-                         ('name', operator, name)]
-        return self.name_get(cr, name_get_uid or uid,
-                             super(Field, self).search(cr, uid, domain,
-                                                       limit=limit,
-                                                       context=context),
-                             context=context)
+    # def _name_search(self, cr, uid, name='', args=None, operator='ilike',
+    #     context=None, limit=100, name_get_uid=None):
+    #     if args is None:
+    #         args = []
+    #     domain = args + ['|',
+    #                      ('field_description', operator, name),
+    #                      ('name', operator, name)]
+    #     return self.name_get(cr, name_get_uid or uid,
+    #                          super(Field, self).search(cr, uid, domain,
+    #                                                    limit=limit,
+    #                                                    context=context),
+    #                          context=context)

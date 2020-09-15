@@ -9,7 +9,6 @@
                 <search string="action">
                     <field name="blocked" string="Blocked"/>
                     <field name="sequence" string="Sequence"/>
-                    <field name="state" string="State"/>
                     <field name="name" string="Name"/>
                     <field name="source_domain" string="Source Domain"/>
                     <field name="manager_id" string="Manager"/>
@@ -97,10 +96,10 @@
                         </group>
                         <notebook>
                             <page string="Field Mapping">
-                                <!-- <group col="1"> -->
-                                <field name="field_mapping_ids"
-                                       context="{'target_model':target_model_id, 'source_model':source_model_id}"/>
-                                <!-- </group> -->
+                                <group>
+                                    <field name="field_mapping_ids" nolabel="1"
+                                           context="{'target_model':target_model_id, 'source_model':source_model_id}"/>
+                                </group>
                             </page>
                             <page string="Log">
                                 <field name="log"/>
@@ -124,14 +123,14 @@
                       decoration-muted="state=='disabled'"
                       decoration-success="state=='enabled'"
                       decoration-info="state=='to_analyze'">
-                    <field name="blocked"/>
                     <field name="sequence" widget="handle"/>
-                    <field name="state"/>
+                    <field name="blocked" widget="boolean_toggle"/>
                     <field name="name"/>
                     <field name="source_model_id"/>
                     <field name="target_model_id"/>
                     <field name="source_records"/>
                     <field name="target_records"/>
+                    <field name="state"/>
                 </tree>
             </field>
         </record>
