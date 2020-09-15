@@ -87,7 +87,9 @@
         <record id="action_etl_field_external_fields" model="ir.actions.act_window">
             <field name="name">External Fields</field>
             <field name="res_model">etl.field</field>
+            <!--
             <field name="view_type">form</field>
+            -->
             <field name="view_mode">tree,form</field>
             <field name="view_id" ref="view_etl_field_tree"/>
             <field name="search_view_id" ref="view_etl_field_filter"/>
