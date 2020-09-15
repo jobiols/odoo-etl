@@ -416,7 +416,6 @@ directory shows possible objects that can be accessed from the expressions:
 
 ::
 
-  @api.multi
   def run_expressions(self, rec_id, source_connection=False, target_connection=False):
       result = []
       for field_mapping in self:

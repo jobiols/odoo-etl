@@ -74,7 +74,9 @@
         <record id="action_etl_value_mapping_field_detail_values_mapping" model="ir.actions.act_window">
             <field name="name">Values Mapping</field>
             <field name="res_model">etl.value_mapping_field_detail</field>
+            <!--
             <field name="view_type">form</field>
+            -->
             <field name="view_mode">tree,form</field>
             <field name="view_id" ref="view_etl_value_mapping_field_detail_tree"/>
             <field name="search_view_id" ref="view_etl_value_mapping_field_detail_filter"/>

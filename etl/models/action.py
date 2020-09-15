@@ -180,14 +180,13 @@ class Action(models.Model):
                 repeating_action = True
             rec.repeating_action = repeating_action
 
-    @api.multi
     def action_block(self):
         return self.write({'blocked': True})
 
     def match_fields(self):
         """ Match fields """
         migrator_field_obj = self.env['etl.field']
-        field_mapping_obj = self.env['etl.field_mapping_obj']
+        field_mapping_obj = self.env['etl.field_mapping']
         for rec in self:
             _logger.info("Matching fields on action %s", rec.name)
 
@@ -387,11 +386,9 @@ class Action(models.Model):
             rec.source_model_id.get_records(source_connection)
             rec.target_model_id.get_records(target_connection)
 
-    @api.multi
     def run_repeated_action(self, repeated_action=True):
         return self.run_action(repeated_action=True)
 
-    @api.multi
     def read_source_model(self, source_connection=False, 
                           target_connection=False, repeated_action=False, 
                           context=None):

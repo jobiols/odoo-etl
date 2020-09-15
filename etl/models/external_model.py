@@ -144,11 +144,9 @@ class ExternalModel(models.Model):
             self.env['etl.external_model_record'].load(
                 external_model_record_fields, new_external_model_record_data)
 
-    @api.multi
     def read_fields_button(self):
         return self.read_fields(False)
 
-    @api.multi
     def read_fields(self, connection=False):
         """ Get fields for external models
         """

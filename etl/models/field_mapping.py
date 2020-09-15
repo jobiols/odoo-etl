@@ -126,11 +126,9 @@ class FieldMapping(models.Model):
                 target_field += '/id'
         self.target_field = target_field
 
-    @api.multi
     def action_block(self):
         return self.write({'blocked': True})
 
-    @api.multi
     def get_migrated_id(self, rec_id, source_connection=False,
         target_connection=False):
         """ Get migrated id for field ids  and one rec_id (from source
@@ -192,7 +190,6 @@ class FieldMapping(models.Model):
             result.append(target_id)
         return result
 
-    @api.multi
     def get_reference(self, rec_id, source_connection=False,
         target_connection=False):
         """ Get reference for field ids  and one rec_id (from source database)
@@ -248,7 +245,6 @@ class FieldMapping(models.Model):
             result.append(target_reference)
         return result
 
-    @api.multi
     def run_expressions(
         self, rec_id, source_connection=False, target_connection=False):
         result = []
