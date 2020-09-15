@@ -17,14 +17,13 @@ class Manager(models.Model):
     _description = 'etl manager'
 
     name = fields.Char(
-        string='Name',
         required=True,
         help='Contains the name of your manager without any specific '
                'restriction.'
     )
     target_id_type = fields.Selection(
-        [(u'source_id', 'Source ID'), 
-        (u'builded_id', 'Builded ID')],
+            [(u'source_id', 'Source ID'),
+             (u'builded_id', 'Builded ID')],
         string='Target ID Type',
         required=True,
         default='source_id',
@@ -35,14 +34,12 @@ class Manager(models.Model):
              ' Source ID is recommended when performing a migration process.'
     )
     source_hostname = fields.Char(
-        string='Source Hostname',
         required=True,
         default='http://localhost',
         help='The source database host URL that is used to access the Odoo '
              'database from remote OS. i.e.: http://192.168.1.101.'
     )
     source_port = fields.Integer(
-        string='Source Port',
         required=True,
         default=80,
         help='The source database port that is used to access the Odoo '
@@ -54,14 +51,12 @@ class Manager(models.Model):
         help='The source database name'
     )
     source_login = fields.Char(
-        string='Source Login',
         required=True,
         help='The username used to login to the source database from the '
              'login page. Make sure this user have full access to all the '
              'models.'
     )
     source_password = fields.Char(
-        string='Source Password',
         required=True,
         help='the password, what else?.'
     )
@@ -74,38 +69,33 @@ class Manager(models.Model):
              'the language as default (en_US)'
     )
     target_hostname = fields.Char(
-        string='Target Hostname',
         required=True,
         default='http://localhost',
         help='the target database host URL that is used to access the Odoo '
              'database from remote OS. i.e.: http://192.168.1.101.'
     )
     target_port = fields.Integer(
-        string='Target Port',
         required=True,
         default=80,
         help='The target database port that is used to access the Odoo '
              'database. i.e.: 8069.'
     )
     target_database = fields.Char(
-        string='Target Database',
         required=True,
         help='the target database name.'
     )
     target_login = fields.Char(
-        string='Target Login',
         required=True,
         help='the username used to login to the target database from the '
              'login page. Make sure this user have full access to all the '
              'models.'
     )
     target_password = fields.Char(
-        string='Target Password',
         required=True,
         help='the password, what else?.'
     )
     log = fields.Text(
-        string='Log'
+
     )
     model_disable_default = fields.Text(
         string='Models Disabled by Default',
@@ -149,7 +139,6 @@ class Manager(models.Model):
                 "'create_date','calendar_last_notif_ack',]",
     )
     model_exception_words = fields.Char(
-        string='Model Exception Words',
         # TODO parecen ser los modelos que no queremos cargar jeo.
         # TODO move this default to another model
         default="['report','ir.logging','ir.qweb']",
@@ -194,7 +183,6 @@ class Manager(models.Model):
         default="['reconcile_partial_id','reconcile_id']",
     )
     repeating_models = fields.Text(
-        string='Repeating Models',
         # TODO move this default to another model
         default="['res.partner','res.company','res.users',"
                 "'account.fiscalyear','product.template','product.product',"
@@ -207,7 +195,6 @@ class Manager(models.Model):
         default="['in_group','sel_groups_','rml_header','rml_foot',]",
     )
     modules_to_install = fields.Text(
-        string='Modules To Install',
         default=[]
     )
     workflow_models = fields.Char(

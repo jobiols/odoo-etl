@@ -18,7 +18,6 @@ class ValueMappingField(models.Model):
         [(u'id', u'Id'),
          (u'char', u'Char (not implemented yet)'),
          (u'selection', u'Selection')],
-        string='Type',
         required=True
     )
     source_model_id = fields.Many2one(
