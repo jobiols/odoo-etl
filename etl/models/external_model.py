@@ -17,13 +17,11 @@ class ExternalModel(models.Model):
     _order = "sequence"
 
     sequence = fields.Integer(
-        string='Sequence',
         readonly=True
     )
     type = fields.Selection(
         [(u'source', u'Source'),
          (u'target', u'Target')],
-        string='Type',
         readonly=True,
         required=True
     )

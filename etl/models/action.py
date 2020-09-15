@@ -16,8 +16,6 @@ _logger = logging.getLogger(__name__)
 
 
 class Action(models.Model):
-    """"""
-
     _name = 'etl.action'
     _description = 'action'
     _order = "sequence"
@@ -109,6 +107,7 @@ class Action(models.Model):
     )
     source_records = fields.Integer(
         related='source_model_id.records',
+        string="Source Records.",
         readonly=True,
         help='read only field counting the number of records at the source '
              'database in relation to the selected source model. The number '
@@ -125,6 +124,7 @@ class Action(models.Model):
     )
     target_records = fields.Integer(
         related='target_model_id.records',
+        string="Target Records.",
         readonly=True,
         help='read only field counting the number of records at the target '
              'database in relation to the selected target model. The number '

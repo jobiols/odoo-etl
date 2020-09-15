@@ -17,7 +17,6 @@ class FieldMapping(models.Model):
     _description = 'field_mapping'
 
     blocked = fields.Boolean(
-        string='Blocked',
         default=False
     )
     state = fields.Selection(
@@ -26,7 +25,6 @@ class FieldMapping(models.Model):
          (u'enabled', 'enabled'),
          (u'disabled', 'disabled'),
          (u'other_class', 'other_class')],
-        string='State',
         required=True
     )
     type = fields.Selection(
@@ -54,7 +52,6 @@ class FieldMapping(models.Model):
         string='Target Exp.'
     )
     expression = fields.Text(
-        string='Expression',
         default="context['result']= False"
     )
     value_mapping_field_id = fields.Many2one(
@@ -90,7 +87,7 @@ class FieldMapping(models.Model):
     source_field_ttype = fields.Char(
         related='source_field_id.ttype',
         readonly=True,
-        string='Source Type'
+        string='Source TType'
     )
     target_field_ttype = fields.Char(
         related='target_field_id.ttype',

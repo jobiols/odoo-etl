@@ -16,13 +16,13 @@ class ValueMappingFieldDetail(models.Model):
         string='Source ID'
     )
     source_value = fields.Char(
-        string='Source Value'
+
     )
     target_id = fields.Char(
         string='Target ID'
     )
     target_value = fields.Char(
-        string='Target Value'
+
     )
     source_external_model_record_id = fields.Many2one(
         'etl.external_model_record',
@@ -34,7 +34,7 @@ class ValueMappingFieldDetail(models.Model):
     )
     source_value_id = fields.Many2one(
         'etl.value_mapping_field_value',
-        string='Source Value'
+        string='Source Value ID'
     )
     target_value_id = fields.Many2one(
         'etl.value_mapping_field_value',
@@ -48,7 +48,6 @@ class ValueMappingFieldDetail(models.Model):
     )
     source_name = fields.Char(
         related='source_external_model_record_id.name',
-        string='Source Name',
         readonly=True,
     )
     source_model_id = fields.Many2one(
