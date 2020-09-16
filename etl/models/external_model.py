@@ -208,8 +208,10 @@ class ExternalModel(models.Model):
         for rec in self:
             try:
                 model_obj = connection.model(rec.model)
-                count = model_obj.search_count([])
-                _logger.info('%i records on model %s', count, rec.name)
-                rec.records = count
-            except Exception as ex:  # noqa
+                model_ids = model_obj.search([])
+                vals = {'records': len(model_ids)}
+                _logger.info('%i records on model %s', len(model_ids),
+                             self.name)
+                rec.write(vals)
+            except Exception as ex:
                 _logger.error('Error getting records %s', str(ex))
