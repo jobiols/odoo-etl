@@ -1,10 +1,21 @@
-<?xml version="1.0" ?>
-<odoo>
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
     <data>
-        <menuitem id="menu_data"
-                  name="ETL"
-                  sequence="10"
-                  web_icon="etl,static/description/icon.png"
-        />
+
+        <menuitem
+            name="ETL"
+            id="menu_etl"
+            sequence="10"
+            />
+
+        <menuitem
+            name="Data"
+            id="menu_data"
+            sequence="10"
+            parent="menu_etl"
+            />
+
     </data>
-</odoo>
+</openerp>
+<!-- vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4
+     -->
