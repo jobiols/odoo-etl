@@ -72,7 +72,6 @@ class ExternalModel(models.Model):
     )
 
     # def _name_search(self, name, args, operator, limit=100):
-        
     #     args = args if args else []
     #     domain = args + ['|', ('model', operator, name), ('name', operator, name)]
 
@@ -84,7 +83,6 @@ class ExternalModel(models.Model):
 
     # def _name_search(self, cr, uid, name='', args=None, operator='ilike',
     #                  context=None, limit=100, name_get_uid=None):
-        
     #     if args is None:
     #         args = []
     #     domain = args + ['|', ('model', operator, name), ('name', operator, name)]
@@ -204,8 +202,10 @@ class ExternalModel(models.Model):
         for rec in self:
             try:
                 model_obj = connection.model(rec.model)
-                count = model_obj.search_count([])
-                _logger.info('%i records on model %s', count, rec.name)
-                rec.records = count
-            except Exception as ex:  # noqa
+                model_ids = model_obj.search([])
+                vals = {'records': len(model_ids)}
+                _logger.info('%i records on model %s', len(model_ids),
+                             self.name)
+                rec.write(vals)
+            except Exception as ex:
                 _logger.error('Error getting records %s', str(ex))

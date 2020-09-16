@@ -297,10 +297,6 @@ class Action(models.Model):
                     value_mapping_field and value_mapping_field.id or False
                 ]
 
-                
-                import wdb;wdb.set_trace()
-                
-
                 # See if mappings have already a blocked mapping created
                 blocked_fields = field_mapping_obj.search([
                     ('blocked', '=', True),
@@ -414,11 +410,6 @@ class Action(models.Model):
             if active_field:
                 domain = [('active', 'in', [True, False])]
             source_model_ids = source_model_obj.search(domain)
-            
-            
-            import wdb;wdb.set_trace()
-            
-            
             source_model_obj.export_data(source_model_ids, ['id'])
             readed_model.append(action.source_model_id.id)
 
@@ -501,15 +492,8 @@ class Action(models.Model):
 
             # Read and append source values of type 'field' and type not m2m
             _logger.info('Building none m2m field mapping...')
-            
-            import wdb;wdb.set_trace()
-
-            # Cambiamos export_data --> browse()
-            source_fields.remove('.id')  # no se para que esta eso.
-            source_model_data = source_model_obj.browse(
-                source_model_ids).read(source_fields)
-#            source_model_data = source_model_obj.export_data(
-#                source_model_ids, source_fields)['datas']
+            source_model_data = source_model_obj.export_data(
+                source_model_ids, source_fields)['datas']
 
             _logger.info('Building m2o field mapping...')
             # Read and append source values of type 'field' and type m2m
@@ -528,9 +512,6 @@ class Action(models.Model):
                 if field_action:
                     field_action = field_action[0]
                     for source_data_record in source_model_data:
-                        
-                        import wdb;wdb.set_trace()
-                        
                         source_data_m2o = source_model_obj.export_data(
                             [int(source_data_record[0])],
                             ['.id', field.source_field,
@@ -565,9 +546,6 @@ class Action(models.Model):
                     field_action = field_action[0]
                     model_data_obj = source_connection.model('ir.model.data')
                     for source_data_record in source_model_data:
-                        
-                        import wdb;wdb.set_trace()
-                        
                         source_data_m2m = \
                             source_model_obj.export_data(
                                 [int(source_data_record[0])],
@@ -582,9 +560,6 @@ class Action(models.Model):
                                         ('name', 'ilike',
                                         value.split('.')[-1])])  
                                     if value_id:
-                                        
-                                        import wdb;wdb.set_trace()
-                                        
                                         value_id = model_data_obj.export_data([value_id[0]], ['.id', 'res_id'])['datas']
                                         value_id = value_id[0][1]
                                     if field_action.target_id_type == 'source_id' and value:  
@@ -607,12 +582,9 @@ class Action(models.Model):
                                         if x.state == state and
                                         x.type == 'value_mapping']
 
-            import wdb;wdb.set_trace()
-
-            source_data_value_mapping = source_model_obj.browse(source_model_ids).read(source_fields_value_mapping)
-            # source_data_value_mapping = \
-            #     source_model_obj.export_data(source_model_ids,
-            #                                 source_fields_value_mapping)['datas']
+            source_data_value_mapping = \
+                source_model_obj.export_data(source_model_ids,
+                                            source_fields_value_mapping)['datas']
 
             source_value_mapping_id = [x.value_mapping_field_id.id for x in
                                     rec.field_mapping_ids
@@ -656,9 +628,6 @@ class Action(models.Model):
                                         rec.field_mapping_ids if
                                         x.state == state and x.type == 'date_adapt'
                                         ]
-            
-            import wdb;wdb.set_trace()
-            
             source_data_date_adapt = source_model_obj.export_data(
                 source_model_ids, source_fields_date_adapt)['datas']
             source_mapping_date_adapt = [x for x in rec.field_mapping_ids
@@ -731,10 +700,6 @@ class Action(models.Model):
                         rec.target_id_prefix, str(record[0]))] + record[2:])
 
             try:
-
-                import wdb;wdb.set_trace()
-
-
                 _logger.info('Loadding Data...')
                 import_result = target_model_obj.load(target_fields, target_model_data)
                 vals = {'log': import_result}
@@ -833,9 +798,6 @@ class Action(models.Model):
         :param str userdate: date string in in user time zone
         :return: UTC datetime string for server-side use
         """
-        
-        import wdb;wdb.set_trace()
-        
         # TODO: move to fields.datetime in server after 7.0
         user_date = datetime.strptime(userdate, DEFAULT_SERVER_DATE_FORMAT)
         context = self._context
