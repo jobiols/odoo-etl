@@ -72,9 +72,6 @@ class ExternalModel(models.Model):
     )
 
     # def _name_search(self, name, args, operator, limit=100):
-        
-    #     import wdb;wdb.set_trace()
-        
     #     args = args if args else []
     #     domain = args + ['|', ('model', operator, name), ('name', operator, name)]
 
@@ -86,9 +83,6 @@ class ExternalModel(models.Model):
 
     # def _name_search(self, cr, uid, name='', args=None, operator='ilike',
     #                  context=None, limit=100, name_get_uid=None):
-        
-    #     import wdb;wdb.set_trace()
-        
     #     if args is None:
     #         args = []
     #     domain = args + ['|', ('model', operator, name), ('name', operator, name)]

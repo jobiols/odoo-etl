@@ -38,7 +38,7 @@ class ValueMappingFieldDetail(models.Model):
     )
     target_value_id = fields.Many2one(
         'etl.value_mapping_field_value',
-        string='Target Value'
+        string='Target Value ID'
     )
     value_mapping_field_id = fields.Many2one(
         'etl.value_mapping_field',

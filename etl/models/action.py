@@ -581,21 +581,19 @@ class Action(models.Model):
                                         rec.field_mapping_ids
                                         if x.state == state and
                                         x.type == 'value_mapping']
-            # print 'source_fields_value_mapping', source_fields_value_mapping
+
             source_data_value_mapping = \
                 source_model_obj.export_data(source_model_ids,
                                             source_fields_value_mapping)['datas']
-            # print 'source_data_value_mapping', source_data_value_mapping
+
             source_value_mapping_id = [x.value_mapping_field_id.id for x in
                                     rec.field_mapping_ids
                                     if x.state == state
                                     and x.type == 'value_mapping']
-            # print 'source_value_mapping_id', source_value_mapping_id
-            for readed_record, source_data_record in zip(source_data_value_mapping,
-                                                        source_model_data):
+
+            for readed_record, source_data_record in zip(source_data_value_mapping, source_model_data):
                 target_record = []
-                for field_value, value_mapping_id in zip(readed_record,
-                                                        source_value_mapping_id):
+                for field_value, value_mapping_id in zip(readed_record, source_value_mapping_id):
                     new_field_value = False
                     value_mapping = value_mapping_field_obj.browse(
                         value_mapping_id)
@@ -702,10 +700,6 @@ class Action(models.Model):
                         rec.target_id_prefix, str(record[0]))] + record[2:])
 
             try:
-
-                import wdb;wdb.set_trace()
-
-
                 _logger.info('Loadding Data...')
                 import_result = target_model_obj.load(target_fields, target_model_data)
                 vals = {'log': import_result}
@@ -804,9 +798,6 @@ class Action(models.Model):
         :param str userdate: date string in in user time zone
         :return: UTC datetime string for server-side use
         """
-        
-        import wdb;wdb.set_trace()
-        
         # TODO: move to fields.datetime in server after 7.0
         user_date = datetime.strptime(userdate, DEFAULT_SERVER_DATE_FORMAT)
         context = self._context
