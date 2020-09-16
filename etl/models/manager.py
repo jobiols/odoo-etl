@@ -258,7 +258,7 @@ class Manager(models.Model):
                 password=self.source_password)
         except Exception as e:
             raise UserError(
-                _("Unable to Connect to Database. 'Error: %s'") % e)
+                _("Unable to Connect to Source Database. 'Error: %s'") % e)
         try:
             _logger.info('Getting target connection')
             target_connection = Client(
@@ -268,7 +268,7 @@ class Manager(models.Model):
                 password=self.target_password)
         except Exception as e:
             raise UserError(
-                _("Unable to Connect to Database. 'Error: %s'") % e)
+                _("Unable to Connect to Target Database. 'Error: %s'") % e)
         return [source_connection, target_connection]
 
     def read_active_source_models(self):

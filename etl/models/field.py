@@ -22,7 +22,7 @@ class Field(models.Model):
     relation_field = fields.Char(
     )
     ttype = fields.Char(
-        string='Type',
+        string='TType',
         required=True
     )
     required = fields.Char(
