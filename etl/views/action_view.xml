@@ -130,6 +130,7 @@
                     <field name="target_model_id"/>
                     <field name="source_records"/>
                     <field name="target_records"/>
+                    <field name="manager_id"/>
                     <field name="state"/>
                 </tree>
             </field>

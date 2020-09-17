@@ -147,7 +147,7 @@ class Manager(models.Model):
         # TODO parecen ser los modelos que queremos cargar jeo.
         # TODO move this default to another model
         # TODO Tener en cuenta que pueden llamarse distinto en distintas vers
-        default="['res.partner']",
+        default="['res.partner','res.partner.category','res.partner.industry','res.company','res.partner.title','res.users']"
     )
 
     model_analyze_default = fields.Text(
@@ -419,7 +419,9 @@ class Manager(models.Model):
             unordered_ids, ordered_ids = actions.order_actions(exceptions)
 
             # get unordered and ordered actions names to write in log. Write log
-            ordered_actions = unordered_actions = []
+            ordered_actions = []
+            unordered_actions = []
+
             for ordered_action in self.env['etl.action'].browse(ordered_ids):
                 ordered_actions.append(ordered_action.source_model_id.model)
             for unordered_action in self.env['etl.action'].browse(unordered_ids):

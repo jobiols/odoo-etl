@@ -205,7 +205,7 @@ class ExternalModel(models.Model):
                 model_ids = model_obj.search([])
                 vals = {'records': len(model_ids)}
                 _logger.info('%i records on model %s', len(model_ids),
-                             self.name)
+                             rec.name)
                 rec.write(vals)
             except Exception as ex:
                 _logger.error('Error getting records %s', str(ex))
