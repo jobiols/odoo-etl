@@ -94,6 +94,7 @@
                         </group>
                         <group>
                             <field name="workflow_models"/>
+                            <field name="model_wanted_words"/>
                         </group>
                         <notebook>
                             <page string="Actions">

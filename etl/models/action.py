@@ -459,13 +459,15 @@ class Action(models.Model):
                                 if x.state == state and
                                 x.type == 'field' and
                                 x.source_field_id.ttype != 'many2many' and
-                                x.source_field_id.ttype != 'many2one'])
+                                x.source_field_id.ttype != 'many2one' and
+                                x.source_field != 'id'])
             # target fields = enabled and field then expression then migrated_id
             target_fields.extend([x.target_field for x in rec.field_mapping_ids
                                 if x.state == state and
                                 x.type == 'field' and
                                 x.source_field_id.ttype != 'many2many' and
-                                x.source_field_id.ttype != 'many2one'])
+                                x.source_field_id.ttype != 'many2one' and
+                                x.source_field != 'id'])
             target_fields.extend([x.target_field for x in rec.field_mapping_ids
                                 if x.state == state and
                                 x.type == 'field' and
@@ -712,10 +714,11 @@ class Action(models.Model):
 
     def order_actions(self, exceptions=None):
         _logger.info('Lines to order %i', len(self.ids))
-        if exceptions is None:
-            exceptions = []
+        exceptions = exceptions if exceptions else []
+
         # field_mapping_obj = self.pool.get('etl.field_mapping')
-        ordered_actions = ordered_ids = []
+        ordered_actions = []
+        ordered_ids = []
 
         # We exclude de exceptions
         unordered_ids = self.search([

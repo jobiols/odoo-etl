@@ -101,7 +101,7 @@
                       decoration-success="state=='enabled'"
                       decoration-info="state=='to_analyze'"
                       decoration-danger="source_field_ttype!=target_field_ttype">
-                    <field name="blocked"/>
+                    <field name="blocked" widget="boolean_toggle"/>
                     <field name="state"/>
                     <field name="type"/>
                     <field name="source_field"/>
