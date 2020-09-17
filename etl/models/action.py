@@ -396,7 +396,7 @@ class Action(models.Model):
         for action in self:
             if action.source_model_id.id in readed_model:
                 continue
-            _logger.info('Reading model %s' % action.source_model_id.model)
+            _logger.info('Reading model %s', action.source_model_id.model)
             if not source_connection:
                 (source_connection,
                  target_connection) = action.manager_id.open_connections()

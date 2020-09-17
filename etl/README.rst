@@ -677,13 +677,11 @@ More about ETL’s Migration Method
 
 As mentioned earlier, one of the advantages of ETL is that it uses the native 
 Odoo method. This can be found at the **action.py python** script at line 
-580 (unmodified action.py) located at the ETL addons folder. 
- 
- 
-ETL calls the load function of OpenERP to load the data into the target model.
+706 located at the ETL addons folder. 
+  
+ETL calls the load function of Odoo to load the data into the target model.
 The load function can be found at the models.py python script starting at line 
-1022 (unmodified models.py at Odoo version 9) located at the OpenERP directory 
-of Odoo. 
+901 of models.py at Odoo version 13 located at the odoo directory of Odoo. 
  
 About the ERPpeek 
 ~~~~~~~~~~~~~~~~~
@@ -801,6 +799,6 @@ the project lives in `project home <project_home>`_ and documentation can be fou
 Maintainers
 ~~~~~~~~~~~
 
-This module is part of the `jobiols/odoo-etl <https://github.com/jobiols/odoo-etl/tree/12.0/etl>`_ project on GitHub.
+This module is part of the `jobiols/odoo-etl <https://github.com/jobiols/odoo-etl/tree/13.0/etl>`_ project on GitHub.
 
 You are welcome to contribute.

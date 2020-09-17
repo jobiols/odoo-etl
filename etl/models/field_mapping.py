@@ -127,7 +127,7 @@ class FieldMapping(models.Model):
         return self.write({'blocked': True})
 
     def get_migrated_id(self, rec_id, source_connection=False,
-        target_connection=False):
+                        target_connection=False):
         """ Get migrated id for field ids  and one rec_id (from source
             database) For example, for field mapping ids
         """
@@ -144,10 +144,10 @@ class FieldMapping(models.Model):
                 'id',
                 field_mapping.source_field_id.name,
                 field_mapping.model_field]
-            _logger.info('Source_fields: %s' % source_fields)
+            _logger.info('Source_fields: %s', source_fields)
             source_model_data = source_model_obj.export_data(
                 [rec_id], source_fields)['datas']
-            _logger.info('Source_model_data: %s' % source_model_data)
+            _logger.info('Source_model_data: %s', source_model_data)
             target_id = False
             if source_model_data:
                 source_id = source_model_data[0][1]
