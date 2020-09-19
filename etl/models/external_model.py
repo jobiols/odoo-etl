@@ -205,7 +205,7 @@ class ExternalModel(models.Model):
         _logger.info('Writing fields data...')
         self.env['etl.field'].load(field_fields, model_field_data)
 
-    def get_records(self, connection):
+    def get_record_count(self, connection):
         """ Get the number of records of this external model
         """
         for rec in self:

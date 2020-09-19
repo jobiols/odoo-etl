@@ -438,9 +438,9 @@ class Manager(models.Model):
         """
         self.ensure_one()
         self.read_models()
-        self.get_records()
+        self.get_record_count()
 
-    def get_records(self):
+    def get_record_count(self):
         """ Get number of records for source and target models
         """
         for rec in self:
@@ -452,8 +452,8 @@ class Manager(models.Model):
             domain = [('type', '=', 'target'), ('manager_id', '=', rec.id)]
             target_models = self.env['etl.external_model'].search(domain)
 
-            source_models.get_records(source_connection)
-            target_models.get_records(target_connection)
+            source_models.get_record_count(source_connection)
+            target_models.get_record_count(target_connection)
 
     def read_models(self):
         """ Get models and fields of source and target database

@@ -381,8 +381,8 @@ class Action(models.Model):
         for rec in self:
             source_connection, target_connection = \
                 rec.manager_id.open_connections()
-            rec.source_model_id.get_records(source_connection)
-            rec.target_model_id.get_records(target_connection)
+            rec.source_model_id.get_record_count(source_connection)
+            rec.target_model_id.get_record_count(target_connection)
 
     def run_repeated_action(self, repeated_action=True):
         return self.run_action(repeated_action=True)
@@ -713,7 +713,7 @@ class Action(models.Model):
                 _logger.info('excepcion1 %s', str(ex))
                 import_result = str(ex)
             rec.log = import_result 
-            rec.target_model_id.get_records(target_connection)
+            rec.target_model_id.get_record_count(target_connection)
 
     def order_actions(self, exceptions=None):
         _logger.info('Lines to order %i', len(self.ids))
