@@ -93,7 +93,7 @@ class ExternalModel(models.Model):
         """ Function that reads external id and name field from an external
             model and save them in migrator database
         """
-        
+
         import wdb;wdb.set_trace()
         
         for rec in self:

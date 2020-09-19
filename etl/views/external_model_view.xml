@@ -101,9 +101,6 @@
     <record id="action_etl_external_model_external_models" model="ir.actions.act_window">
         <field name="name">External Models</field>
         <field name="res_model">etl.external_model</field>
-        <!--
-        <field name="view_type">form</field>
-        -->
         <field name="view_mode">tree,form</field>
         <field name="view_id" ref="view_etl_external_model_tree"/>
         <field name="search_view_id" ref="view_etl_external_model_filter"/>

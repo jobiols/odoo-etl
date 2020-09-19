@@ -149,7 +149,7 @@ class Action(models.Model):
     )
     target_id_prefix = fields.Char(
         string='target_id_prefix',
-        compute='_compute_action_prefix'
+        compute='_compute_target_id_prefix'
     )
     field_mapping_ids = fields.One2many(
         'etl.field_mapping',
@@ -159,7 +159,7 @@ class Action(models.Model):
     )
 
     @api.depends('source_model_id.model', 'target_id_type')
-    def _compute_action_prefix(self):
+    def _compute_target_id_prefix(self):
         for rec in self:
             value = False
             if rec.target_id_type == 'builded_id':
@@ -170,14 +170,13 @@ class Action(models.Model):
     @api.depends('field_mapping_ids.state')
     def _compute_repeating_action(self):
         for rec in self:
-            repeating_action = False
+            rec.repeating_action = False
             repeating_field_mapps = rec.field_mapping_ids.search([
                 ('state', '=', 'on_repeating'),
                 ('action_id', '=', rec.id),
             ])
             if repeating_field_mapps:
-                repeating_action = True
-            rec.repeating_action = repeating_action
+                rec.repeating_action = True
 
     def action_block(self):
         return self.write({'blocked': True})
