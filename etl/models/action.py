@@ -1,6 +1,6 @@
 #
 ##############################################################################
-# For copyright and license notices, see __openerp__.py file in module root
+# For copyright and license notices, see __manifest__.py file in module root
 # directory
 ##############################################################################
 import sys
@@ -420,6 +420,8 @@ class Action(models.Model):
         value_mapping_field_detail_obj = self.env[
             'etl.value_mapping_field_detail']
         value_mapping_field_obj = self.env['etl.value_mapping_field']
+        
+        state = 'on_repeating' if repeated_action else 'enabled'
 
         for rec in self:
             source_connection, target_connection = \
@@ -439,30 +441,31 @@ class Action(models.Model):
             if rec.to_rec_id > 0:
                 domain.append(('id', '<=', rec.to_rec_id))
 
+            # Obtener los modelos externos de source y target
             source_model_obj = source_connection.model(rec.source_model_id.model)
             target_model_obj = target_connection.model(rec.target_model_id.model)
 
+            
+            import wdb;wdb.set_trace()
+            
+            # ids del source que hay que copiar a target
             source_model_ids = source_model_obj.search(domain)
             _logger.info('Records to import %i', len(source_model_ids))
-
             _logger.info('Building source data...')
+
             # Empezamos con  los campos que definimos como id
             source_fields = ['.id', rec.source_id_exp]
             target_fields = ['id']
 
-            if repeated_action:
-                state = 'on_repeating'
-            else:
-                state = 'enabled'
-
             # source fields = enabled (or repeating) and type field
             source_fields.extend([
                 x.source_field for x in rec.field_mapping_ids
-                if x.state == state and 
+                if x.state == state and
                 x.type == 'field' and
                 x.source_field_id.ttype != 'many2many' and
                 x.source_field_id.ttype != 'many2one' and
                 x.source_field != 'id'])
+
             # target fields = enabled and field then expression then migrated_id
             target_fields.extend([
                 x.target_field for x in rec.field_mapping_ids
@@ -704,6 +707,9 @@ class Action(models.Model):
                     target_model_data.append(['%s_%s' % (rec.target_id_prefix, str(record[0]))] + record[2:])
             try:
                 _logger.info('Loadding Data...')
+                
+                import wdb;wdb.set_trace()
+                
                 import_result = target_model_obj.load(target_fields, target_model_data)
             except Exception as ex:
                 _logger.info('excepcion1 %s', str(ex))

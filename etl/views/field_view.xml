@@ -83,7 +83,6 @@
             </field>
         </record>
 
-
         <record id="action_etl_field_external_fields" model="ir.actions.act_window">
             <field name="name">External Fields</field>
             <field name="res_model">etl.field</field>
