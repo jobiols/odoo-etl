@@ -3,7 +3,7 @@
 # For copyright and license notices, see __manifest_.py file in module root
 # directory
 ##############################################################################
-from odoo import models, fields, api
+from odoo import models, fields
 
 
 class ValueMappingField(models.Model):
