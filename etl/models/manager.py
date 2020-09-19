@@ -256,9 +256,9 @@ class Manager(models.Model):
                 db=self.source_database,
                 user=self.source_login,
                 password=self.source_password)
-        except Exception as e:
+        except Exception as ex:
             raise UserError(
-                _("Unable to Connect to Source Database. 'Error: %s'") % e)
+                _("Unable to Connect to Source Database. 'Error: %s'") % ex)
         try:
             _logger.info('Getting target connection')
             target_connection = Client(
@@ -266,9 +266,9 @@ class Manager(models.Model):
                 db=self.target_database,
                 user=self.target_login,
                 password=self.target_password)
-        except Exception as e:
+        except Exception as ex:
             raise UserError(
-                _("Unable to Connect to Target Database. 'Error: %s'") % e)
+                _("Unable to Connect to Target Database. 'Error: %s'") % ex)
         return [source_connection, target_connection]
 
     def read_active_source_models(self):
@@ -289,7 +289,7 @@ class Manager(models.Model):
 
     def install_modules(self):
         for rec in self:
-            (source_connection, target_connection) = self.open_connections()
+            source_connection, target_connection = self.open_connections()
             target_module_obj = target_connection.model("ir.module.module")
             try:
                 modules = literal_eval(rec.modules_to_install)
