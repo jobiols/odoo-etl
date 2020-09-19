@@ -93,6 +93,9 @@ class ExternalModel(models.Model):
         """ Function that reads external id and name field from an external
             model and save them in migrator database
         """
+        
+        import wdb;wdb.set_trace()
+        
         for rec in self:
             source_connection, target_connection = \
                 rec.manager_id.open_connections()
@@ -133,6 +136,9 @@ class ExternalModel(models.Model):
                 'name',
                 'external_model_id/.id']
             # load records
+            
+            import wdb;wdb.set_trace()
+            
             self.env['etl.external_model_record'].load(
                 external_model_record_fields, new_external_model_record_data)
 
@@ -166,13 +172,14 @@ class ExternalModel(models.Model):
                     raise UserError(_('Error getting connection'))
             try:
                 external_model_obj = connection.model(model.model)
-            except:
+            except Exception as ex:
                 _logger.info('Model database, model: %s not found !!!',
                              model.model)
                 continue
             try:
                 external_model_fields = external_model_obj.fields_get()
-            except:
+            except Exception as ex:
+                _logger.info('fields_get error: %s', str(ex))
                 continue
             else:
                 for field in external_model_fields:
@@ -204,8 +211,7 @@ class ExternalModel(models.Model):
                 model_obj = connection.model(rec.model)
                 model_ids = model_obj.search([])
                 vals = {'records': len(model_ids)}
-                _logger.info('%i records on model %s', len(model_ids),
-                             rec.name)
+                _logger.info('%i recs on model %s', len(model_ids), rec.name)
                 rec.write(vals)
             except Exception as ex:
                 _logger.error('Error getting records %s', str(ex))

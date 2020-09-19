@@ -154,8 +154,9 @@ class FieldMapping(models.Model):
                 try:
                     source_resource_obj = source_connection.model(
                         source_model_data[0][2])
-                except:
+                except Exception as ex:
                     target_id = False
+                    _logger.info('Exception 2: %s', str(ex))
                 else:
                     source_reference = source_resource_obj.export_data(
                         [int(source_id)], ['id'])['datas']
@@ -182,8 +183,10 @@ class FieldMapping(models.Model):
                                 # target_id = target_ir_model_data_obj.g
                                 # et_object_reference(
                                 # module, external_ref)[1]
-                        except:
+                        except Exception as ex:
                             target_id = False
+                            _logger.info('Exception 3: %s', str(ex))
+
             result.append(target_id)
         return result
 
@@ -212,7 +215,8 @@ class FieldMapping(models.Model):
                     model, res_id = source_reference.split(',', 1)
                     try:
                         source_resource_obj = source_connection.model(model)
-                    except:
+                    except Exception as ex:
+                        _logger.info('Exception 4: %s', str(ex))
                         target_id = False
                     else:
                         source_ext_id = source_resource_obj.export_data(
@@ -228,14 +232,17 @@ class FieldMapping(models.Model):
                                 external_ref = source_ext_id_splited[1]
                             try:
                                 target_id = target_ir_model_data_obj.get_object_reference(module, external_ref)[1]  # noqa
-                            except:
+                            except Exception as ex:
                                 # Agregamos este nuevo try porque algunas
                                 # veces module no es false si no que es como
                                 # una cadena vacia
+                                _logger.info('Exception 5: %s', str(ex))
                                 try:
                                     target_id = target_ir_model_data_obj.get_object_reference('', external_ref)[1]  # noqa
-                                except:
+                                except Exception as ex:
                                     target_id = False
+                                    _logger.info('Exception 6: %s', str(ex))
+
             target_reference = False
             if target_id:
                 target_reference = model + ',' + str(target_id)
