@@ -2,7 +2,8 @@
 # For copyright and license notices, see __manifest__.py file in module root
 # directory
 ##############################################################################
-from odoo import models, fields, _
+from odoo.osv import expression
+from odoo import models, fields, api, _
 from odoo.exceptions import UserError
 from ast import literal_eval
 import logging
@@ -71,23 +72,19 @@ class ExternalModel(models.Model):
         string='external_model_record_ids'
     )
 
-    # def _name_search(self, name, args, operator, limit=100):
-    #     args = args if args else []
-    #     domain = args + ['|', ('model', operator, name), ('name', operator, name)]
+    @api.model
+    def _name_search(self, name='', args=None, operator='ilike', limit=100, name_get_uid=None):
+        _logger.info('_name_search %s: %s', name, operator)
+        _logger.info('_name_search %s: %s', name, operator)
+        _logger.info('_name_search %s: %s', name, operator)
+        _logger.info('_name_search %s: %s', name, operator)
+        _logger.info('_name_search %s: %s', name, operator)
+        _logger.info('_name_search %s: %s', name, operator)
 
-    #     ret = self.name_get()
-
-    #     return self.name_get(super().search(domain, limit=limit))
-
-
-
-    # def _name_search(self, cr, uid, name='', args=None, operator='ilike',
-    #                  context=None, limit=100, name_get_uid=None):
-    #     if args is None:
-    #         args = []
-    #     domain = args + ['|', ('model', operator, name), ('name', operator, name)]
-    #     return self.name_get(cr, name_get_uid or uid, super(external_model, self).search(
-    #                              cr, uid, domain, limit=limit, context=context), context=context)
+        args = args or []
+        domain = args + ['|', ('model', operator, name), ('name', operator, name)]
+        record_ids = self._search(expression.AND([args, domain]), limit=limit, access_rights_uid=name_get_uid)
+        return models.lazy_name_get(self.browse(record_ids).with_user(name_get_uid))
 
     def read_records(self):
         """ Function that reads external id and name field from an external
@@ -95,7 +92,7 @@ class ExternalModel(models.Model):
         """
 
         import wdb;wdb.set_trace()
-        
+
         for rec in self:
             source_connection, target_connection = \
                 rec.manager_id.open_connections()
@@ -148,6 +145,9 @@ class ExternalModel(models.Model):
     def read_fields(self, connection=False):
         """ Get fields for external models
         """
+        
+        import wdb;wdb.set_trace()
+        
         field_fields = [
             'id',
             'model_id/.id',
@@ -162,7 +162,7 @@ class ExternalModel(models.Model):
             _logger.info('Reading fields %s database, model: %s',
                          model.type, model.model)
             if not connection:
-                (source_connection, target_connection) = \
+                source_connection, target_connection = \
                     model.manager_id.open_connections()
                 if model.type == 'source':
                     connection = source_connection
@@ -206,12 +206,9 @@ class ExternalModel(models.Model):
         self.env['etl.field'].load(field_fields, model_field_data)
 
     def get_records(self, connection):
+        """ Get the number of records of this external model
+        """
         for rec in self:
-            try:
-                model_obj = connection.model(rec.model)
-                model_ids = model_obj.search([])
-                vals = {'records': len(model_ids)}
-                _logger.info('%i recs on model %s', len(model_ids), rec.name)
-                rec.write(vals)
-            except Exception as ex:
-                _logger.error('Error getting records %s', str(ex))
+            model_obj = connection.model(rec.model)
+            rec.records = model_obj.search_count([])
+            _logger.info('%i records on model %s', rec.records, rec.name)
