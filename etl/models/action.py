@@ -3,7 +3,6 @@
 # For copyright and license notices, see __manifest__.py file in module root
 # directory
 ##############################################################################
-import sys
 from odoo import models, fields, api, SUPERUSER_ID
 import pytz
 from ast import literal_eval
