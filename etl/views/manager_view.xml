@@ -27,9 +27,9 @@
                     <button name="read_and_get"
                             string="Read and get Records"
                             class="oe_highlight" type="object"/>
-                    <button name="read_models" string="Read Models"
+                    <button name="button_read_models" string="Read Models"
                             type="object"/>
-                    <button name="get_records" string="Get Records Number"
+                    <button name="get_record_count" string="Get Records Number"
                             type="object"/>
                     <button name="match_models_and_order_actions"
                             string="Match and Order" class="oe_highlight"
@@ -93,7 +93,7 @@
                     </group>
                     <group>
                         <field name="workflow_models"/>
-                        <field name="model_wanted_words"/>
+                        <field name="model_exception_words"/>
                     </group>
                     <notebook>
                         <page string="Actions">

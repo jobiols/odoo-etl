@@ -97,7 +97,8 @@
                         <page string="Field Mapping">
                             <group>
                                 <field name="field_mapping_ids" nolabel="1"
-                                        context="{'target_model':target_model_id, 'source_model':source_model_id}"/>
+                                       context="{'target_model':target_model_id, 
+                                                 'source_model':source_model_id}"/>
                             </group>
                         </page>
                         <page string="Log">

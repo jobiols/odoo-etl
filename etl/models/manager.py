@@ -139,16 +139,15 @@ class Manager(models.Model):
                 "'create_date','calendar_last_notif_ack',]",
     )
     model_exception_words = fields.Char(
-        # TODO parecen ser los modelos que no queremos cargar jeo.
-        # TODO move this default to another model
-        default="['report','ir.logging','ir.qweb']",
+        default="['mail.%','ir.mail%','email_template%']",
+        help='models that will never be migrated.'
     )
-    model_wanted_words = fields.Char(
-        # TODO parecen ser los modelos que queremos cargar jeo.
-        # TODO move this default to another model
-        # TODO Tener en cuenta que pueden llamarse distinto en distintas vers
-        default="['res.partner','res.partner.category','res.partner.industry','res.company','res.partner.title','res.users']"
-    )
+    # model_wanted_words = fields.Char(
+    #     # TODO parecen ser los modelos que queremos cargar jeo.
+    #     # TODO move this default to another model
+    #     # TODO Tener en cuenta que pueden llamarse distinto en distintas vers
+    #     default="['res.partner','res.partner.category','res.partner.industry','res.company','res.partner.title','res.users']"
+    # )
 
     model_analyze_default = fields.Text(
         string='Models Analyze by Default',
@@ -230,22 +229,6 @@ class Manager(models.Model):
         help='the target database default language. It’s recommended to keep '
              'the language as default (en_US).'
     )
-    # odoo_target_version = fields.Integer(
-    #     default=lambda self: self.get_current_version(),
-    #     required=True,
-    #     help='the target odoo major version, default is the odoo version '
-    #     'where this module is installed'
-    # )
-    # odoo_source_version = fields.Integer(
-    #     required=True,
-    #     default=8,
-    #     help='the source odoo major version, default 8'
-    # )
-
-    # def get_current_version(self):
-    #     base = self.env['ir.module.module']
-    #     ver = base.search([('name', '=', 'base')]).latest_version
-    #     return int(ver[:ver.find('.')])
 
     def open_connections(self):
         self.ensure_one()
@@ -279,9 +262,10 @@ class Manager(models.Model):
             actions.read_source_model(source_connection, target_connection)
 
     def delete_workflows(self):
+        # TODO los workflows estan depreciados no se desde que version
         for rec in self:
             (source_connection, target_connection) = self.open_connections()
-            target_wf_instance_obj = target_connection.model('workflow.instance')  # noqa
+            target_wf_instance_obj = target_connection.model('workflow.instance')
             res_types = literal_eval(rec.workflow_models)
             target_wf_instance_ids = target_wf_instance_obj.search(
                 [('res_type', 'in', res_types)])
@@ -295,9 +279,9 @@ class Manager(models.Model):
                 modules = literal_eval(rec.modules_to_install)
             except ValueError:
                 raise UserError('Enter the technical names of the modules '
-                                 'to install in quotes and comma separated '
-                                 'with the syntax of a python list.\n\n'
-                                 'i.e. ["crm","stock","hr"]')
+                                'to install in quotes and comma separated '
+                                'with the syntax of a python list.\n\n'
+                                'i.e. ["crm","stock","hr"]')
             domain = [('name', 'in', modules)]
             target_module_ids = target_module_obj.search(domain)
             target_module_obj.button_immediate_install(target_module_ids)
@@ -314,11 +298,10 @@ class Manager(models.Model):
         """ Run all repeating actions
         """
         for rec in self:
-            actions = self.env['etl.action'].search([
-                ('manager_id', '=', rec.id),
-                ('repeating_action', '=', True),
-                ('state', '=', 'enabled')],
-                                                    order='sequence')
+            actions = self.env['etl.action'].search(
+                [('manager_id', '=', rec.id),
+                 ('repeating_action', '=', True),
+                 ('state', '=', 'enabled')], order='sequence')
             actions.run_repeated_action()
 
     def match_models_and_order_actions(self):
@@ -437,7 +420,7 @@ class Manager(models.Model):
         """ Read source and target models and get records number
         """
         self.ensure_one()
-        self.read_models()
+        self.button_read_models()
         self.get_record_count()
 
     def get_record_count(self):
@@ -455,24 +438,29 @@ class Manager(models.Model):
             source_models.get_record_count(source_connection)
             target_models.get_record_count(target_connection)
 
-    def read_models(self):
+    def button_read_models(self):
         """ Get models and fields of source and target database
         """
         for rec in self:
-            (source_connection, target_connection) = self.open_connections()
-            rec.read_model(source_connection, 'source')
-            rec.read_model(target_connection, 'target')
+            source_connection, target_connection = self.open_connections()
 
-            source_external_models = rec.env['etl.external_model'].search([
-                ('manager_id', '=', rec.id), ('type', '=', 'source')])
+            # leer todos los modelos. Los modelos de source y destino no
+            # coincidiran en general porque pueden haber cambiado de nombre o
+            # porque no esta instalado algun modulo.
+            rec.read_models(source_connection, 'source')
+            rec.read_models(target_connection, 'target')
 
-            target_external_models = rec.env['etl.external_model'].search([
-                ('manager_id', '=', rec.id), ('type', '=', 'target')])
+            domain = [('manager_id', '=', rec.id), ('type', '=', 'source')]
+            source_ext_models = rec.env['etl.external_model'].search(domain)
 
-            source_external_models.read_fields(source_connection)
-            target_external_models.read_fields(target_connection)
+            domain = [('manager_id', '=', rec.id), ('type', '=', 'target')]
+            target_ext_models = rec.env['etl.external_model'].search(domain)
 
-    def read_model(self, connection, relation_type):
+            # leer todos los campos de cada modelo
+            source_ext_models.read_fields(source_connection)
+            target_ext_models.read_fields(target_connection)
+
+    def read_models(self, connection, relation_type):
         """ Get models for one manger and one type (source or target)
         """
         res = {}
@@ -480,32 +468,16 @@ class Manager(models.Model):
             external_model_obj = connection.model("ir.model")
 
             # obtener la main version del odoo que estamos accediendo
-            # base_obj = connection.model('ir.module.module')
-            # ids = base_obj.search([('name', '=', 'base')])
-            # data = base_obj.export_data(ids, ['latest_version'])
-            # data = data['datas'][0][0]
-            # ver = int(data[:data.find('.')])
-            ver = int(float(connection.major_version))
-
-            # TODO en 12 es models.TransientModel ver que hacemos con esto
-            # osv_memory = False for not catching transients models
-            if ver == 8:
-                domain = [('osv_memory', '=', False)]
-            else:
-                domain = []
+            # por ahora no sirve para nada...
+            #ver = int(float(connection.major_version))
             
             # catch de models exceptions words and append to search domain
-            # words_exception = manager.model_exception_words
-            # if words_exception:
-            #     words_exception = literal_eval(words_exception)
-            #     for exception in words_exception:
-            #         domain.append(('model', 'not like', exception))
-
-            # catch the models to load and append to search domain
-            words_wanted = manager.model_wanted_words
-            if words_wanted:
-                words_wanted = literal_eval(words_wanted)
-                domain.append(('model', 'in', words_wanted))
+            domain = []
+            words_exception = manager.model_exception_words
+            if words_exception:
+                words_exception = literal_eval(words_exception)
+                for exception in words_exception:
+                    domain.append(('model', 'not like', exception))
 
             # get external model ids
             external_model_ids = external_model_obj.search(domain)
@@ -519,8 +491,7 @@ class Manager(models.Model):
             external_model_fields[0] = 'id'
 
             # We add the type, manager and sequence to external fields and data
-            external_model_fields.extend(
-                ['type', 'manager_id/.id', 'sequence'])
+            external_model_fields.extend(['type', 'manager_id/.id', 'sequence'])
             external_model_data = []
             for record in export_data['datas']:
                 # we extend each record with type, manager and a sequence
@@ -534,7 +505,6 @@ class Manager(models.Model):
                 external_model_data.append(record)
 
             # Load external_model_data to external models model
-            rec_ids = self.env['etl.external_model'].load(
-                external_model_fields, external_model_data)
+            rec_ids = self.env['etl.external_model'].load(external_model_fields, external_model_data)
             res[manager.id] = rec_ids
         return res

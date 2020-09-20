@@ -419,6 +419,8 @@ class Action(models.Model):
             'etl.value_mapping_field_detail']
         value_mapping_field_obj = self.env['etl.value_mapping_field']
         
+        #import wdb;wdb.set_trace()
+        
         state = 'on_repeating' if repeated_action else 'enabled'
 
         for rec in self:
@@ -442,9 +444,6 @@ class Action(models.Model):
             # Obtener los modelos externos de source y target
             source_model_obj = source_connection.model(rec.source_model_id.model)
             target_model_obj = target_connection.model(rec.target_model_id.model)
-
-            
-            import wdb;wdb.set_trace()
             
             # ids del source que hay que copiar a target
             source_model_ids = source_model_obj.search(domain)
@@ -541,6 +540,9 @@ class Action(models.Model):
                             new_field_value = '%s_%s' % (_v1, _v2)
                         source_data_record.append(new_field_value)
 
+            
+            import wdb;wdb.set_trace()
+            
             _logger.info('Building m2m field mapping...')
             # Read and append source values of type 'field' and type m2m
             source_fields_m2m = [
@@ -632,16 +634,17 @@ class Action(models.Model):
 
             _logger.info('Building date adapt...')
             # Read and append source values of type 'date_adapt'
-            source_fields_date_adapt = [x.source_field for x in
-                                        rec.field_mapping_ids if
-                                        x.state == state and x.type == 'date_adapt'
-                                        ]
-            source_data_date_adapt = source_model_obj.export_data(
-                source_model_ids, source_fields_date_adapt)['datas']
+            source_fields_date_adapt = [
+                x.source_field for x in
+                rec.field_mapping_ids if
+                x.state == state and x.type == 'date_adapt']
+
+            source_data_date_adapt = source_model_obj.export_data(source_model_ids, source_fields_date_adapt)['datas']
             source_mapping_date_adapt = [
                 x for x in rec.field_mapping_ids
                 if x.state == state
                 and x.type == 'date_adapt']
+
             for readed_record, source_data_record in zip(source_data_date_adapt, source_model_data):
                 target_record = []
                 for field_value, source_mapping in zip(readed_record, source_mapping_date_adapt):
@@ -661,6 +664,7 @@ class Action(models.Model):
                 x.id for x in rec.field_mapping_ids
                 if x.state == state
                 and x.type == 'expression']
+
             if field_mapping_expression_ids:
                 for _rec in source_model_data:
                     rec_id = _rec[0]
@@ -705,9 +709,7 @@ class Action(models.Model):
                     target_model_data.append(['%s_%s' % (rec.target_id_prefix, str(record[0]))] + record[2:])
             try:
                 _logger.info('Loadding Data...')
-                
-                import wdb;wdb.set_trace()
-                
+
                 import_result = target_model_obj.load(target_fields, target_model_data)
             except Exception as ex:
                 _logger.info('excepcion1 %s', str(ex))

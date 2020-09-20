@@ -91,8 +91,6 @@ class ExternalModel(models.Model):
             model and save them in migrator database
         """
 
-        import wdb;wdb.set_trace()
-
         for rec in self:
             source_connection, target_connection = \
                 rec.manager_id.open_connections()
@@ -133,9 +131,6 @@ class ExternalModel(models.Model):
                 'name',
                 'external_model_id/.id']
             # load records
-            
-            import wdb;wdb.set_trace()
-            
             self.env['etl.external_model_record'].load(
                 external_model_record_fields, new_external_model_record_data)
 
@@ -145,9 +140,6 @@ class ExternalModel(models.Model):
     def read_fields(self, connection=False):
         """ Get fields for external models
         """
-        
-        import wdb;wdb.set_trace()
-        
         field_fields = [
             'id',
             'model_id/.id',
@@ -202,13 +194,19 @@ class ExternalModel(models.Model):
                         function
                     ]
                     model_field_data.append(field_data)
+
         _logger.info('Writing fields data...')
         self.env['etl.field'].load(field_fields, model_field_data)
 
     def get_record_count(self, connection):
         """ Get the number of records of this external model
+            Si no encuentro el record es porque no esta el modelo, no es un
+            error grave, puedo agregar el modelo y volver a correr.
         """
         for rec in self:
-            model_obj = connection.model(rec.model)
-            rec.records = model_obj.search_count([])
-            _logger.info('%i records on model %s', rec.records, rec.name)
+            try:
+                _logger.info('%i records on model %s', rec.records, rec.name)
+                model_obj = connection.model(rec.model)
+                rec.records = model_obj.search_count([])
+            except Exception as ex:
+                _logger.warning('Model not found %s', rec.name)
