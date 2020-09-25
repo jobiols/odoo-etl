@@ -19,23 +19,23 @@ class FieldMapping(models.Model):
     blocked = fields.Boolean(
         default=False
     )
-    state = fields.Selection(
-        [(u'on_repeating', 'on_repeating'),
-         (u'to_analyze', 'to_analyze'),
-         (u'enabled', 'enabled'),
-         (u'disabled', 'disabled'),
-         (u'other_class', 'other_class')],
-        required=True
-    )
     type = fields.Selection(
-        [(u'field', 'field'),
-         (u'expression', 'expression'),
-         (u'migrated_id', u'Migrated ID'),
-         (u'value_mapping', u'Value Mapping'),
-         (u'date_adapt', u'Date Adapt'),
-         (u'reference', 'reference')],
+        [('field', 'Field'),
+         ('expression', 'Expression'),
+         ('migrated_id', 'Migrated ID'),
+         ('value_mapping', 'Value Mapping'),
+         ('date_adapt', 'Date Adapt'),
+         ('reference', 'Reference')],
         string='Source Type',
         default='field'
+    )
+    state = fields.Selection(
+        [('on_repeating', 'On Repeating'),
+         ('to_analyze', 'To Analyze'),
+         ('enabled', 'Enabled'),
+         ('disabled', 'Disabled'),
+         ('other_class', 'Other Class')],
+        required=True
     )
     source_field_id = fields.Many2one(
         'etl.field',

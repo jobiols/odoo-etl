@@ -52,6 +52,7 @@
                     <field name="state" widget="statusbar"
                             clickable="True"/>
                 </header>
+
                 <sheet string="Action">
                     <div class="oe_button_box" name="button_box">
                         <button class="oe_stat_button" type="action" icon="fa-stack-exchange"
@@ -59,15 +60,17 @@
                                 name="%(etl.action_etl_field_mapping_fields_mapping)d"
                                 context="{'search_default_action_id': active_id}"/>
                     </div>
+                    <h1>
+                        <field name="name" placeholder="Action Name"/>
+                    </h1>
                     <group>
-                        <field name="name"/>
                         <field name="source_domain"/>
                     </group>
                     <group>
                         <group>
-                            <field name="blocked"/>
+                            <field name="blocked" widget="boolean_toggle"/>
                             <field name="sequence"/>
-                            <field name="repeating_action"/>
+                            <field name="repeating_action" widget="boolean_toggle"/>
                         </group>
                         <group>
                             <field name="from_rec_id"/>
@@ -82,13 +85,13 @@
                             <field name="source_model_id"
                                     domain="[('type','=','source'),('manager_id','=',manager_id)]"/>
                             <field name="source_id_exp"/>
-                            <field name="source_records"/>
+                            <field name="s_records"/>
                         </group>
                         <group>
                             <field name="target_model_id"
                                     domain="[('type','=','target'),('manager_id','=',manager_id)]"/>
                             <field name="target_id_type"/>
-                            <field name="target_records"/>
+                            <field name="t_records"/>
                             <field name="target_id_prefix"
                                     attrs="{'required':[('target_id_type','=','builded_id')],'invisible':[('target_id_type','!=','builded_id')],}"/>
                         </group>
@@ -127,9 +130,9 @@
                 <field name="blocked" widget="boolean_toggle"/>
                 <field name="name"/>
                 <field name="source_model_id"/>
+                <field name="s_records"/>
                 <field name="target_model_id"/>
-                <field name="source_records"/>
-                <field name="target_records"/>
+                <field name="t_records"/>
                 <field name="manager_id"/>
                 <field name="state"/>
             </tree>

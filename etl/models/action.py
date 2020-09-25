@@ -104,9 +104,8 @@ class Action(models.Model):
         help='is the field name of the ID field in the source model. Usually '
              'set at its default (id).'
     )
-    source_records = fields.Integer(
+    s_records = fields.Integer(
         related='source_model_id.records',
-        string="Source Records.",
         readonly=True,
         help='read only field counting the number of records at the source '
              'database in relation to the selected source model. The number '
@@ -121,9 +120,8 @@ class Action(models.Model):
         help='the target model name which will be mapped to receive the '
              'records from the source model when running the action. '
     )
-    target_records = fields.Integer(
+    t_records = fields.Integer(
         related='target_model_id.records',
-        string="Target Records.",
         readonly=True,
         help='read only field counting the number of records at the target '
              'database in relation to the selected target model. The number '

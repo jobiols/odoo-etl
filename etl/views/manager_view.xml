@@ -63,12 +63,14 @@
                                 name="%(etl.action_etl_value_mapping_field_value_mapping_fields)d"
                                 context="{'search_default_manager_id': active_id}"/>
                     </div>
-                    <group>
-                        <field name="name"/>
-                    </group>
+                    
+                    <h1>
+                        <field name="name"  placeholder="Project Migration Name"/>
+                    </h1>
                     <group>
                         <field name="target_id_type"/>
                     </group>
+                    
                     <group col="6">
                         <field name="source_hostname"/>
                         <field name="source_port"/>
@@ -76,9 +78,6 @@
                         <field name="source_login"/>
                         <field name="source_password" password="True"/>
                         <field name="source_lang"/>
-                        <!--
-                        <field name='odoo_source_version'/>
-                        -->
                         <newline/>
                         <field name="target_hostname"/>
                         <field name="target_port"/>
@@ -86,25 +85,23 @@
                         <field name="target_login"/>
                         <field name="target_password" password="True"/>
                         <field name="target_lang"/>
-                        <!--
-                        <field name='odoo_target_version'/>                            
-                        -->
                         <newline/>
                     </group>
                     <group>
                         <field name="workflow_models"/>
-                        <field name="model_exception_words"/>
                     </group>
                     <notebook>
-                        <page string="Actions">
+                        <page string="Actions" help="Actions todo">
                             <group>
                                 <field name="repeating_models" />
                             </group>
+<!--
                             <group>
                                 <field name="action_ids"
                                         context="{'from_manager':True}"
                                         nolabel="1"/>
                             </group>
+-->                            
                         </page>
                         <page string="Exceptions">
                             <group col="1">
@@ -116,10 +113,10 @@
                                 <field name="field_disable_words"/>
                             </group>
                         </page>
-                        <page string="Log">
+                        <page string="Log" help="The answer">
                             <field name="log"/>
                         </page>
-                        <page string="notes">
+                        <page string="notes" help="Notes about and modules to install">
                             <button name="install_modules"
                                     string="Install Modules"
                                     class="oe_highlight" type="object"/>
