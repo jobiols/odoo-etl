@@ -33,7 +33,7 @@
                 <header>
                     <button name="run_expressions" string="Run Expressions" type="object"/>
                     <button name="action_block" string="Block" attrs="{'invisible':[('blocked','=',True)]}" type="object"/>
-                    <field name="state" widget="statusbar" clickable="True"/>
+                    <field name="state" widget="statusbar" options="{'clickable': '1'}"/>
                 </header>
                 <sheet string="field_mapping">
                     <div class="oe_right oe_button_box" name="buttons">

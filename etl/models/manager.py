@@ -139,7 +139,7 @@ class Manager(models.Model):
                 "'create_date','calendar_last_notif_ack',]",
     )
     model_exception_words = fields.Char(
-        default="['mail.%','ir.mail%','email_template%']",
+        default="['mail.%','ir.mail%','email_template%','account.%','ir.%','res.company']",
         help='models that will never be migrated.'
     )
     # model_wanted_words = fields.Char(

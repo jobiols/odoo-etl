@@ -14,15 +14,15 @@ _logger = logging.getLogger(__name__)
 class ExternalModel(models.Model):
     _name = 'etl.external_model'
     _description = 'external_model'
-
+    _rec_name = 'model'
     _order = "sequence"
 
     sequence = fields.Integer(
         readonly=True
     )
     type = fields.Selection(
-        [(u'source', u'Source'),
-         (u'target', u'Target')],
+        [('source', 'Source'),
+         ('target', 'Target')],
         readonly=True,
         required=True
     )

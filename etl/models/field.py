@@ -8,7 +8,7 @@ from odoo import models, fields
 
 class Field(models.Model):
     _name = 'etl.field'
-    _description = 'field'
+    _description = 'Field'
 
     name = fields.Char(
         required=True

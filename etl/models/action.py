@@ -20,10 +20,10 @@ class Action(models.Model):
     _order = "sequence"
 
     state = fields.Selection(
-        [(u'to_analyze', 'To Analyze'),
-         (u'enabled', 'Enabled'),
-         (u'disabled', 'Disabled'),
-         (u'no_records', 'No Records')],
+        [('to_analyze', 'To Analyze'),
+         ('enabled', 'Enabled'),
+         ('disabled', 'Disabled'),
+         ('no_records', 'No Records')],
         required=True,
         help='To Analyze: The action requires further analysis and testing. '
              'When an action is set to this state, it will not be included in '
@@ -94,7 +94,7 @@ class Action(models.Model):
         string='Source Model',
         required=True,
         ondelete='cascade',
-        help='the source model to migrate. The Match and Order action will '
+        help='The source model to migrate. The Match and Order action will '
              'try to fill this field.'
     )
     source_id_exp = fields.Char(
@@ -117,7 +117,7 @@ class Action(models.Model):
         'etl.external_model',
         string='Target Model',
         ondelete='cascade',
-        help='the target model name which will be mapped to receive the '
+        help='The target model name which will be mapped to receive the '
              'records from the source model when running the action. '
     )
     t_records = fields.Integer(
@@ -128,10 +128,9 @@ class Action(models.Model):
              'of the non-active records will not be counted. '
     )
 
-    # TODO candidato a desaparecer del form
     target_id_type = fields.Selection(
-        [(u'source_id', 'source_id'),
-         (u'builded_id', 'builded_id')],
+        [('source_id', 'source_id'),
+         ('builded_id', 'builded_id')],
         string='Target ID Type',
         required=True,
         related='manager_id.target_id_type',
@@ -416,9 +415,7 @@ class Action(models.Model):
         value_mapping_field_detail_obj = self.env[
             'etl.value_mapping_field_detail']
         value_mapping_field_obj = self.env['etl.value_mapping_field']
-        
-        #import wdb;wdb.set_trace()
-        
+                
         state = 'on_repeating' if repeated_action else 'enabled'
 
         for rec in self:
@@ -426,7 +423,7 @@ class Action(models.Model):
                 rec.manager_id.open_connections()
 
             _logger.info('Actions to run: %i', len(rec.ids))
-            # TODO ver si esto es necesario porque hacia fallar el load
+            # TODO ver si esto es necesario porque hacia fallar el load. JEO
             # add language to connections context
             #source_connection.context = {'lang': rec.manager_id.source_lang}
             #target_connection.context = {'lang': rec.manager_id.target_lang}
@@ -539,7 +536,7 @@ class Action(models.Model):
                         source_data_record.append(new_field_value)
 
             
-            import wdb;wdb.set_trace()
+            #import wdb;wdb.set_trace()
             
             _logger.info('Building m2m field mapping...')
             # Read and append source values of type 'field' and type m2m
