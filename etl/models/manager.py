@@ -3,11 +3,11 @@
 # For copyright and license notices, see __manifest__.py file in module root
 # directory
 ##############################################################################
-from odoo import models, fields, _
-from odoo.exceptions import UserError
-from erppeek import Client
 from ast import literal_eval
 import logging
+from erppeek import Client
+from odoo import models, fields, _
+from odoo.exceptions import UserError
 
 _logger = logging.getLogger(__name__)
 
@@ -278,10 +278,10 @@ class Manager(models.Model):
             try:
                 modules = literal_eval(rec.modules_to_install)
             except ValueError:
-                raise UserError('Enter the technical names of the modules '
+                raise UserError(_('Enter the technical names of the modules '
                                 'to install in quotes and comma separated '
                                 'with the syntax of a python list.\n\n'
-                                'i.e. ["crm","stock","hr"]')
+                                'i.e. ["crm","stock","hr"]'))
             domain = [('name', 'in', modules)]
             target_module_ids = target_module_obj.search(domain)
             target_module_obj.button_immediate_install(target_module_ids)
@@ -470,7 +470,7 @@ class Manager(models.Model):
             # obtener la main version del odoo que estamos accediendo
             # por ahora no sirve para nada...
             #ver = int(float(connection.major_version))
-            
+
             # catch de models exceptions words and append to search domain
             domain = []
             words_exception = manager.model_exception_words

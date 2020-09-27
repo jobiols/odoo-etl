@@ -3,13 +3,13 @@
 # For copyright and license notices, see __manifest__.py file in module root
 # directory
 ##############################################################################
-from odoo import models, fields, api, SUPERUSER_ID
-import pytz
-from ast import literal_eval
 from datetime import datetime
+from ast import literal_eval
+import logging
+import pytz
+from odoo import models, fields, api, SUPERUSER_ID
 from odoo.tools import DEFAULT_SERVER_DATE_FORMAT, \
     DEFAULT_SERVER_DATETIME_FORMAT
-import logging
 
 _logger = logging.getLogger(__name__)
 
@@ -313,7 +313,7 @@ class Action(models.Model):
                 'target_field',
                 'action_id/.id',
                 'value_mapping_field_id/.id']
-            _logger.info("Loading mapping fields for action %s" % rec.name)
+            _logger.info("Loading mapping fields for action %s", rec.name)
             import_result = field_mapping_obj.load(mapping_fields, mapping_data)
             vals = {'log': import_result}
 
@@ -384,8 +384,8 @@ class Action(models.Model):
     def run_repeated_action(self, repeated_action=True):
         return self.run_action(repeated_action=True)
 
-    def read_source_model(self, source_connection=False, 
-                          target_connection=False, repeated_action=False, 
+    def read_source_model(self, source_connection=False,
+                          target_connection=False, repeated_action=False,
                           context=None):
         readed_model = []
         for action in self:
@@ -415,7 +415,7 @@ class Action(models.Model):
         value_mapping_field_detail_obj = self.env[
             'etl.value_mapping_field_detail']
         value_mapping_field_obj = self.env['etl.value_mapping_field']
-                
+
         state = 'on_repeating' if repeated_action else 'enabled'
 
         for rec in self:
@@ -439,7 +439,7 @@ class Action(models.Model):
             # Obtener los modelos externos de source y target
             source_model_obj = source_connection.model(rec.source_model_id.model)
             target_model_obj = target_connection.model(rec.target_model_id.model)
-            
+
             # ids del source que hay que copiar a target
             source_model_ids = source_model_obj.search(domain)
             _logger.info('Records to import %i', len(source_model_ids))
@@ -535,9 +535,9 @@ class Action(models.Model):
                             new_field_value = '%s_%s' % (_v1, _v2)
                         source_data_record.append(new_field_value)
 
-            
+
             #import wdb;wdb.set_trace()
-            
+
             _logger.info('Building m2m field mapping...')
             # Read and append source values of type 'field' and type m2m
             source_fields_m2m = [
@@ -576,7 +576,7 @@ class Action(models.Model):
                                         new_field_value = value
                                     elif field_action.target_id_type == 'builded_id' and value_id:
                                         if new_field_value:
-                                            new_field_value = new_field_value + ',' + '%s_%s' % ( 
+                                            new_field_value = new_field_value + ',' + '%s_%s' % (
                                                 field_action.target_id_prefix, str(value_id))
                                         else:
                                             new_field_value = '%s_%s' % (field_action.target_id_prefix, str(value_id))
@@ -610,14 +610,14 @@ class Action(models.Model):
                         new_field = value_mapping_field_detail_obj.search([
                             ('source_external_model_record_id.ext_id', '=', field_value),
                             ('value_mapping_field_id', '=', value_mapping_id)],
-                            limit=1)
+                                                                          limit=1)
                         # if new_fields:
                         new_field_value = new_field.target_external_model_record_id.ext_id
                     elif value_mapping.type == 'selection':
                         new_field = value_mapping_field_detail_obj.search([
                             ('source_value_id.ext_id', '=', field_value),
                             ('value_mapping_field_id', '=', value_mapping_id)],
-                            limit=1)
+                                                                          limit=1)
                         new_field_value = new_field.target_value_id.ext_id
                     # Convertimos a false todos aquellos mapeos al que no se les
                     # asigno pareja. Si el modelo permite valores false va a andar
@@ -709,7 +709,7 @@ class Action(models.Model):
             except Exception as ex:
                 _logger.info('excepcion1 %s', str(ex))
                 import_result = str(ex)
-            rec.log = import_result 
+            rec.log = import_result
             rec.target_model_id.get_record_count(target_connection)
 
     def order_actions(self, exceptions=None):

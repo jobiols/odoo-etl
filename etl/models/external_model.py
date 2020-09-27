@@ -2,11 +2,11 @@
 # For copyright and license notices, see __manifest__.py file in module root
 # directory
 ##############################################################################
+from ast import literal_eval
+import logging
 from odoo.osv import expression
 from odoo import models, fields, api, _
 from odoo.exceptions import UserError
-from ast import literal_eval
-import logging
 
 _logger = logging.getLogger(__name__)
 
@@ -208,5 +208,5 @@ class ExternalModel(models.Model):
                 _logger.info('%i records on model %s', rec.records, rec.name)
                 model_obj = connection.model(rec.model)
                 rec.records = model_obj.search_count([])
-            except Exception as ex:
+            except Exception:
                 _logger.warning('Model not found %s', rec.name)

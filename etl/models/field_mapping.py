@@ -3,11 +3,11 @@
 # For copyright and license notices, see __manifest__.py file in module root
 # directory
 ##############################################################################
+import time
+import logging
 from odoo import models, fields, api, _
 from odoo.exceptions import UserError
-import time
 from odoo.tools.safe_eval import safe_eval
-import logging
 
 _logger = logging.getLogger(__name__)
 
@@ -162,8 +162,7 @@ class FieldMapping(models.Model):
                         [int(source_id)], ['id'])['datas']
                     if source_reference[0]:
                         source_reference_splited = source_reference[0][
-                            0].split(
-                            '.', 1)
+                            0].split('.', 1)
                         if len(source_reference_splited) == 1:
                             module = False
                             external_ref = source_reference_splited[0]
