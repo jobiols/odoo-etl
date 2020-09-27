@@ -107,7 +107,7 @@ class Action(models.Model):
     s_records = fields.Integer(
         related='source_model_id.records',
         readonly=True,
-        help='read only field counting the number of records at the source '
+        help='Read only field counting the number of records at the source '
              'database in relation to the selected source model. The number '
              'of non-active records will not be counted, but can still be '
              'included in migration by setting the domain: \n'
@@ -123,9 +123,9 @@ class Action(models.Model):
     t_records = fields.Integer(
         related='target_model_id.records',
         readonly=True,
-        help='read only field counting the number of records at the target '
+        help='Read only field counting the number of records at the target '
              'database in relation to the selected target model. The number '
-             'of the non-active records will not be counted. '
+             'of the non-active records will not be counted.'
     )
 
     target_id_type = fields.Selection(
@@ -134,12 +134,13 @@ class Action(models.Model):
         string='Target ID Type',
         required=True,
         related='manager_id.target_id_type',
-        help='have the same function as the manager model‘s *Target ID Type*. '
+        help='Have the same function as the manager model‘s *Target ID Type*. '
              'The default value will follow the value set at the manager '
              'model‘s Target ID Type and can be changed in every action '
              'according to preference (not recommended).'
     )
     log = fields.Text(
+        help="Where to see the result of the process."
     )
     note = fields.Html(
         string='Notes'

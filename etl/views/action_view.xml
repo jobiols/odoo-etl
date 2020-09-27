@@ -27,7 +27,7 @@
         </field>
     </record>
 
-    <!-- FORMVIEW -->
+    <!-- VIEW ETL ACTION FORMVIEW -->
     <record id="view_etl_action_form" model="ir.ui.view">
         <field name="name">etl.action.form</field>
         <field name="model">etl.action</field>
@@ -97,11 +97,9 @@
                     </group>
                     <notebook>
                         <page string="Field Mapping">
-                            <group>
-                                <field name="field_mapping_ids" nolabel="1"
-                                       context="{'target_model':target_model_id, 
-                                                 'source_model':source_model_id}"/>
-                            </group>
+                            <field name="field_mapping_ids" nolabel="1"
+                                   context="{'target_model':target_model_id, 
+                                             'source_model':source_model_id}"/>
                         </page>
                         <page string="Log">
                             <field name="log"/>
