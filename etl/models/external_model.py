@@ -14,7 +14,7 @@ _logger = logging.getLogger(__name__)
 class ExternalModel(models.Model):
     _name = 'etl.external_model'
     _description = 'external_model'
-    _rec_name = 'model'
+    _rec_name = 'd_name'
     _order = "sequence"
 
     sequence = fields.Integer(
@@ -33,6 +33,10 @@ class ExternalModel(models.Model):
     model = fields.Char(
         readonly=True,
         required=True
+    )
+    d_name = fields.Char(
+        compute="_compute_d_name",
+        help="is the name shown as display_name on the views"
     )
     order = fields.Integer(
         readonly=True
@@ -72,19 +76,9 @@ class ExternalModel(models.Model):
         string='external_model_record_ids'
     )
 
-    @api.model
-    def _name_search(self, name='', args=None, operator='ilike', limit=100, name_get_uid=None):
-        _logger.info('_name_search %s: %s', name, operator)
-        _logger.info('_name_search %s: %s', name, operator)
-        _logger.info('_name_search %s: %s', name, operator)
-        _logger.info('_name_search %s: %s', name, operator)
-        _logger.info('_name_search %s: %s', name, operator)
-        _logger.info('_name_search %s: %s', name, operator)
-
-        args = args or []
-        domain = args + ['|', ('model', operator, name), ('name', operator, name)]
-        record_ids = self._search(expression.AND([args, domain]), limit=limit, access_rights_uid=name_get_uid)
-        return models.lazy_name_get(self.browse(record_ids).with_user(name_get_uid))
+    def _compute_d_name(self):
+        for rec in self:
+            rec.d_name = '%s (%s)' % (rec.name, rec.model) if rec.name != rec.model else rec.model
 
     def read_records(self):
         """ Function that reads external id and name field from an external
@@ -104,6 +98,9 @@ class ExternalModel(models.Model):
                 fields_to_read = literal_eval(rec.fields_to_read)
 
             record_fields = ['.id', 'id']
+            
+            import wdb;wdb.set_trace()
+            
             record_fields.extend(fields_to_read)
 
             external_model_obj = connection.model(rec.model)
@@ -151,8 +148,7 @@ class ExternalModel(models.Model):
             'function']
         model_field_data = []
         for model in self:
-            _logger.info('Reading fields %s database, model: %s',
-                         model.type, model.model)
+            _logger.info('Reading fields from %s model: %s', model.type, model.display_name)
             if not connection:
                 source_connection, target_connection = \
                     model.manager_id.open_connections()
@@ -205,8 +201,8 @@ class ExternalModel(models.Model):
         """
         for rec in self:
             try:
-                _logger.info('%i records on model %s', rec.records, rec.name)
+                _logger.info('%i records on model %s', rec.records, rec.display_name)
                 model_obj = connection.model(rec.model)
                 rec.records = model_obj.search_count([])
             except Exception:
-                _logger.warning('Model not found %s', rec.name)
+                _logger.warning('Model not found %s', rec.model)

@@ -6,27 +6,20 @@
         <field name="model">etl.external_model</field>
         <field name="arch" type="xml">
             <search string="external_model">
-                <field name="sequence" string="Sequence"
-                        />
-                <field name="type" string="Type"
-                        />
-                <field name="name" string="Name"
-                        />
-                <field name="model" string="Model"
-                        />
-                <field name="order" string="Order"
-                        />
-                <field name="records" string="Records"
-                        />
-                <field name="manager_id" string="Manager"
-                        />
+                <field name="sequence" string="Sequence"/>
+                <field name="type" string="Type"/>
+                <field name="name" string="Name"/>
+                <field name="model" string="Model"/>
+                <field name="order" string="Order"/>
+                <field name="records" string="Records"/>
+                <field name="manager_id" string="Manager"/>
                 <group expand="0" string="Group By">
                 </group>
             </search>
         </field>
     </record>
 
-    <!-- FORMVIEW -->
+    <!-- EXTERNAL MODEL FORMVIEW -->
     <record id="view_etl_external_model_form" model="ir.ui.view">
         <field name="name">etl.external_model.form</field>
         <field name="model">etl.external_model</field>
@@ -38,24 +31,21 @@
                     <button type="object" name="read_records" string="Read Records"/>
                 </header>
                 <sheet string="external_model">
-                    <div class="oe_right oe_button_box" name="buttons">
-                    </div>
                     <group>
-                    <field name="sequence"
-                        /> 
-                    <field name="type"
-                        /> 
-                    <field name="name"
-                        /> 
-                    <field name="model"
-                        /> 
-                    <field name="order"
-                        attrs="{'invisible':[('type','!=','source')]}"
-                        /> 
-                    <field name="records"
-                        /> 
-                    <field name="manager_id"
-                    />
+                        <group>
+                            <field name="sequence"/> 
+                            <field name="type"/> 
+                            <field name="name"/> 
+                        </group>
+                        <group>                    
+                            <field name="model"/> 
+                            <field name="records"/> 
+                            <field name="manager_id"/>
+                            <field name="order" attrs="{'invisible':[('type','!=','source')]}"/> 
+                        </group>
+                    <group>
+                    </group>
+
                     <notebook colspan="2">
                         <page string="Fields">
                             <field name="field_ids"/>
@@ -63,13 +53,16 @@
                         <page string="Records">
                             <group>
                                 <field name="fields_to_read"/>
-                                <field name="external_model_record_ids"/>
+                            </group>
+                            <group col="1">
+                                <strong>External model records</strong>
+                                <field name="external_model_record_ids" nolabel="1"/>
                             </group>
                         </page>
                     </notebook>
+
                     </group>
                 </sheet>
-
             </form>
         </field>
     </record>
@@ -79,24 +72,16 @@
         <field name="name">etl.external_model.tree</field>
         <field name="model">etl.external_model</field>
         <field name="arch" type="xml">
-            <tree string="external_model"
-                >
-                <field name="sequence"
-                    />
-                <field name="type"
-                    />
-                <field name="name"
-                    />
-                <field name="model"
-                    />
-                <field name="records"
-                    />
+            <tree string="external_model">
+                <field name="sequence" widget="handle"/>
+                <field name="type"/>
+                <field name="display_name"/>
+                <field name="records"/>
                 <field name="manager_id"
                     invisible="'from_manager' in context"/>
             </tree>
         </field>
     </record>
-
 
     <record id="action_etl_external_model_external_models" model="ir.actions.act_window">
         <field name="name">External Models</field>
@@ -105,8 +90,9 @@
         <field name="view_id" ref="view_etl_external_model_tree"/>
         <field name="search_view_id" ref="view_etl_external_model_filter"/>
         <field name="help" type="html">
-            <p class="oe_view_nocontent_create">Click to create a External Models.</p>
+            <p class="o_view_nocontent_smiling_face">Click to create an External Model.</p>
         </field>
+
     </record>
 
     <menuitem
@@ -114,6 +100,5 @@
         id="menu_external_models"
         sequence="40"
         action="action_etl_external_model_external_models"
-        parent="menu_data"
-        />
+        parent="menu_data"/>
 </odoo>
