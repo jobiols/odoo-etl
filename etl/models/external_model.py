@@ -98,9 +98,7 @@ class ExternalModel(models.Model):
                 fields_to_read = literal_eval(rec.fields_to_read)
 
             record_fields = ['.id', 'id']
-            
-            import wdb;wdb.set_trace()
-            
+
             record_fields.extend(fields_to_read)
 
             external_model_obj = connection.model(rec.model)

@@ -418,7 +418,6 @@ class Action(models.Model):
         value_mapping_field_obj = self.env['etl.value_mapping_field']
 
         state = 'on_repeating' if repeated_action else 'enabled'
-
         for rec in self:
             source_connection, target_connection = \
                 rec.manager_id.open_connections()
@@ -453,8 +452,8 @@ class Action(models.Model):
             # source fields = enabled (or repeating) and type field
             source_fields.extend([
                 x.source_field for x in rec.field_mapping_ids
-                if x.state == state and
-                x.type == 'field' and
+                if x.type == 'field' and
+                x.state == state and not x.blocked and
                 x.source_field_id.ttype != 'many2many' and
                 x.source_field_id.ttype != 'many2one' and
                 x.source_field != 'id'])
@@ -462,41 +461,42 @@ class Action(models.Model):
             # target fields = enabled and field then expression then migrated_id
             target_fields.extend([
                 x.target_field for x in rec.field_mapping_ids
-                if x.state == state and
-                x.type == 'field' and
+                if x.type == 'field' and
+                x.state == state and not x.blocked and
                 x.source_field_id.ttype != 'many2many' and
                 x.source_field_id.ttype != 'many2one' and
                 x.source_field != 'id'])
+
             target_fields.extend([
                 x.target_field for x in rec.field_mapping_ids
-                if x.state == state and
-                x.type == 'field' and
+                if x.type == 'field' and
+                x.state == state and not x.blocked and
                 x.source_field_id.ttype == 'many2one'])
             target_fields.extend([
                 x.target_field for x in rec.field_mapping_ids
-                if x.state == state and
-                x.type == 'field' and
+                if x.type == 'field' and
+                x.state == state and not x.blocked and
                 x.source_field_id.ttype == 'many2many'])
             target_fields.extend([
                 x.target_field for x in rec.field_mapping_ids
-                if x.state == state and
-                x.type == 'value_mapping'])
+                if x.type == 'value_mapping' and
+                x.state == state and not x.blocked])
             target_fields.extend([
                 x.target_field for x in rec.field_mapping_ids
-                if x.state == state and
-                x.type == 'date_adapt'])
+                if x.type == 'date_adapt' and
+                x.state == state and not x.blocked])
             target_fields.extend([
                 x.target_field for x in rec.field_mapping_ids
-                if x.state == state and
-                x.type == 'expression'])
+                if x.type == 'expression' and
+                x.state == state and not x.blocked])
             target_fields.extend([
                 x.target_field for x in rec.field_mapping_ids
-                if x.state == state
-                and x.type == 'migrated_id'])
+                if x.type == 'migrated_id' and 
+                x.state == state and not x.blocked])
             target_fields.extend([
                 x.target_field for x in rec.field_mapping_ids
-                if x.state == state and
-                x.type == 'reference'])
+                if x.type == 'reference' and
+                x.state == state and not x.blocked])
 
             # Read and append source values of type 'field' and type not m2m
             _logger.info('Building none m2m field mapping...')
@@ -507,8 +507,10 @@ class Action(models.Model):
             # Read and append source values of type 'field' and type m2m
             source_fields_m2o = [
                 x.id for x in rec.field_mapping_ids
-                if x.state == state and x.type == 'field'
-                and x.source_field_id.ttype == 'many2one']
+                if x.type == 'field' and
+                x.state == state and not x.blocked and
+                x.source_field_id.ttype == 'many2one']
+
             for field_id in source_fields_m2o:
                 field = field_mapping_obj.browse(field_id)
                 field_model = field.source_field_id.relation
@@ -536,14 +538,12 @@ class Action(models.Model):
                             new_field_value = '%s_%s' % (_v1, _v2)
                         source_data_record.append(new_field_value)
 
-
-            #import wdb;wdb.set_trace()
-
             _logger.info('Building m2m field mapping...')
             # Read and append source values of type 'field' and type m2m
             source_fields_m2m = [
                 x.id for x in rec.field_mapping_ids
-                if x.state == state and x.type == 'field' and
+                if x.type == 'field' and
+                x.state == state and not x.blocked and
                 x.source_field_id.ttype == 'many2many']
 
             for field_id in source_fields_m2m:
@@ -585,19 +585,18 @@ class Action(models.Model):
                         source_data_record.append(new_field_value)
 
             _logger.info('Building value mapping mapping...')
+
             # Read and append source values of type 'value_mapping'
             source_fields_value_mapping = [
-                x.source_field for x in
-                rec.field_mapping_ids
-                if x.state == state and
-                x.type == 'value_mapping']
+                x.source_field for x in rec.field_mapping_ids
+                if x.type == 'value_mapping' and
+                x.state == state and not x.blocked]
 
             source_data_value_mapping = source_model_obj.export_data(source_model_ids, source_fields_value_mapping)['datas']
             source_value_mapping_id = [
-                x.value_mapping_field_id.id for x in
-                rec.field_mapping_ids
-                if x.state == state
-                and x.type == 'value_mapping']
+                x.value_mapping_field_id.id for x in rec.field_mapping_ids
+                if x.type == 'value_mapping' and
+                x.state == state and not x.blocked]
 
             for readed_record, source_data_record in zip(source_data_value_mapping, source_model_data):
                 target_record = []
@@ -610,15 +609,13 @@ class Action(models.Model):
                     if value_mapping.type == 'id':
                         new_field = value_mapping_field_detail_obj.search([
                             ('source_external_model_record_id.ext_id', '=', field_value),
-                            ('value_mapping_field_id', '=', value_mapping_id)],
-                                                                          limit=1)
+                            ('value_mapping_field_id', '=', value_mapping_id)], limit=1)
                         # if new_fields:
                         new_field_value = new_field.target_external_model_record_id.ext_id
                     elif value_mapping.type == 'selection':
                         new_field = value_mapping_field_detail_obj.search([
                             ('source_value_id.ext_id', '=', field_value),
-                            ('value_mapping_field_id', '=', value_mapping_id)],
-                                                                          limit=1)
+                            ('value_mapping_field_id', '=', value_mapping_id)], limit=1)
                         new_field_value = new_field.target_value_id.ext_id
                     # Convertimos a false todos aquellos mapeos al que no se les
                     # asigno pareja. Si el modelo permite valores false va a andar
@@ -631,15 +628,15 @@ class Action(models.Model):
             _logger.info('Building date adapt...')
             # Read and append source values of type 'date_adapt'
             source_fields_date_adapt = [
-                x.source_field for x in
-                rec.field_mapping_ids if
-                x.state == state and x.type == 'date_adapt']
+                x.source_field for x in rec.field_mapping_ids 
+                if x.type == 'date_adapt' and
+                x.state == state and not x.blocked]
 
             source_data_date_adapt = source_model_obj.export_data(source_model_ids, source_fields_date_adapt)['datas']
             source_mapping_date_adapt = [
                 x for x in rec.field_mapping_ids
-                if x.state == state
-                and x.type == 'date_adapt']
+                if x.type == 'date_adapt' and
+                x.state == state and not x.blocked]
 
             for readed_record, source_data_record in zip(source_data_date_adapt, source_model_data):
                 target_record = []
@@ -658,8 +655,8 @@ class Action(models.Model):
             _logger.info('Building expressions...')
             field_mapping_expression_ids = [
                 x.id for x in rec.field_mapping_ids
-                if x.state == state
-                and x.type == 'expression']
+                if x.type == 'expression' and
+                x.state == state and not x.blocked]
 
             if field_mapping_expression_ids:
                 for _rec in source_model_data:
@@ -672,8 +669,9 @@ class Action(models.Model):
             _logger.info('Building migrated ids...')
             field_mapping_migrated_id_ids = [
                 x.id for x in rec.field_mapping_ids
-                if x.state == state
-                and x.type == 'migrated_id']
+                if x.type == 'migrated_id' and
+                x.state == state and not x.blocked]
+
             if field_mapping_migrated_id_ids:
                 for _rec in source_model_data:
                     rec_id = _rec[0]
@@ -685,8 +683,8 @@ class Action(models.Model):
             _logger.info('Building reference fields...')
             field_mapping_reference_ids = [
                 x.id for x in rec.field_mapping_ids
-                if x.state == state
-                and x.type == 'reference']
+                if x.type == 'reference' and
+                x.state == state and not x.blocked]
             if field_mapping_reference_ids:
                 for _rec in source_model_data:
                     rec_id = _rec[0]
@@ -800,6 +798,7 @@ class Action(models.Model):
         :param str userdate: date string in in user time zone
         :return: UTC datetime string for server-side use
         """
+        assert False
         # TODO: move to fields.datetime in server after 7.0
         user_date = datetime.strptime(userdate, DEFAULT_SERVER_DATE_FORMAT)
         context = self._context
