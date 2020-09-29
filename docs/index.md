@@ -8,6 +8,7 @@ ETL Stands for Extract Transform and Load, and can be running in an intermediate
 database see picture 1.
 
 ![image](/_includes/potenciar.jpeg)
+*picture 1*
 
 The main idea of the module is to give functional users the availability to 
 move data from one odoo database to another odoo database. The design is quite 
