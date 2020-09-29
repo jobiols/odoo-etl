@@ -24,7 +24,6 @@ If you find some issues please report it to [issues](https://github.com/jobiols/
 
 Jorge Obiols <jorge.obiols@gmail.com>
 
-{% include capitulo1.md %}
 {% include capitulo2.md %}
 {% include capitulo3.md %}
 {% include where-to-install.md %}
