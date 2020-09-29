@@ -19,19 +19,10 @@ Jorge Obiols <jorge.obiols@gmail.com>
 
 sigue la linea
 
-
-# titulo1
-Hablamos del titulo uno
-
-## titulo2
-Hablamos del titulo dos
-
-### titulo3
-Hablamos del titulo tres
-
-va el include
-aca tiene que decir titulo 4:
-{% include titulo4.md %}
+{% include capitulo1.md %}
+{% include capitulo2.md %}
+{% include capitulo3.md %}
+{% include capitulo4.md %}
 
 
 
