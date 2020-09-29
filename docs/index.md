@@ -13,6 +13,11 @@ database see picture 1.
    {% endif %}
 {% endfor %}
 
+otra forma:
+
+![](/assets/img/potenciar.jpeg)
+
+
 The main idea of the module is to give functional users the availability to 
 move data from one odoo database to another odoo database. The design is quite 
 simple, it use native odoo methods (primarily load and export data).
