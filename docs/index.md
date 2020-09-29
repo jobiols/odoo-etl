@@ -1,4 +1,5 @@
-# Introduction to ETL
+Introduction to ETL
+===================
 
 ETL is an Odoo module developed to move data between databases easily. 
 It can be used for data migration between same or different odoo versions 
@@ -7,7 +8,7 @@ It can be used for data migration between same or different odoo versions
 ETL Stands for Extract Transform and Load, and can be running in an intermediate
 database see picture 1.
 
-![](/assets/img/potenciar.jpeg)
+![](/assets/img/etl-dbs.png)
 *<center>Picture 1</center>*
 
 
