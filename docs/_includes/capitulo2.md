@@ -1,2 +1,2 @@
-# Capitulo 2
+## Capitulo 2
 esto esta en el include

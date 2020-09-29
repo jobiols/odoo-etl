@@ -4,8 +4,10 @@ ETL is an Odoo module developed to move data between databases easily.
 It can be used for data migration between same or different odoo versions 
 (v8 to v13). 
 ETL Stands for Extract Transform and Load, and can be running in an 
-intermediate database *picture 1* in which database A can be the source Odoo 
-database version X and database B can be target Odoo database version Y.
+intermediate database see *picture 1*. In this schema, database A can be the 
+source Odoo database version X and database B can be target Odoo database version Y.
+
+See the section *Where to install ETL* to understand performance issues.
 
 ![](/assets/img/etl-dbs.png)
 *<center>Picture 1</center>*
@@ -25,7 +27,7 @@ Jorge Obiols <jorge.obiols@gmail.com>
 {% include capitulo1.md %}
 {% include capitulo2.md %}
 {% include capitulo3.md %}
-{% include capitulo4.md %}
+{% include where-to-install-etl.md %}
 
 
 
