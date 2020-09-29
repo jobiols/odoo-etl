@@ -1,4 +1,4 @@
-# Introduction to ETL (Odoo V13)
+# Introduction to ETL
 
 ETL is an Odoo module developed to move data between databases easily. 
 It can be used for data migration between same or different odoo versions 
@@ -27,7 +27,4 @@ Jorge Obiols <jorge.obiols@gmail.com>
 {% include capitulo1.md %}
 {% include capitulo2.md %}
 {% include capitulo3.md %}
-{% include where-to-install-etl.md %}
-
-
-
+{% include where-to-install.md %}
