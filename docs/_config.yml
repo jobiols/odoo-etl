@@ -2,3 +2,9 @@ title: ODOO-ETL Titulo
 author: Jorge Obiols
 theme: jekyll-theme-leap-day
 markdown: kramdown
+
+defaults:
+  - scope:
+      path: "assets/img"
+    values: 
+      image: true

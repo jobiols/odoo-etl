@@ -7,10 +7,11 @@ It can be used for data migration between same or different odoo versions
 ETL Stands for Extract Transform and Load, and can be running in an intermediate
 database see picture 1.
 
-![image](potenciar.jpeg)
-*picture 1*
-
-{% include potenciar.jpeg %}
+{% for file in site.static_files %}
+   {% if file.image %}
+      ![](file.path)
+   {% endif %}
+{% endfor %}
 
 The main idea of the module is to give functional users the availability to 
 move data from one odoo database to another odoo database. The design is quite 
