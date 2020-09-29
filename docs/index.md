@@ -30,6 +30,6 @@ Hablamos del titulo dos
 Hablamos del titulo tres
 
 va el include
-{% include chapter_1.md}
+
 
 
