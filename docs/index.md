@@ -11,7 +11,7 @@ The aim of this project is different from odoo migration or OpenUpgrade, it
 allows to start from a clean database, merging  different odoo databases into 
 a single multicompany db, etc.
 
-The proyect lives in `github.com/jobiols/odoo-etl`_ Any feedback is welcome, 
+The proyect lives in github.com/jobiols/odoo-etl Any feedback is welcome, 
 if someone likes the idea, please don't hesitate to contact me so we can work 
 together. 
 
