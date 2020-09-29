@@ -1,4 +1,3 @@
-# Capitulo 1
 ## Where to install ETL
 
 As we could seen in the introduction, the ETL etl module can be installed in 
