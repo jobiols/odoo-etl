@@ -410,6 +410,9 @@ class Action(models.Model):
             readed_model.append(action.source_model_id.id)
 
     def run_action(self, repeated_action=False):
+        
+        import wdb;wdb.set_trace()
+        
         action_obj = self.env['etl.action']
         model_obj = self.env['etl.external_model']
         field_mapping_obj = self.env['etl.field_mapping']
@@ -491,7 +494,7 @@ class Action(models.Model):
                 x.state == state and not x.blocked])
             target_fields.extend([
                 x.target_field for x in rec.field_mapping_ids
-                if x.type == 'migrated_id' and 
+                if x.type == 'migrated_id' and
                 x.state == state and not x.blocked])
             target_fields.extend([
                 x.target_field for x in rec.field_mapping_ids
@@ -703,7 +706,9 @@ class Action(models.Model):
                     target_model_data.append(['%s_%s' % (rec.target_id_prefix, str(record[0]))] + record[2:])
             try:
                 _logger.info('Loadding Data...')
-
+                
+                import wdb;wdb.set_trace()
+                
                 import_result = target_model_obj.load(target_fields, target_model_data)
             except Exception as ex:
                 _logger.info('excepcion1 %s', str(ex))
