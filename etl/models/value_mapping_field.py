@@ -34,17 +34,19 @@ class ValueMappingField(models.Model):
     value_mapping_field_detail_ids = fields.One2many(
         'etl.value_mapping_field_detail',
         'value_mapping_field_id',
-        string='Details'
+        string='Details',
+        help="This is te actual mapping between source and target."
     )
     value_mapping_field_value_ids = fields.One2many(
         'etl.value_mapping_field_value',
         'value_mapping_field_id',
-        string='Mapping Values'
+        string='Mapping Values',
+        help="These are all the values ​​that are going to be mapped, all of the source "
+             "plus all of the target without repeating."
     )
     manager_id = fields.Many2one(
         'etl.manager',
         ondelete='cascade',
-        string='manager_id',
         required=True
     )
 

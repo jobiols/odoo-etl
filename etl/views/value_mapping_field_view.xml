@@ -28,8 +28,6 @@
                     <button name="map_record" string="Map Records" class="oe_highlight" type="object"/>
                 </header>
                 <sheet string="value_mapping_field">
-                    <div class="oe_right oe_button_box" name="buttons">
-                    </div>
                     <group>
                     <field name="name"
                         /> 

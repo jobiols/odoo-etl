@@ -16,7 +16,7 @@
                 <filter name="not_disabled" string="Not Disabled"
                         domain="[('state','not in',['disabled','no_records'])]"/>
                 <filter name="enabled" string="Enabled"
-                        domain="[('state','in',['enabled'])]"/>
+                        domain="[('state','in',['enabled']),('blocked','=',False)]"/>
                 <filter name="to_analyze" string="To Analyze"
                         domain="[('state','in',['to_analyze'])]"/>
                 <filter name="no_records" string="No Records"

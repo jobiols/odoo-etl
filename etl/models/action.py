@@ -410,9 +410,6 @@ class Action(models.Model):
             readed_model.append(action.source_model_id.id)
 
     def run_action(self, repeated_action=False):
-        
-        import wdb;wdb.set_trace()
-        
         action_obj = self.env['etl.action']
         model_obj = self.env['etl.external_model']
         field_mapping_obj = self.env['etl.field_mapping']
@@ -572,7 +569,7 @@ class Action(models.Model):
                                 for value in readed_record[1].split(','):
                                     value_id = model_data_obj.search([
                                         ('model', 'ilike', field.source_field_id.relation),
-                                        ('name', 'ilike', value.split('.')[-1])])  
+                                        ('name', 'ilike', value.split('.')[-1])])
                                     if value_id:
                                         value_id = model_data_obj.export_data([value_id[0]], ['.id', 'res_id'])['datas']
                                         value_id = value_id[0][1]
@@ -631,7 +628,7 @@ class Action(models.Model):
             _logger.info('Building date adapt...')
             # Read and append source values of type 'date_adapt'
             source_fields_date_adapt = [
-                x.source_field for x in rec.field_mapping_ids 
+                x.source_field for x in rec.field_mapping_ids
                 if x.type == 'date_adapt' and
                 x.state == state and not x.blocked]
 
@@ -706,9 +703,9 @@ class Action(models.Model):
                     target_model_data.append(['%s_%s' % (rec.target_id_prefix, str(record[0]))] + record[2:])
             try:
                 _logger.info('Loadding Data...')
-                
+
                 import wdb;wdb.set_trace()
-                
+
                 import_result = target_model_obj.load(target_fields, target_model_data)
             except Exception as ex:
                 _logger.info('excepcion1 %s', str(ex))
@@ -751,8 +748,7 @@ class Action(models.Model):
                     if not mapping.source_field_id.relation == rec.source_model_id.model:
                         action_clean_dependecies.append(mapping.source_field_id.relation)
                         # else:
-                        # TODO usar este dato para algo! para marcar la clase
-                        # por ejemplo
+                        # TODO usar este dato para algo! para marcar la clase por ejemplo
             _logger.info('Model: %s, depenencias: %s', rec.source_model_id.model, action_clean_dependecies)
             dependecies_ok = True
             for action_dependecy in action_clean_dependecies:
