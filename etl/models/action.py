@@ -69,15 +69,14 @@ class Action(models.Model):
     from_rec_id = fields.Integer(
         string='From Record',
         help='is also used to filter out or include records in the migration '
-             'process. The ID records that will be migrated will start from '
+             'process.\nThe ID records that will be migrated will start from '
              'the value set at this field. To disable this feature, simply '
-             'leave it along with the To Record field to its default value 0 '
-             '(zero).'
+             'leave it along with the To Record field to its default value 0 (zero).'
     )
     to_rec_id = fields.Integer(
         string='To Record',
         help='is also used to filter out or include records in the migration '
-             'process. The records that will be migrated will end at the '
+             'process.\nThe records that will be migrated will end at the '
              'value set at this field. To disable this feature, simply leave '
              'it along with the From Record field to its default value 0 '
              '(zero).'
@@ -377,9 +376,8 @@ class Action(models.Model):
 
     def update_records_number(self):
         for rec in self:
-            source_connection, target_connection = \
-                rec.manager_id.open_connections()
-            rec.source_model_id.get_record_count(source_connection)
+            source_connection, target_connection = rec.manager_id.open_connections()
+            rec.source_model_id.get_record_count(source_connection, rec.source_domain)
             rec.target_model_id.get_record_count(target_connection)
 
     def run_repeated_action(self, repeated_action=True):
@@ -410,6 +408,7 @@ class Action(models.Model):
             readed_model.append(action.source_model_id.id)
 
     def run_action(self, repeated_action=False):
+
         action_obj = self.env['etl.action']
         model_obj = self.env['etl.external_model']
         field_mapping_obj = self.env['etl.field_mapping']
@@ -419,8 +418,7 @@ class Action(models.Model):
 
         state = 'on_repeating' if repeated_action else 'enabled'
         for rec in self:
-            source_connection, target_connection = \
-                rec.manager_id.open_connections()
+            source_connection, target_connection = rec.manager_id.open_connections()
 
             _logger.info('Actions to run: %i', len(rec.ids))
             # TODO ver si esto es necesario porque hacia fallar el load. JEO
@@ -448,6 +446,8 @@ class Action(models.Model):
             # Empezamos con  los campos que definimos como id
             source_fields = ['.id', rec.source_id_exp]
             target_fields = ['id']
+
+            #import wdb;wdb.set_trace()
 
             # source fields = enabled (or repeating) and type field
             source_fields.extend([
@@ -500,6 +500,9 @@ class Action(models.Model):
 
             # Read and append source values of type 'field' and type not m2m
             _logger.info('Building none m2m field mapping...')
+
+            # import wdb;wdb.set_trace()
+
             source_model_data = source_model_obj.export_data(
                 source_model_ids, source_fields)['datas']
 
@@ -604,7 +607,7 @@ class Action(models.Model):
                     new_field_value = False
                     value_mapping = value_mapping_field_obj.browse(value_mapping_id)
                     # TODO mejorar esta cosa horrible, no hace falta guardar en
-                    # dos clases separadas, deberia usar una sola para selection y
+                    # dos clases separadas, deberia usar una sola para seleccion y
                     # para id
                     if value_mapping.type == 'id':
                         new_field = value_mapping_field_detail_obj.search([
@@ -672,12 +675,14 @@ class Action(models.Model):
                 if x.type == 'migrated_id' and
                 x.state == state and not x.blocked]
 
+
+            #import wdb;wdb.set_trace()
+
             if field_mapping_migrated_id_ids:
                 for _rec in source_model_data:
                     rec_id = _rec[0]
-                    migrated_id_results = field_mapping_obj.browse(
-                        field_mapping_migrated_id_ids).get_migrated_id(
-                            int(rec_id), source_connection, target_connection)
+                    _a = field_mapping_obj.browse(field_mapping_migrated_id_ids)
+                    migrated_id_results = _a.get_migrated_id(int(rec_id), source_connection, target_connection)
                     _rec.extend(migrated_id_results)
 
             _logger.info('Building reference fields...')
@@ -704,11 +709,11 @@ class Action(models.Model):
             try:
                 _logger.info('Loadding Data...')
 
-                import wdb;wdb.set_trace()
+                #import wdb;wdb.set_trace()
 
                 import_result = target_model_obj.load(target_fields, target_model_data)
             except Exception as ex:
-                _logger.info('excepcion1 %s', str(ex))
+                _logger.info('excepcion-716 %s', str(ex))
                 import_result = str(ex)
             rec.log = import_result
             rec.target_model_id.get_record_count(target_connection)
@@ -799,9 +804,7 @@ class Action(models.Model):
         :param str userdate: date string in in user time zone
         :return: UTC datetime string for server-side use
         """
-        assert False
-        # TODO: move to fields.datetime in server after 7.0
-        user_date = datetime.strptime(userdate, DEFAULT_SERVER_DATE_FORMAT)
+        user_date = fields.datetime.strptime(userdate, DEFAULT_SERVER_DATE_FORMAT)
         context = self._context
         if context and context.get('tz'):
             tz_name = context['tz']

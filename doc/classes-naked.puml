@@ -1,0 +1,86 @@
+@startuml
+title Models Class Diagram
+
+right header
+
+
+| **Module**: | etl |
+| **Description**: |  |
+| **Author**: | INFINITY SOLUTIONS, ADHOC SA, jeo Software |
+
+endheader
+
+class "EtlAction" as etl_etl_action <<(M, Darkorange) model>> #Yellow {
+	_inherit = 'base'
+	_name = 'etl.action'
+	_order = 'sequence'
+	==
+	}
+class "EtlExternalModel" as etl_etl_external_model <<(M, Darkorange) model>> #Yellow {
+	_inherit = 'base'
+	_name = 'etl.external_model'
+	_order = 'sequence'
+	==
+	}
+class "EtlExternalModelRecord" as etl_etl_external_model_record <<(M, Darkorange) model>> #Yellow {
+	_inherit = 'base'
+	_name = 'etl.external_model_record'
+	==
+	}
+class "EtlField" as etl_etl_field <<(M, Darkorange) model>> #Yellow {
+	_inherit = 'base'
+	_name = 'etl.field'
+	==
+	}
+class "EtlFieldMapping" as etl_etl_field_mapping <<(M, Darkorange) model>> #Yellow {
+	_inherit = 'base'
+	_name = 'etl.field_mapping'
+	==
+	}
+class "EtlManager" as etl_etl_manager <<(M, Darkorange) model>> #Yellow {
+	_inherit = 'base'
+	_name = 'etl.manager'
+	==
+	}
+class "EtlValueMappingField" as etl_etl_value_mapping_field <<(M, Darkorange) model>> #Yellow {
+	_inherit = 'base'
+	_name = 'etl.value_mapping_field'
+	==
+	}
+class "EtlValueMappingFieldDetail" as etl_etl_value_mapping_field_detail <<(M, Darkorange) model>> #Yellow {
+	_inherit = 'base'
+	_name = 'etl.value_mapping_field_detail'
+	==
+	}
+class "EtlValueMappingFieldValue" as etl_etl_value_mapping_field_value <<(M, Darkorange) model>> #Yellow {
+	_inherit = 'base'
+	_name = 'etl.value_mapping_field_value'
+	==
+	}
+etl_etl_external_model_record "external_model_record_ids *" *--> "external_model_id 1" etl_etl_external_model
+etl_etl_field "field_ids *" *--> "model_id 1" etl_etl_external_model
+etl_etl_field_mapping "field_mapping_ids *" *--> "action_id 1" etl_etl_action
+etl_etl_field_mapping "*" o-- "manager_id 1" etl_etl_manager
+etl_etl_field_mapping "*" o-- "model_field_id 1" etl_etl_field
+etl_etl_field_mapping "*" o-- "source_field_id 1" etl_etl_field
+etl_etl_field_mapping "*" o-- "source_model_id 1" etl_etl_external_model
+etl_etl_field_mapping "*" o-- "target_field_id 1" etl_etl_field
+etl_etl_field_mapping "*" o-- "target_model_id 1" etl_etl_external_model
+etl_etl_field_mapping "*" o-- "value_mapping_field_id 1" etl_etl_value_mapping_field
+etl_etl_value_mapping_field "value_mapping_field_ids *" *--> "manager_id 1" etl_etl_manager
+etl_etl_value_mapping_field "*" o-- "source_model_id 1" etl_etl_external_model
+etl_etl_value_mapping_field "*" o-- "target_model_id 1" etl_etl_external_model
+etl_etl_value_mapping_field_detail "*" o-- "source_external_model_record_id 1" etl_etl_external_model_record
+etl_etl_value_mapping_field_detail "*" o-- "source_model_id 1" etl_etl_external_model
+etl_etl_value_mapping_field_detail "*" o-- "source_value_id 1" etl_etl_value_mapping_field_value
+etl_etl_value_mapping_field_detail "*" o-- "target_external_model_record_id 1" etl_etl_external_model_record
+etl_etl_value_mapping_field_detail "*" o-- "target_model_id 1" etl_etl_external_model
+etl_etl_value_mapping_field_detail "*" o-- "target_value_id 1" etl_etl_value_mapping_field_value
+etl_etl_value_mapping_field_detail "value_mapping_field_detail_ids *" *--> "value_mapping_field_id 1" etl_etl_value_mapping_field
+etl_etl_value_mapping_field_value "value_mapping_field_value_ids *" *--> "value_mapping_field_id 1" etl_etl_value_mapping_field
+left footer
+
+ 		//     Powered by **Odoo UML** with **PlantUML** technology// . //Author//: Armando Robert Lobo <mailto:arobertlobo5@gmail.com>
+endfooter
+hide empty members
+@enduml

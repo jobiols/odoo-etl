@@ -1,0 +1,248 @@
+@startuml
+title Models Class Diagram
+
+right header
+
+
+| **Module**: | etl |
+| **Description**: |  |
+| **Author**: | INFINITY SOLUTIONS, ADHOC SA, jeo Software |
+
+endheader
+
+class "EtlAction" as etl_etl_action <<(M, Darkorange) model>> #Yellow {
+	_inherit = 'base'
+	_name = 'etl.action'
+	_order = 'sequence'
+	==
+	+ blocked: **Boolean**
+	+ field_mapping_ids: **EtlFieldMapping**[]
+	+ from_rec_id: **Integer**
+	+ id: **Integer** {readonly}
+	+ log: **Text**
+	+ manager_id: **EtlManager** {required}
+	+ name: **Char** {required}
+	+ note: **Html**
+	+ repeating_action: **Boolean** {readonly, //compute//, //store//}
+	+ s_records: **Integer** {readonly, //related//='source_model_id.records'}
+	+ sequence: **Integer**
+	+ source_domain: **Char** {required, default}
+	+ source_id_exp: **Char** {required, default}
+	+ source_model_id: **EtlExternalModel** {required}
+	+ state: **Selection** {required}
+	+ t_records: **Integer** {readonly, //related//='target_model_id.records'}
+	+ target_id_prefix: **Char** {readonly, //compute//}
+	+ target_id_type: **Selection** {required, //related//='manager_id.target_id_type'}
+	+ target_model_id: **EtlExternalModel**
+	+ to_rec_id: **Integer**
+	--
+	# _compute_repeating_action(self)
+	# _compute_target_id_prefix(self)
+	+ action_block(self)
+	+ check_m2o_depends(self)
+	+ date_to_datetime(self, userdate) {//model//}
+	+ match_fields(self)
+	+ order_actions(self, exceptions=None)
+	+ read_source_model(self, source_connection=False, target_connection=False, repeated_action=False, context=None)
+	+ run_action(self, repeated_action=False)
+	+ run_repeated_action(self, repeated_action=True)
+	+ update_records_number(self)
+	}
+class "EtlExternalModel" as etl_etl_external_model <<(M, Darkorange) model>> #Yellow {
+	_inherit = 'base'
+	_name = 'etl.external_model'
+	_order = 'sequence'
+	==
+	+ external_model_record_ids: **EtlExternalModelRecord**[]
+	+ field_ids: **EtlField**[] {readonly}
+	+ fields_to_read: **Char** {default}
+	+ id: **Integer** {readonly}
+	+ manager_id: **EtlManager** {required, readonly}
+	+ model: **Char** {required, readonly}
+	+ name: **Char** {required, readonly}
+	+ order: **Integer** {readonly}
+	+ records: **Integer** {readonly}
+	+ sequence: **Integer** {readonly}
+	+ source_action_ids: **EtlAction**[]
+	+ target_action_ids: **EtlAction**[]
+	+ type: **Selection** {required, readonly}
+	--
+	# _name_search(self, name='', args=None, operator='ilike', limit=100, name_get_uid=None) {//model//}
+	+ get_record_count(self, connection)
+	+ read_fields(self, connection=False)
+	+ read_fields_button(self)
+	+ read_records(self)
+	}
+class "EtlExternalModelRecord" as etl_etl_external_model_record <<(M, Darkorange) model>> #Yellow {
+	_inherit = 'base'
+	_name = 'etl.external_model_record'
+	==
+	+ ext_id: **Char** {required}
+	+ external_model_id: **EtlExternalModel** {required}
+	+ id: **Integer** {readonly}
+	+ name: **Char** {required}
+	}
+class "EtlField" as etl_etl_field <<(M, Darkorange) model>> #Yellow {
+	_inherit = 'base'
+	_name = 'etl.field'
+	==
+	+ field_description: **Char** {required}
+	+ function: **Char**
+	+ id: **Integer** {readonly}
+	+ model_id: **EtlExternalModel**
+	+ name: **Char** {required}
+	+ relation: **Char**
+	+ relation_field: **Char**
+	+ required: **Char**
+	+ ttype: **Char** {required}
+	+ type: **Selection** {readonly, //related//='model_id.type'}
+	}
+class "EtlFieldMapping" as etl_etl_field_mapping <<(M, Darkorange) model>> #Yellow {
+	_inherit = 'base'
+	_name = 'etl.field_mapping'
+	==
+	+ action_id: **EtlAction** {required}
+	+ blocked: **Boolean** {default}
+	+ expression: **Text** {default}
+	+ id: **Integer** {readonly}
+	+ manager_id: **EtlManager** {readonly, //related//='action_id.manager_id'}
+	+ model_field: **Char**
+	+ model_field_id: **EtlField**
+	+ note: **Html**
+	+ source_field: **Char**
+	+ source_field_id: **EtlField**
+	+ source_field_ttype: **Char** {readonly, //related//='source_field_id.ttype'}
+	+ source_model_id: **EtlExternalModel** {//related//='action_id.source_model_id'}
+	+ state: **Selection** {required}
+	+ target_field: **Char**
+	+ target_field_id: **EtlField**
+	+ target_field_ttype: **Char** {readonly, //related//='target_field_id.ttype'}
+	+ target_model_id: **EtlExternalModel** {//related//='action_id.target_model_id'}
+	+ type: **Selection** {default}
+	+ value_mapping_field_id: **EtlValueMappingField**
+	--
+	+ action_block(self)
+	+ get_migrated_id(self, rec_id, source_connection=False, target_connection=False)
+	+ get_reference(self, rec_id, source_connection=False, target_connection=False)
+	+ onchange_source_field(self)
+	+ onchange_target_field(self)
+	+ run_expressions(self, rec_id, source_connection=False, target_connection=False)
+	}
+class "EtlManager" as etl_etl_manager <<(M, Darkorange) model>> #Yellow {
+	_inherit = 'base'
+	_name = 'etl.manager'
+	==
+	+ action_ids: **EtlAction**[] {domain}
+	+ external_model_ids: **EtlExternalModel**[] {readonly}
+	+ field_analyze_default: **Text** {default}
+	+ field_disable_default: **Text** {default}
+	+ field_disable_words: **Text** {default}
+	+ id: **Integer** {readonly}
+	+ log: **Text**
+	+ model_analyze_default: **Text** {default}
+	+ model_disable_default: **Text** {default}
+	+ model_exception_words: **Char** {default}
+	+ modules_to_install: **Text** {default}
+	+ name: **Char** {required}
+	+ note: **Html**
+	+ repeating_models: **Text** {default}
+	+ source_database: **Char** {required}
+	+ source_hostname: **Char** {required, default}
+	+ source_lang: **Char** {required, default}
+	+ source_login: **Char** {required}
+	+ source_password: **Char** {required}
+	+ source_port: **Integer** {required, default}
+	+ target_database: **Char** {required}
+	+ target_hostname: **Char** {required, default}
+	+ target_id_type: **Selection** {required, default}
+	+ target_lang: **Char** {required, default}
+	+ target_login: **Char** {required}
+	+ target_password: **Char** {required}
+	+ target_port: **Integer** {required, default}
+	+ value_mapping_field_ids: **EtlValueMappingField**[]
+	+ workflow_models: **Char** {required, default}
+	--
+	+ button_read_models(self)
+	+ delete_workflows(self)
+	+ get_record_count(self)
+	+ install_modules(self)
+	+ match_models(self)
+	+ match_models_and_order_actions(self)
+	+ open_connections(self)
+	+ order_actions(self)
+	+ read_active_source_models(self)
+	+ read_and_get(self)
+	+ read_models(self, connection, relation_type)
+	+ run_actions(self)
+	+ run_repeated_actions(self)
+	}
+class "EtlValueMappingField" as etl_etl_value_mapping_field <<(M, Darkorange) model>> #Yellow {
+	_inherit = 'base'
+	_name = 'etl.value_mapping_field'
+	==
+	+ id: **Integer** {readonly}
+	+ log: **Text**
+	+ manager_id: **EtlManager** {required}
+	+ name: **Char** {required}
+	+ source_model_id: **EtlExternalModel**
+	+ target_model_id: **EtlExternalModel**
+	+ type: **Selection** {required}
+	+ value_mapping_field_detail_ids: **EtlValueMappingFieldDetail**[]
+	+ value_mapping_field_value_ids: **EtlValueMappingFieldValue**[]
+	--
+	+ map_record(self)
+	}
+class "EtlValueMappingFieldDetail" as etl_etl_value_mapping_field_detail <<(M, Darkorange) model>> #Yellow {
+	_inherit = 'base'
+	_name = 'etl.value_mapping_field_detail'
+	==
+	+ id: **Integer** {readonly}
+	+ source_external_model_record_id: **EtlExternalModelRecord**
+	+ source_id: **Char**
+	+ source_model_id: **EtlExternalModel** {readonly, //related//='value_mapping_field_id.source_model_id'}
+	+ source_name: **Char** {readonly, //related//='source_external_model_record_id.name'}
+	+ source_value: **Char**
+	+ source_value_id: **EtlValueMappingFieldValue**
+	+ target_external_model_record_id: **EtlExternalModelRecord**
+	+ target_id: **Char**
+	+ target_model_id: **EtlExternalModel** {readonly, //related//='value_mapping_field_id.target_model_id'}
+	+ target_value: **Char**
+	+ target_value_id: **EtlValueMappingFieldValue**
+	+ value_mapping_field_id: **EtlValueMappingField** {required}
+	}
+class "EtlValueMappingFieldValue" as etl_etl_value_mapping_field_value <<(M, Darkorange) model>> #Yellow {
+	_inherit = 'base'
+	_name = 'etl.value_mapping_field_value'
+	==
+	+ ext_id: **Char** {required}
+	+ id: **Integer** {readonly}
+	+ name: **Char** {required}
+	+ value_mapping_field_id: **EtlValueMappingField** {required}
+	}
+etl_etl_external_model_record "external_model_record_ids *" *--> "external_model_id 1" etl_etl_external_model
+etl_etl_field "field_ids *" *--> "model_id 1" etl_etl_external_model
+etl_etl_field_mapping "field_mapping_ids *" *--> "action_id 1" etl_etl_action
+etl_etl_field_mapping "*" o-- "manager_id 1" etl_etl_manager
+etl_etl_field_mapping "*" o-- "model_field_id 1" etl_etl_field
+etl_etl_field_mapping "*" o-- "source_field_id 1" etl_etl_field
+etl_etl_field_mapping "*" o-- "source_model_id 1" etl_etl_external_model
+etl_etl_field_mapping "*" o-- "target_field_id 1" etl_etl_field
+etl_etl_field_mapping "*" o-- "target_model_id 1" etl_etl_external_model
+etl_etl_field_mapping "*" o-- "value_mapping_field_id 1" etl_etl_value_mapping_field
+etl_etl_value_mapping_field "value_mapping_field_ids *" *--> "manager_id 1" etl_etl_manager
+etl_etl_value_mapping_field "*" o-- "source_model_id 1" etl_etl_external_model
+etl_etl_value_mapping_field "*" o-- "target_model_id 1" etl_etl_external_model
+etl_etl_value_mapping_field_detail "*" o-- "source_external_model_record_id 1" etl_etl_external_model_record
+etl_etl_value_mapping_field_detail "*" o-- "source_model_id 1" etl_etl_external_model
+etl_etl_value_mapping_field_detail "*" o-- "source_value_id 1" etl_etl_value_mapping_field_value
+etl_etl_value_mapping_field_detail "*" o-- "target_external_model_record_id 1" etl_etl_external_model_record
+etl_etl_value_mapping_field_detail "*" o-- "target_model_id 1" etl_etl_external_model
+etl_etl_value_mapping_field_detail "*" o-- "target_value_id 1" etl_etl_value_mapping_field_value
+etl_etl_value_mapping_field_detail "value_mapping_field_detail_ids *" *--> "value_mapping_field_id 1" etl_etl_value_mapping_field
+etl_etl_value_mapping_field_value "value_mapping_field_value_ids *" *--> "value_mapping_field_id 1" etl_etl_value_mapping_field
+left footer
+
+ 		//     Powered by **Odoo UML** with **PlantUML** technology// . //Author//: Armando Robert Lobo <mailto:arobertlobo5@gmail.com>
+endfooter
+hide empty members
+@enduml

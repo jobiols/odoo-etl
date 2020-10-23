@@ -192,15 +192,17 @@ class ExternalModel(models.Model):
         _logger.info('Writing fields data...')
         self.env['etl.field'].load(field_fields, model_field_data)
 
-    def get_record_count(self, connection):
+    def get_record_count(self, connection, domain='[]'):
         """ Get the number of records of this external model
             Si no encuentro el record es porque no esta el modelo, no es un
             error grave, puedo agregar el modelo y volver a correr.
         """
+
         for rec in self:
             try:
                 _logger.info('%i records on model %s', rec.records, rec.display_name)
                 model_obj = connection.model(rec.model)
-                rec.records = model_obj.search_count([])
+                rec.records = model_obj.search_count(literal_eval(domain))
             except Exception:
+                rec.records = -1
                 _logger.warning('Model not found %s', rec.model)

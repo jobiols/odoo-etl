@@ -59,8 +59,6 @@
                             <field name="blocked"/> 
                         </group>
                         <group>
-                            <field name="expression"
-                                attrs="{'required':[('type','=','expression'),('state','in',['enabled','on_repeating'])],'invisible':[('type','!=','expression')]}"/> 
 
                             <field name="value_mapping_field_id"
                                 context="{'default_manager_id':manager_id}"
@@ -75,8 +73,47 @@
                         </group>
                     </group>
 
-                    <group>                    
-                        <field name="note"/> 
+                    <field name="expression"
+                           widget="ace" 
+                           options="{'mode': 'python'}" 
+                           placeholder="Enter Python code here. Help about Python expression is available in the help tab of this document."
+                           attrs="{'required':[('type','=','expression'),('state','in',['enabled','on_repeating'])],'invisible':[('type','!=','expression')]}"/> 
+                    
+                    <field name="note"/> 
+
+                    
+
+                    <group attrs="{'invisible':[('type','!=','expression')]}" >
+                        <group col="1" colspan="2">
+                            <i class="fa fa-info fa-3x text-info float-left" role="img" aria-label="Info" title="Info"/>
+                            <h3>How to write python expressions</h3>
+
+                            <div>
+                                <p>
+                                    A python expresion is a script that maps a source field to a target field.
+                                </p>
+                                <p>
+                                    <ul>
+                                        <li>source_obj</li>
+                                        <li>source_connection</li>
+                                        <li>target_obj</li>
+                                        <li>target_connection</li>
+                                        <li>rec_id</li>
+                                        <li>env</li>
+                                        <li>time</li>
+                                        <li>cr</li>
+                                        <li>context</li>
+                                        <li>uid</li>
+                                        <li>user</li>
+                                    </ul>
+                                </p>
+                            </div>
+                            <div>
+                                <p>
+                                    Example:
+                                </p>
+                            </div>
+                        </group>
                     </group>
                 </sheet>
             </form>

@@ -35,15 +35,8 @@ class Manager(models.Model):
     )
     source_hostname = fields.Char(
         required=True,
-        default='http://localhost',
         help='The source database host URL that is used to access the Odoo '
              'database from remote OS. i.e.: http://192.168.1.101.'
-    )
-    source_port = fields.Integer(
-        required=True,
-        default=80,
-        help='The source database port that is used to access the Odoo '
-             'database. i.e.: 8069.'
     )
     source_database = fields.Char(
         string='Source Database',
@@ -70,15 +63,8 @@ class Manager(models.Model):
     )
     target_hostname = fields.Char(
         required=True,
-        default='http://localhost',
         help='the target database host URL that is used to access the Odoo '
              'database from remote OS. i.e.: http://192.168.1.101.'
-    )
-    target_port = fields.Integer(
-        required=True,
-        default=80,
-        help='The target database port that is used to access the Odoo '
-             'database. i.e.: 8069.'
     )
     target_database = fields.Char(
         required=True,
@@ -139,7 +125,7 @@ class Manager(models.Model):
                 "'create_date','calendar_last_notif_ack',]",
     )
     model_exception_words = fields.Char(
-        default="['mail.%','ir.mail%','email_template%','account.%','ir.%','res.company']",
+        default="['mail.%','ir.mail%','email_template%','ir.%','_unknown']",
         help='models that will never be migrated.'
     )
     # model_wanted_words = fields.Char(
@@ -233,25 +219,23 @@ class Manager(models.Model):
     def open_connections(self):
         self.ensure_one()
         try:
-            _logger.info('Getting source connection')
+            _logger.info('Getting source connection to %s ', self.source_hostname)
             source_connection = Client(
-                '%s:%i' % (self.source_hostname, self.source_port),
+                self.source_hostname,
                 db=self.source_database,
                 user=self.source_login,
                 password=self.source_password)
         except Exception as ex:
-            raise UserError(
-                _("Unable to Connect to Source Database. 'Error: %s'") % ex)
+            raise UserError(_("Unable to Connect to Source Database. Error: %s") % ex)
         try:
-            _logger.info('Getting target connection')
+            _logger.info('Getting target connection to %s ', self.target_hostname)
             target_connection = Client(
-                '%s:%i' % (self.target_hostname, self.target_port),
+                self.target_hostname,
                 db=self.target_database,
                 user=self.target_login,
                 password=self.target_password)
         except Exception as ex:
-            raise UserError(
-                _("Unable to Connect to Target Database. 'Error: %s'") % ex)
+            raise UserError(_("Unable to Connect to Target Database. Error: %s") % ex)
         return [source_connection, target_connection]
 
     def read_active_source_models(self):
@@ -273,15 +257,15 @@ class Manager(models.Model):
 
     def install_modules(self):
         for rec in self:
-            source_connection, target_connection = self.open_connections()
+            __, target_connection = self.open_connections()
             target_module_obj = target_connection.model("ir.module.module")
             try:
                 modules = literal_eval(rec.modules_to_install)
             except ValueError:
                 raise UserError(_('Enter the technical names of the modules '
-                                'to install in quotes and comma separated '
-                                'with the syntax of a python list.\n\n'
-                                'i.e. ["crm","stock","hr"]'))
+                                  'to install in quotes and comma separated '
+                                  'with the syntax of a python list.\n\n'
+                                  'i.e. ["crm","stock","hr"]'))
             domain = [('name', 'in', modules)]
             target_module_ids = target_module_obj.search(domain)
             target_module_obj.button_immediate_install(target_module_ids)

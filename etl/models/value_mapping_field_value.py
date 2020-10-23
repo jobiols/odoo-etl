@@ -23,6 +23,5 @@ class ValueMappingFieldValue(models.Model):
     value_mapping_field_id = fields.Many2one(
         'etl.value_mapping_field',
         ondelete='cascade',
-        string='value_mapping_field_id',
         required=True
     )

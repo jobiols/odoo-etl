@@ -27,7 +27,13 @@ class FieldMapping(models.Model):
          ('date_adapt', 'Date Adapt'),
          ('reference', 'Reference')],
         string='Mapping Type',
-        default='field'
+        default='field',
+        help="Field: move data between two fields\n"
+             "Expression: \n"
+             "Migrated ID: \n"
+             "Value Mapping: \n"
+             "Date Adapt: \n"
+             "Reference: \n"
     )
     state = fields.Selection(
         [('on_repeating', 'On Repeating'),
@@ -106,8 +112,7 @@ class FieldMapping(models.Model):
         self.source_field = False
         if self.source_field_id:
             self.source_field = self.source_field_id.name
-            if self.source_field_id.ttype in ['many2one', 'many2many', 
-                                              'one2many']:
+            if self.source_field_id.ttype in ['many2one', 'many2many', 'one2many']:
                 self.source_field += '/id'
 
     @api.onchange('target_field_id')
@@ -115,34 +120,29 @@ class FieldMapping(models.Model):
         self.target_field = False
         if self.target_field_id:
             self.target_field = self.target_field_id.name
-            if self.target_field_id.ttype in ['many2one', 'many2many',
-                                              'one2many']:
+            if self.target_field_id.ttype in ['many2one', 'many2many', 'one2many']:
                 self.target_field += '/id'
 
     def action_block(self):
         return self.write({'blocked': True})
 
-    def get_migrated_id(self, rec_id, source_connection=False,
-                        target_connection=False):
-        """ Get migrated id for field ids  and one rec_id (from source
-            database) For example, for field mapping ids
+    def get_migrated_id(self, rec_id, source_connection=False, target_connection=False):
+        """ Get migrated id for field ids and one rec_id (from source database)
+            For example, for field mapping ids
         """
         result = []
 
         for field_mapping in self:
             if not source_connection or not target_connection:
-                (source_connection, target_connection) = \
-                    field_mapping.action_id.manager_id.open_connections()
-            source_model_obj = source_connection.model(
-                field_mapping.action_id.source_model_id.model)
+                source_connection, target_connection = field_mapping.action_id.manager_id.open_connections()
+            source_model_obj = source_connection.model(field_mapping.action_id.source_model_id.model)
             target_ir_model_data_obj = target_connection.model('ir.model.data')
-            source_fields = [
-                'id',
-                field_mapping.source_field_id.name,
-                field_mapping.model_field]
+
+            source_fields = ['id', field_mapping.source_field_id.name, field_mapping.model_field]
+
             _logger.info('Source_fields: %s', source_fields)
-            source_model_data = source_model_obj.export_data(
-                [rec_id], source_fields)['datas']
+            source_model_data = source_model_obj.export_data([rec_id], source_fields)['datas']
+
             _logger.info('Source_model_data: %s', source_model_data)
             target_id = False
             if source_model_data:
@@ -152,13 +152,12 @@ class FieldMapping(models.Model):
                         source_model_data[0][2])
                 except Exception as ex:
                     target_id = False
-                    _logger.info('Exception 2: %s', str(ex))
+                    _logger.info('Exception 158: %s', str(ex))
                 else:
                     source_reference = source_resource_obj.export_data(
                         [int(source_id)], ['id'])['datas']
                     if source_reference[0]:
-                        source_reference_splited = source_reference[0][
-                            0].split('.', 1)
+                        source_reference_splited = source_reference[0][0].split('.', 1)
                         if len(source_reference_splited) == 1:
                             module = False
                             external_ref = source_reference_splited[0]
@@ -168,8 +167,8 @@ class FieldMapping(models.Model):
                         try:
                             # cambiamos a esta manera fea porque el metodo de
                             # abajo no andaba
-                            target_ids = target_ir_model_data_obj.search([(
-                                'module', '=', module),
+                            target_ids = target_ir_model_data_obj.search([
+                                ('module', '=', module),
                                 ('name', '=', external_ref)])
                             target_ids = target_ir_model_data_obj.read(
                                 target_ids, ['res_id'])
@@ -180,13 +179,12 @@ class FieldMapping(models.Model):
                                 # module, external_ref)[1]
                         except Exception as ex:
                             target_id = False
-                            _logger.info('Exception 3: %s', str(ex))
+                            _logger.info('Exception 186: %s', str(ex))
 
             result.append(target_id)
         return result
 
-    def get_reference(self, rec_id, source_connection=False,
-        target_connection=False):
+    def get_reference(self, rec_id, source_connection=False, target_connection=False):
         """ Get reference for field ids  and one rec_id (from source database)
             For example, for field mapping ids
         """
@@ -211,7 +209,7 @@ class FieldMapping(models.Model):
                     try:
                         source_resource_obj = source_connection.model(model)
                     except Exception as ex:
-                        _logger.info('Exception 4: %s', str(ex))
+                        _logger.info('Exception 216: %s', str(ex))
                         target_id = False
                     else:
                         source_ext_id = source_resource_obj.export_data(
@@ -231,12 +229,12 @@ class FieldMapping(models.Model):
                                 # Agregamos este nuevo try porque algunas
                                 # veces module no es false si no que es como
                                 # una cadena vacia
-                                _logger.info('Exception 5: %s', str(ex))
+                                _logger.info('Exception 236: %s', str(ex))
                                 try:
                                     target_id = target_ir_model_data_obj.get_object_reference('', external_ref)[1]  # noqa
                                 except Exception as ex:
                                     target_id = False
-                                    _logger.info('Exception 6: %s', str(ex))
+                                    _logger.info('Exception 241: %s', str(ex))
 
             target_reference = False
             if target_id:
@@ -244,19 +242,16 @@ class FieldMapping(models.Model):
             result.append(target_reference)
         return result
 
-    def run_expressions(
-        self, rec_id, source_connection=False, target_connection=False):
+    def run_expressions(self, rec_id, source_connection=False, target_connection=False):
         result = []
 
         for field_mapping in self:
             expression_result = False
             if not source_connection or not target_connection:
-                (source_connection, target_connection) = \
-                    field_mapping.action_id.manager_id.open_connections()
-            source_model_obj = source_connection.model(
-                field_mapping.action_id.source_model_id.model)
-            target_model_obj = target_connection.model(
-                field_mapping.action_id.target_model_id.model)
+                source_connection, target_connection = field_mapping.action_id.manager_id.open_connections()
+
+            source_model_obj = source_connection.model(field_mapping.action_id.source_model_id.model)
+            target_model_obj = target_connection.model(field_mapping.action_id.target_model_id.model)
 
             obj_pool = source_model_obj
             cxt = {
@@ -266,7 +261,7 @@ class FieldMapping(models.Model):
                 'target_obj': target_model_obj,
                 'target_connection': target_connection,
                 'rec_id': rec_id,
-                'pool': self.pool,
+                'env': self.env,
                 'time': time,
                 'cr': self._cr,
                 # copy context to prevent side-effects of eval
@@ -275,8 +270,8 @@ class FieldMapping(models.Model):
                 'user': self.env.user,
             }
             if not field_mapping.expression:
-                raise UserError(_(
-                    'Warning. Type expression choosen but not expression set'))
+                raise UserError(_("Warning. Type expression choosen but not expression "
+                                  "set"))
             # nocopy allows to return 'action'
             safe_eval(field_mapping.expression.strip(), cxt, mode="exec")
             if 'result' in cxt['context']:

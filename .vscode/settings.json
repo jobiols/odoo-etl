@@ -5,5 +5,16 @@
     "python.linting.pylintArgs": ["--load-plugins","pylint_odoo","-d C0114,E0401,C0115,C0116,c8101"],
     "files.insertFinalNewline": true,
     "files.trimTrailingWhitespace": true,
-
+    "sqltools.connections": [
+        {
+            "database": "test13_prod",
+            "driver": "PostgreSQL",
+            "name": "test13_prod",
+            "password": "odoo",
+            "port": 5432,
+            "previewLimit": 50,
+            "server": "localhost",
+            "username": "odoo"
+        }
+    ]
 }

@@ -68,24 +68,23 @@
                         <field name="name"  placeholder="Project Migration Name"/>
                     </h1>
                     <group>
-                        <field name="target_id_type"/>
+                        <group>
+                            <field name="source_hostname" placeholder="https://odoo.mysource.com:443"/>
+                            <field name="source_database"/>
+                            <field name="source_login"/>
+                            <field name="source_password" password="True"/>
+                            <field name="source_lang"/>
+                        </group>
+                        <group>
+                            <field name="target_hostname" placeholder="http://localhost:8069"/>
+                            <field name="target_database"/>
+                            <field name="target_login"/>
+                            <field name="target_password" password="True"/>
+                            <field name="target_lang"/>
+                        </group>
                     </group>
-                    
-                    <group col="6">
-                        <field name="source_hostname"/>
-                        <field name="source_port"/>
-                        <field name="source_database"/>
-                        <field name="source_login"/>
-                        <field name="source_password" password="True"/>
-                        <field name="source_lang"/>
-                        <newline/>
-                        <field name="target_hostname"/>
-                        <field name="target_port"/>
-                        <field name="target_database"/>
-                        <field name="target_login"/>
-                        <field name="target_password" password="True"/>
-                        <field name="target_lang"/>
-                        <newline/>
+                    <group>
+                        <field name="target_id_type"/>
                     </group>
                     <group>
                         <field name="workflow_models"/>

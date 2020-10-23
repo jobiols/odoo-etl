@@ -55,21 +55,46 @@
     </record>
 
     <!-- TREEVIEW -->
+    <!-- TODO no puedo pasar el contexto para ocultar ciertos campos, asi que lo quito 
+        y que se muestren todos.
+        
+        source_external_model_record_id
+        target_external_model_record_id
+        invisible="context.get('type',False) in ['char','selection']" 
+
+        source_value_id
+        target_value_id
+        invisible="context.get('type',False) not in ['char','selection']" 
+
+        Hay que arreglarlo porque hay otros atributos con el mismo problema
+    -->
+
     <record id="view_etl_value_mapping_field_detail_tree" model="ir.ui.view">
         <field name="name">etl.value_mapping_field_detail.tree</field>
         <field name="model">etl.value_mapping_field_detail</field>
         <field name="arch" type="xml">
             <tree string="value_mapping_field_detail" editable="top">
-                <field name="source_external_model_record_id" invisible="context.get('type',False)in['char','selection']" required="context.get('type',False)=='id'" domain="[('external_model_id','=',source_model_id)]"/>
-                <field name="target_external_model_record_id" invisible="context.get('type',False)in['char','selection']" required="False" domain="[('external_model_id','=',target_model_id)]"/>
-                <field name="source_value_id" invisible="context.get('type',False)not in['char','selection']" required="context.get('type',False)in['char','selection']" options="{'no_create': True}" domain="[('value_mapping_field_id','=',value_mapping_field_id)]"/>
-                <field name="target_value_id" options="{'no_create': True}" invisible="context.get('type',False)not in['char','selection']" required="context.get('type',False)in['char','selection']" domain="[('value_mapping_field_id','=',value_mapping_field_id)]"/>
+                <field name="source_external_model_record_id" 
+                       required="context.get('type',False)=='id'" 
+                       domain="[('external_model_id','=',source_model_id)]"/>
+                <field name="target_external_model_record_id" 
+                       required="False" 
+                       domain="[('external_model_id','=',target_model_id)]"/>
+                <field name="source_value_id" 
+                       required="context.get('type',False) in ['char','selection']" 
+                       options="{'no_create': True}" 
+                       domain="[('value_mapping_field_id','=',value_mapping_field_id)]"/>
+                <field name="target_value_id" 
+                       options="{'no_create': True}" 
+                       required="context.get('type',False) in ['char','selection']" 
+                       domain="[('value_mapping_field_id','=',value_mapping_field_id)]"/>
                 <field name="source_model_id" invisible="1"/>
                 <field name="target_model_id" invisible="1"/>
                 <field name="value_mapping_field_id" required="0" invisible="1"/>
             </tree>
         </field>
     </record>
+    
     <record id="action_etl_value_mapping_field_detail_values_mapping" model="ir.actions.act_window">
         <field name="name">Values Mapping</field>
         <field name="res_model">etl.value_mapping_field_detail</field>
