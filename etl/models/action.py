@@ -379,7 +379,7 @@ class Action(models.Model):
             rec.source_model_id.get_record_count(source_connection, rec.source_domain)
             rec.target_model_id.get_record_count(target_connection)
 
-    def run_repeated_action(self, repeated_action=True):
+    def run_repeated_action(self):
         return self.run_action(repeated_action=True)
 
     def read_source_model(self, source_connection=False,
@@ -411,8 +411,7 @@ class Action(models.Model):
         action_obj = self.env['etl.action']
         model_obj = self.env['etl.external_model']
         field_mapping_obj = self.env['etl.field_mapping']
-        value_mapping_field_detail_obj = self.env[
-            'etl.value_mapping_field_detail']
+        value_mapping_field_detail_obj = self.env['etl.value_mapping_field_detail']
         value_mapping_field_obj = self.env['etl.value_mapping_field']
 
         state = 'on_repeating' if repeated_action else 'enabled'
