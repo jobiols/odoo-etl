@@ -17,6 +17,12 @@ target = {
 conn = Client(target['host'], db=target['db'], user=target['user'],
               password=target['password'])
 
-args = {'move_id': 198, 'lines': [3, 4, 5]}
+args = {'move_id': '__export__.account_move_2_6b3c4b6f',
+        'partner_id': '__export__.res_partner_1184',
+        'type': 'out_invoice',
+        'lines': [
+            {'product_id': '__export__.product_template_1519'}
+        ]
+        }
 
-conn.execute('account.move', 'insert_move_lines', 1, args)
+conn.execute('account.move', 'insert_invoice', 1, args)

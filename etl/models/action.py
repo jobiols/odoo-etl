@@ -7,10 +7,9 @@ from datetime import datetime
 from ast import literal_eval
 import logging
 import pytz
-from odoo import models, fields, api, SUPERUSER_ID
-from odoo.tools import DEFAULT_SERVER_DATE_FORMAT, \
-    DEFAULT_SERVER_DATETIME_FORMAT
-
+from odoo import models, fields, api, SUPERUSER_ID, _
+from odoo.tools import DEFAULT_SERVER_DATE_FORMAT, DEFAULT_SERVER_DATETIME_FORMAT
+from odoo.exceptions import UserError
 _logger = logging.getLogger(__name__)
 
 
@@ -438,6 +437,8 @@ class Action(models.Model):
             source_model_obj = source_connection.model(rec.source_model_id.model)
             target_model_obj = target_connection.model(rec.target_model_id.model)
 
+            #import wdb;wdb.set_trace()
+
             # ids del source que hay que copiar a target
             source_model_ids = source_model_obj.search(domain)
             _logger.info('Records to import %i', len(source_model_ids))
@@ -709,14 +710,37 @@ class Action(models.Model):
             try:
                 _logger.info('Loadding Data...')
 
-                #import wdb;wdb.set_trace()
+                if target_model_obj._name == 'account.move.line':
+                    import_result = self.create_invoices(target_connection, target_fields, target_model_data)
+                else:
+                    import_result = target_model_obj.load(target_fields, target_model_data)
 
-                import_result = target_model_obj.load(target_fields, target_model_data)
             except Exception as ex:
                 _logger.info('excepcion-716 %s', str(ex))
                 import_result = str(ex)
             rec.log = import_result
             rec.target_model_id.get_record_count(target_connection)
+
+    def create_invoices(self, connection, keys, model_data):
+        lines = list()
+        for data in model_data:
+            lines.append(dict(zip(keys, data)))
+
+        args = {
+            'move_id': lines[0]['move_id/id'],
+            'lines' : lines
+        }
+        connection = self.env['account.move']
+        connection.insert_invoice(args)
+        return True
+
+        #import wdb;wdb.set_trace()
+        try:
+            err = connection.execute('account.move', 'insert_invoice', 1, args)
+        except Exception:
+            err = _('Etl_companion is not installed in target database')
+
+        return err
 
     def order_actions(self, exceptions=None):
         _logger.info('Lines to order %i', len(self.ids))

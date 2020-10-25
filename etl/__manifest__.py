@@ -27,7 +27,7 @@
     "development_status": "Alpha",  # "Alpha|Beta|Production/Stable|Mature"
     'test': [],
     'website': 'http://jeosoft.com.ar',
-    'depends': ['base'],
+    'depends': ['base', 'account'],
     'data': [
         'security/etl_group.xml',
         'views/etl_menuitem.xml',
