@@ -125,7 +125,6 @@ class Action(models.Model):
              'database in relation to the selected target model. The number '
              'of the non-active records will not be counted.'
     )
-
     target_id_type = fields.Selection(
         [('source_id', 'source_id'),
          ('builded_id', 'builded_id')],
@@ -407,6 +406,35 @@ class Action(models.Model):
             readed_model.append(action.source_model_id.id)
 
     def run_action(self, repeated_action=False):
+        self.ensure_one()
+
+        # si es account.move.line tiene tratamiento especial.
+        if self.target_model_id.model == 'account.move.line':
+            # buscamos las account.move
+            source_connection, _ = self.manager_id.open_connections()
+            am_obj = source_connection.model('account.move')
+            #aml_obj = source_connection.model('account.move.line')
+
+            # limitamos las account move que vamos a traer
+            domain = []
+            domain.append(('id', '>=', 512))
+            domain.append(('id', '<=', 1000))
+
+            am_ids = am_obj.search(domain)
+            invoice_qty = len(am_ids)
+
+            # por cada id de account.move traemos todas las lineas
+            for _id in am_ids:
+                invoice_qty -= 1
+                _logger.info('===============> quedan %s', invoice_qty)
+                domain = [('invoice_id', '=', _id)]
+                self.source_domain = str(domain)
+                self._run_action(repeated_action=repeated_action)
+            return True
+
+        self._run_action(repeated_action=repeated_action)
+
+    def _run_action(self, repeated_action=False):
 
         action_obj = self.env['etl.action']
         model_obj = self.env['etl.external_model']
@@ -435,8 +463,6 @@ class Action(models.Model):
             # Obtener los modelos externos de source y target
             source_model_obj = source_connection.model(rec.source_model_id.model)
             target_model_obj = target_connection.model(rec.target_model_id.model)
-
-            #import wdb;wdb.set_trace()
 
             # ids del source que hay que copiar a target
             source_model_ids = source_model_obj.search(domain)
@@ -709,6 +735,7 @@ class Action(models.Model):
             try:
                 _logger.info('Loadding Data...')
 
+                # si es account.move.line tiene tratamiento especial
                 if target_model_obj._name == 'account.move.line':
                     import_result = self.create_invoices(target_connection, target_fields, target_model_data)
                 else:
@@ -729,13 +756,9 @@ class Action(models.Model):
             'move_id': lines[0]['move_id/id'],
             'lines' : lines
         }
-        connection = self.env['account.move']
-        connection.insert_invoice(args)
-        return True
-
-        #import wdb;wdb.set_trace()
         try:
             err = connection.execute('account.move', 'insert_invoice', 1, args)
+            _logger.info('invoice created with lines... %s', err)
         except Exception:
             err = _('Etl_companion is not installed in target database')
 

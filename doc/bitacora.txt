@@ -1,0 +1,5 @@
+migrando account.voucher --> account.payment
+
+    target payment_method_id es requerido, y apunta a account.payment.method
+    
+

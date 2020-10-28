@@ -1,1 +1,1 @@
-select * from account_move_line
+select * from account_payment_method
