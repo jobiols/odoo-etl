@@ -27,8 +27,12 @@
     "development_status": "Alpha",  # "Alpha|Beta|Production/Stable|Mature"
     'test': [],
     'website': 'http://jeosoft.com.ar',
-    'depends': ['base', 'account'],
+    'depends': ['base', 'account', 'l10n_latam_invoice_document', 'l10n_latam_base', 'l10n_ar'],
     'data': [
+        'data/account_group_data.xml',
+        'data/account_chart_template_data.xml',
+        'data/account.account.template.csv',
+        'data/account_chart_template_data2.xml',
     ],
     'installable': True,
     'application': False,

@@ -407,20 +407,18 @@ class Action(models.Model):
 
     def run_action(self, repeated_action=False):
         self.ensure_one()
-
         # si es account.move.line tiene tratamiento especial.
         if self.target_model_id.model == 'account.move.line':
-            # buscamos las account.move
-            source_connection, _ = self.manager_id.open_connections()
-            am_obj = source_connection.model('account.move')
-            #aml_obj = source_connection.model('account.move.line')
+            # buscamos las account.invoice
+            source_connection, target_connection = self.manager_id.open_connections()
+            ai_obj = source_connection.model('account.invoice')
 
-            # limitamos las account move que vamos a traer
+            # limitamos las account invoice que vamos a traer
             domain = []
-            domain.append(('id', '>=', 512))
-            domain.append(('id', '<=', 1000))
+            domain.append(('id', '>=', 30000))
+            domain.append(('id', '<=', 40000))
 
-            am_ids = am_obj.search(domain)
+            am_ids = ai_obj.search(domain)
             invoice_qty = len(am_ids)
 
             # por cada id de account.move traemos todas las lineas
@@ -429,12 +427,12 @@ class Action(models.Model):
                 _logger.info('===============> quedan %s', invoice_qty)
                 domain = [('invoice_id', '=', _id)]
                 self.source_domain = str(domain)
-                self._run_action(repeated_action=repeated_action)
+                self._run_action(repeated_action=repeated_action, source_connection=source_connection, target_connection=target_connection)
             return True
 
         self._run_action(repeated_action=repeated_action)
 
-    def _run_action(self, repeated_action=False):
+    def _run_action(self, repeated_action=False, source_connection=False, target_connection=False):
 
         action_obj = self.env['etl.action']
         model_obj = self.env['etl.external_model']
@@ -444,7 +442,8 @@ class Action(models.Model):
 
         state = 'on_repeating' if repeated_action else 'enabled'
         for rec in self:
-            source_connection, target_connection = rec.manager_id.open_connections()
+            if not source_connection or not target_connection:
+                source_connection, target_connection = rec.manager_id.open_connections()
 
             _logger.info('Actions to run: %i', len(rec.ids))
             # TODO ver si esto es necesario porque hacia fallar el load. JEO
@@ -466,6 +465,8 @@ class Action(models.Model):
 
             # ids del source que hay que copiar a target
             source_model_ids = source_model_obj.search(domain)
+            if not source_model_ids:
+                return
             _logger.info('Records to import %i', len(source_model_ids))
             _logger.info('Building source data...')
 

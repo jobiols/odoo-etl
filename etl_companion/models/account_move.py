@@ -9,20 +9,32 @@ class AccountMove(models.Model):
     def get_id(self, xml_id):
         """ Dado el xml_id id obtiene el id
         """
+
+        import wdb;wdb.set_trace()
+
         model_obj = self.env['ir.model.data']
         xml_id = xml_id.split('.')
         _, _id = model_obj.get_object_reference(xml_id[0], xml_id[1])
         return _id
 
     def unlink_invoice(self):
+
+        import wdb;wdb.set_trace()
+
         self.env['account.move'].search([]).unlink()
 
     def insert_invoice(self, param):
+
+        import wdb;wdb.set_trace()
+
         """ Inserta las lineas de factura de una factura que viene en param
         """
         _logger.info('Inserting Invoice -------------------------------- ')
 
         def get_value(obj, xml_id):
+
+            import wdb;wdb.set_trace()
+
             """ Dado el modelo y el xml_id devuelve el record
             """
             _id = self.get_id(xml_id)
