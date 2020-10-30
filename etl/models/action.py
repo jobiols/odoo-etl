@@ -415,8 +415,8 @@ class Action(models.Model):
 
             # limitamos las account invoice que vamos a traer
             domain = []
-            domain.append(('id', '>=', 30000))
-            domain.append(('id', '<=', 40000))
+            domain.append(('id', '>=', 0))
+            domain.append(('id', '<=', 150))
 
             am_ids = ai_obj.search(domain)
             invoice_qty = len(am_ids)
@@ -757,6 +757,8 @@ class Action(models.Model):
             'move_id': lines[0]['move_id/id'],
             'lines' : lines
         }
+        import wdb;wdb.set_trace()
+
         try:
             err = connection.execute('account.move', 'insert_invoice', 1, args)
             _logger.info('invoice created with lines... %s', err)
