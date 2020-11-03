@@ -20,15 +20,20 @@
 ##############################################################################
 {
     'author': 'jeo Software',
-    'category': 'Tools',
+    'category': 'LoTools',
     'version': '13.0.1.0.0',
     'license': 'AGPL-3',
-    'name': 'odoo ETL companion',
-    "development_status": "Beta",  # "Alpha|Beta|Production/Stable|Mature"
+    'name': 'l10n_ar Localization Tweak',
+    "development_status": "Alpha",  # "Alpha|Beta|Production/Stable|Mature"
     'test': [],
     'website': 'http://jeosoft.com.ar',
     'depends': [],
-    'data': [],
+    'data': [
+        'data/account_group_data.xml',
+        'data/account_chart_template_data.xml',
+        'data/account.account.template.csv',
+        'data/account_chart_template_data2.xml',
+    ],
     'installable': True,
     'application': False,
 }
