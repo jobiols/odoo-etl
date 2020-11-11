@@ -27,7 +27,7 @@
     "development_status": "Beta",  # "Alpha|Beta|Production/Stable|Mature"
     'test': [],
     'website': 'http://jeosoft.com.ar',
-    'depends': [],
+    'depends': ['base', 'account', 'l10n_latam_invoice_document', 'l10n_latam_base', 'l10n_ar'],
     'data': [],
     'installable': True,
     'application': False,

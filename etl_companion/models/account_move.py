@@ -9,19 +9,10 @@ class AccountMove(models.Model):
     def get_id(self, xml_id):
         """ Dado el xml_id id obtiene el id
         """
-
-        #import wdb;wdb.set_trace()
-
         model_obj = self.env['ir.model.data']
         xml_id = xml_id.split('.')
         _, _id = model_obj.get_object_reference(xml_id[0], xml_id[1])
         return _id
-
-    def unlink_invoice(self):
-
-        #import wdb;wdb.set_trace()
-
-        self.env['account.move'].search([]).unlink()
 
     def insert_invoice(self, param):
         """ Inserta las lineas de factura de una factura que viene en param
@@ -39,7 +30,7 @@ class AccountMove(models.Model):
         partner_obj = self.env['res.partner']
         account_obj = self.env['account.account']
         product_obj = self.env['product.product']
-        acc_obj = self.env['account.account']
+#        acc_obj = self.env['account.account']
         _logger.info('Creados los modelos -------------------------------- ')
 
         # suponiendo que todas las facturas estan migradas abro un Form con cada una
@@ -55,13 +46,11 @@ class AccountMove(models.Model):
                 with move_form.invoice_line_ids.new() as line_form:
                     _logger.info('procesando la linea %s ', str(line))
 
-
                     # No se como usar el id de la linea, en este momento se creo una
                     # account_invoice_line pero con id = 0 todavia no esta en la bd.
                     unused = line['id']
 
-                    #line_form.product_id = get_value(product_obj, line['product_id/id'])
-                    line_form.product_id = product_obj.search([], limit=1)
+                    line_form.product_id = get_value(product_obj, line['product_id/id'])
                     if line_form.product_id:
                         _logger.info('agregado producto %s', line_form.product_id.name)
                     else:
@@ -76,10 +65,8 @@ class AccountMove(models.Model):
                     # no se para que esta el partner aca
                     line_form.partner_id = get_value(partner_obj, line['partner_id/id'])
 
-                    # todas las cuentas contables deben estar migradas, por ahora le
-                    # pongo una cuenta cualquiera
-#                   line_form.account_id = get_value(account_obj, line['account_id/id'])
-                    line_form.account_id = account_obj.search([], limit=1)
+                    # agregamos la cuenta contable
+                    line_form.account_id = get_value(account_obj, line['account_id/id'])
                     if line_form.account_id:
                         _logger.info('account %s', line_form.account_id.name)
                     else:

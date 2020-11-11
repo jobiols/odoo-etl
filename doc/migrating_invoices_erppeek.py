@@ -7,22 +7,39 @@ target = {
     'password': 'elias'
 }
 
-target = {
-    'host':'http://localhost:8069',
-    'db': 'migracion_consulting',
-    'user': 'admin',
-    'password': 'admin'
+source = {
+    'host':'http://10.254.128.237:8069',
+    'db': 'consulting_backup_3',
+    'user': 'alexis@quilsoft.com',
+    'password': 'Quilsoft1234'
 }
 
-conn = Client(target['host'], db=target['db'], user=target['user'],
-              password=target['password'])
+def _get_target():
+    conn = Client(target['host'], db=target['db'], user=target['user'], password=target['password'])
+    model = conn.model('res.country.state')
+    ids = model.search([])
+    fields = ['id/id', 'country_id/id', 'name']
+    datas = model.export_data(ids, fields)['datas']
+    for data in datas:
+        print(data)
 
-args = {'move_id': '__export__.account_move_2_6b3c4b6f',
-        'partner_id': '__export__.res_partner_1184',
-        'type': 'out_invoice',
-        'lines': [
-            {'product_id': '__export__.product_template_1519'}
-        ]
-        }
+def _get_source():
+    "Traer todos los identificadores externos de res.partner.state"
 
-conn.execute('account.move', 'insert_invoice', 1, args)
+    conn = Client(source['host'], db=source['db'], user=source['user'], password=source['password'])
+
+    model = conn.model('res.partner')
+    rec_id = 2556
+    is_customer = model.export_data([rec_id], ['customer'])['datas'][0][0]
+
+
+
+    ids = model.search([('country_id.name', '=', 'Chile')])
+
+    fields = ['id/id', 'country_id/id', 'name']
+    datas = model.export_data(ids, fields)['datas']
+    for data in datas:
+        print(data)
+
+_get_source()
+

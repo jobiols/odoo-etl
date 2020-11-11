@@ -604,7 +604,12 @@ class Action(models.Model):
                                         value_id = model_data_obj.export_data([value_id[0]], ['.id', 'res_id'])['datas']
                                         value_id = value_id[0][1]
                                     if field_action.target_id_type == 'source_id' and value:
-                                        new_field_value = value
+
+                                        if new_field_value:
+                                            new_field_value = new_field_value + ',' + value
+                                        else:
+                                            new_field_value = value
+
                                     elif field_action.target_id_type == 'builded_id' and value_id:
                                         if new_field_value:
                                             new_field_value = new_field_value + ',' + '%s_%s' % (
@@ -736,6 +741,8 @@ class Action(models.Model):
             try:
                 _logger.info('Loadding Data...')
 
+                #import wdb;wdb.set_trace()
+
                 # si es account.move.line tiene tratamiento especial
                 if target_model_obj._name == 'account.move.line':
                     import_result = self.create_invoices(target_connection, target_fields, target_model_data)
@@ -757,8 +764,6 @@ class Action(models.Model):
             'move_id': lines[0]['move_id/id'],
             'lines' : lines
         }
-        import wdb;wdb.set_trace()
-
         try:
             err = connection.execute('account.move', 'insert_invoice', 1, args)
             _logger.info('invoice created with lines... %s', err)
