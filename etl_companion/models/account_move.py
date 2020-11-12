@@ -23,15 +23,20 @@ class AccountMove(models.Model):
             """ Dado el modelo y el xml_id devuelve el record
             """
             _id = self.get_id(xml_id)
-            return obj.search([('id', '=', _id)])
+
+            _logger.info('Convertir %s en %d' % (xml_id, _id))
+
+            ret = obj.search([('id', '=', _id)])
+
+            _logger.info('se encontro el record %s' % str(ret))
+
+            return ret
 
         # modelos
         am_obj = self.env['account.move']
         partner_obj = self.env['res.partner']
         account_obj = self.env['account.account']
         product_obj = self.env['product.product']
-#        acc_obj = self.env['account.account']
-        _logger.info('Creados los modelos -------------------------------- ')
 
         # suponiendo que todas las facturas estan migradas abro un Form con cada una
         # de las facturas

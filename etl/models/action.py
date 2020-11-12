@@ -765,6 +765,9 @@ class Action(models.Model):
             'lines' : lines
         }
         try:
+
+            import wdb;wdb.set_trace()
+
             err = connection.execute('account.move', 'insert_invoice', 1, args)
             _logger.info('invoice created with lines... %s', err)
         except Exception:
