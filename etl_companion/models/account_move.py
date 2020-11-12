@@ -36,7 +36,8 @@ class AccountMove(models.Model):
         am_obj = self.env['account.move']
         partner_obj = self.env['res.partner']
         account_obj = self.env['account.account']
-        product_obj = self.env['product.product']
+        product_product_obj = self.env['product.product']
+        product_template_obj = self.env['product.template']
 
         # suponiendo que todas las facturas estan migradas abro un Form con cada una
         # de las facturas
@@ -55,7 +56,15 @@ class AccountMove(models.Model):
                     # account_invoice_line pero con id = 0 todavia no esta en la bd.
                     unused = line['id']
 
-                    line_form.product_id = get_value(product_obj, line['product_id/id'])
+                    # obtengo el product template
+                    # en la linea de producto en realidad viene el product_template que
+                    # el product product no lo migre porque no tienen variantes.
+                    _logger.info('busco product template %s' % line['product_id/id'])
+                    product_template_id = get_value(product_template_obj, line['product_id/id'])
+                    _logger.info('encontre %s' % str(product_template_id))
+
+                    # busco el product product correspondiente
+                    line_form.product_id = product_product_obj.search([('product_tmpl_id', '=', product_template_id.id)])
                     if line_form.product_id:
                         _logger.info('agregado producto %s', line_form.product_id.name)
                     else:
