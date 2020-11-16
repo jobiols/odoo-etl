@@ -79,6 +79,9 @@ class AccountMove(models.Model):
                     # no se para que esta el partner aca
                     line_form.partner_id = get_value(partner_obj, line['partner_id/id'])
 
+
+                    logger.info('buscar la cuenta,%s', line['account_id/id'])
+                    
                     # agregamos la cuenta contable
                     line_form.account_id = get_value(account_obj, line['account_id/id'])
                     if line_form.account_id:

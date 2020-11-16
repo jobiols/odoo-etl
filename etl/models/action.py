@@ -3,6 +3,7 @@
 # For copyright and license notices, see __manifest__.py file in module root
 # directory
 ##############################################################################
+import json
 from datetime import datetime
 from ast import literal_eval
 import logging
@@ -416,10 +417,12 @@ class Action(models.Model):
             # limitamos las account invoice que vamos a traer
             domain = []
             domain.append(('id', '>=', 0))
-            domain.append(('id', '<=', 150))
+            domain.append(('id', '<=', 140))
 
             am_ids = ai_obj.search(domain)
             invoice_qty = len(am_ids)
+
+            #import wdb;wdb.set_trace()
 
             # por cada id de account.move traemos todas las lineas
             for _id in am_ids:
@@ -431,6 +434,15 @@ class Action(models.Model):
             return True
 
         self._run_action(repeated_action=repeated_action)
+
+    def format_result(self, result):
+        ret = list()
+        if result['ids']:
+            return result['ids']
+        else:
+            for msg in result['messages']:
+                ret.append(json.dumps(msg))
+        return '\n'.join(ret)
 
     def _run_action(self, repeated_action=False, source_connection=False, target_connection=False):
 
@@ -466,6 +478,7 @@ class Action(models.Model):
             # ids del source que hay que copiar a target
             source_model_ids = source_model_obj.search(domain)
             if not source_model_ids:
+                rec.log = "No records found"
                 return
             _logger.info('Records to import %i', len(source_model_ids))
             _logger.info('Building source data...')
@@ -527,8 +540,6 @@ class Action(models.Model):
 
             # Read and append source values of type 'field' and type not m2m
             _logger.info('Building none m2m field mapping...')
-
-            # import wdb;wdb.set_trace()
 
             source_model_data = source_model_obj.export_data(
                 source_model_ids, source_fields)['datas']
@@ -707,9 +718,6 @@ class Action(models.Model):
                 if x.type == 'migrated_id' and
                 x.state == state and not x.blocked]
 
-
-            #import wdb;wdb.set_trace()
-
             if field_mapping_migrated_id_ids:
                 for _rec in source_model_data:
                     rec_id = _rec[0]
@@ -741,13 +749,16 @@ class Action(models.Model):
             try:
                 _logger.info('Loadding Data...')
 
-                #import wdb;wdb.set_trace()
 
                 # si es account.move.line tiene tratamiento especial
                 if target_model_obj._name == 'account.move.line':
-                    import_result = self.create_invoices(target_connection, target_fields, target_model_data)
+                    # me traigo los identificadores externos de todos los productos y
+                    # el identificador externo del template
+                    product_product_data = self.get_all_product(source_connection)
+                    import_result = self.create_invoices(product_product_data, target_connection, target_fields, target_model_data)
                 else:
-                    import_result = target_model_obj.load(target_fields, target_model_data)
+                    result = target_model_obj.load(target_fields, target_model_data)
+                    import_result = self.format_result(result)
 
             except Exception as ex:
                 _logger.info('excepcion-716 %s', str(ex))
@@ -755,20 +766,47 @@ class Action(models.Model):
             rec.log = import_result
             rec.target_model_id.get_record_count(target_connection)
 
-    def create_invoices(self, connection, keys, model_data):
+    def get_all_product(self, connection):
+        """ Traer todos los productos del source y armar una estructura para luego
+            encontrar el product template dado el product product
+        """
+        model = connection.model('product.product')
+        ids = model.search([])
+        datas = model.export_data(ids, ['id/id','product_tmpl_id/id'])['datas']
+
+        ret = dict()
+        for data in datas:
+            ret[data[0]] = data[1]
+
+        return ret
+
+
+    def product2template(self, product_data, keys, model_data):
+        """ Cambiar el identificador externo de product product por product template
+        """
+        # index del producto
+        _ix = keys.index('product_id/id')
+
+        for data in model_data:
+            # obtenemos el identificador externo del producto
+            product_product = data[_ix]
+            # lo cambiamos por el identificador externo del template
+            data[_ix] = product_data.get(product_product)
+        return model_data
+
+    def create_invoices(self, product_data, target_c, keys, model_data):
+        # corregir el producto
+        model_data = self.product2template(product_data, keys, model_data)
         lines = list()
         for data in model_data:
             lines.append(dict(zip(keys, data)))
 
         args = {
             'move_id': lines[0]['move_id/id'],
-            'lines' : lines
+            'lines': lines
         }
         try:
-
-            import wdb;wdb.set_trace()
-
-            err = connection.execute('account.move', 'insert_invoice', 1, args)
+            err = target_c.execute('account.move', 'insert_invoice', 1, args)
             _logger.info('invoice created with lines... %s', err)
         except Exception:
             err = _('Etl_companion is not installed in target database')

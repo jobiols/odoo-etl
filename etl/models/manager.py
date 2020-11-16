@@ -268,7 +268,9 @@ class Manager(models.Model):
                                   'i.e. ["crm","stock","hr"]'))
             domain = [('name', 'in', modules)]
             target_module_ids = target_module_obj.search(domain)
-            target_module_obj.button_immediate_install(target_module_ids)
+            # lo instlalamos de a uno porque sino se va por timeout
+            for _id in target_module_ids:
+                target_module_obj.button_immediate_install([_id])
 
     def run_actions(self):
         """ Run all actions (none repeating)

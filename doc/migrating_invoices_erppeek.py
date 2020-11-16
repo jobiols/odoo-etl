@@ -9,7 +9,7 @@ target = {
 
 source = {
     'host':'http://10.254.128.237:8069',
-    'db': 'consulting_backup_3',
+    'db': 'consulting_backup_5',
     'user': 'alexis@quilsoft.com',
     'password': 'Quilsoft1234'
 }
@@ -24,20 +24,15 @@ def _get_target():
         print(data)
 
 def _get_source():
-    "Traer todos los identificadores externos de res.partner.state"
+    "Traer todos los identificadores externos "
 
     conn = Client(source['host'], db=source['db'], user=source['user'], password=source['password'])
 
-    model = conn.model('res.partner')
-    rec_id = 2556
-    is_customer = model.export_data([rec_id], ['customer'])['datas'][0][0]
+    model = conn.model('account.invoice.line')
+    rec_ids = model.search([('id','<',2000)])
+    print(len(rec_ids))
+    datas = model.export_data(rec_ids, ['account_id/id'])['datas']
 
-
-
-    ids = model.search([('country_id.name', '=', 'Chile')])
-
-    fields = ['id/id', 'country_id/id', 'name']
-    datas = model.export_data(ids, fields)['datas']
     for data in datas:
         print(data)
 
