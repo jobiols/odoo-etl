@@ -18,6 +18,7 @@ class Action(models.Model):
     _name = 'etl.action'
     _description = 'action'
     _order = "sequence"
+    _ret = False # Variable local para acelerar la carga
 
     state = fields.Selection(
         [('to_analyze', 'To Analyze'),
@@ -416,8 +417,8 @@ class Action(models.Model):
 
             # limitamos las account invoice que vamos a traer
             domain = []
-            domain.append(('id', '>=', 0))
-            domain.append(('id', '<=', 140))
+            domain.append(('id', '>=', 1501))
+            domain.append(('id', '<=', 1600))
 
             am_ids = ai_obj.search(domain)
             invoice_qty = len(am_ids)
@@ -749,7 +750,6 @@ class Action(models.Model):
             try:
                 _logger.info('Loadding Data...')
 
-
                 # si es account.move.line tiene tratamiento especial
                 if target_model_obj._name == 'account.move.line':
                     # me traigo los identificadores externos de todos los productos y
@@ -770,15 +770,19 @@ class Action(models.Model):
         """ Traer todos los productos del source y armar una estructura para luego
             encontrar el product template dado el product product
         """
-        model = connection.model('product.product')
-        ids = model.search([])
-        datas = model.export_data(ids, ['id/id','product_tmpl_id/id'])['datas']
+        if not self._ret:
 
-        ret = dict()
-        for data in datas:
-            ret[data[0]] = data[1]
+            model = connection.model('product.product')
+            ids = model.search([])
+            datas = model.export_data(ids, ['id/id', 'product_tmpl_id/id'])['datas']
 
-        return ret
+            ret = dict()
+            for data in datas:
+                ret[data[0]] = data[1]
+
+            self._ret = ret
+
+        return self._ret
 
 
     def product2template(self, product_data, keys, model_data):
