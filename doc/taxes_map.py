@@ -479,8 +479,8 @@ def map_tax(source):
   #return 'account_base_config.account_tax_005'
 
 # obtener el identificador externo en source
-model = source_connection.model('account.invoice.line')
-source_external_id = model.export_data([rec_id], ['invoice_line_tax_id/id'])['datas'][0][0]
+model = source_connection.model('product.template')
+source_external_id = model.export_data([rec_id], ['supplier_taxes_id/id'])['datas'][0][0]
 
 # mapear identificador externo de source a target y devolverlo
 context['result'] = map_tax(source_external_id) if source_external_id else False
