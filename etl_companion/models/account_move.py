@@ -28,7 +28,7 @@ class AccountMove(models.Model):
 
             ret = obj.search([('id', '=', _id)])
 
-            _logger.info('se encontro el record %s' % str(ret))
+            _logger.info('se encontro el record %s', str(ret))
 
             return ret
 
@@ -50,18 +50,18 @@ class AccountMove(models.Model):
 
                 # creamos una linea de factura sin salvarla en bd
                 with move_form.invoice_line_ids.new() as line_form:
-                    _logger.info('procesando la linea %s ', str(line))
+                    _logger.info('procesando la linea %s', str(line))
 
                     # No se como usar el id de la linea, en este momento se creo una
                     # account_invoice_line pero con id = 0 todavia no esta en la bd.
-                    unused = line['id']
+                    # unused = line['id']
 
                     # obtengo el product template
                     # en la linea de producto en realidad viene el product_template que
                     # el product product no lo migre porque no tienen variantes.
-                    _logger.info('busco product template %s' % line['product_id/id'])
+                    _logger.info('busco product template %s', line['product_id/id'])
                     product_template_id = get_value(product_template_obj, line['product_id/id'])
-                    _logger.info('encontre %s' % str(product_template_id))
+                    _logger.info('encontre %s', str(product_template_id))
 
                     # busco el product product correspondiente
                     line_form.product_id = product_product_obj.search([('product_tmpl_id', '=', product_template_id.id)])
@@ -79,9 +79,8 @@ class AccountMove(models.Model):
                     # no se para que esta el partner aca
                     line_form.partner_id = get_value(partner_obj, line['partner_id/id'])
 
+                    _logger.info('buscar la cuenta,%s', line['account_id/id'])
 
-                    logger.info('buscar la cuenta,%s', line['account_id/id'])
-                    
                     # agregamos la cuenta contable
                     line_form.account_id = get_value(account_obj, line['account_id/id'])
                     if line_form.account_id:
@@ -96,9 +95,9 @@ class AccountMove(models.Model):
             _logger.info('se salvo la factura con estos elementos %s', str(invoice.line_ids.ids))
 
             # devolver los ids de todas las lineas del asiento.
-            return str(invoice.line_ids.ids)
+            return {'ok': True, 'msg': str(invoice.line_ids.ids)}
 
         except Exception as ex:
-            _logger.error('Error %s', (str(ex)))
+            _logger.error('Error %s', str(ex))
             # ocurrio un error devolver el mensaje
-            return str(ex)
+            return {'ok': False, 'msg': str(ex)}
