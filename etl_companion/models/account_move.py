@@ -56,19 +56,21 @@ class AccountMove(models.Model):
                     # account_invoice_line pero con id = 0 todavia no esta en la bd.
                     # unused = line['id']
 
-                    # obtengo el product template
-                    # en la linea de producto en realidad viene el product_template que
-                    # el product product no lo migre porque no tienen variantes.
-                    _logger.info('busco product template %s', line['product_id/id'])
-                    product_template_id = get_value(product_template_obj, line['product_id/id'])
-                    _logger.info('encontre %s', str(product_template_id))
+                    # obtengo el product template, en la linea de producto en realidad
+                    # viene el product_template ya que el product product no lo migre
+                    # porque no tienen variantes.
+                    # tener en cuenta ademas que puede haber lineas de factura sin producto
+                    if line['product_id/id']:
+                        _logger.info('busco product template %s', line['product_id/id'])
+                        product_template_id = get_value(product_template_obj, line['product_id/id'])
+                        _logger.info('encontre %s', str(product_template_id))
 
-                    # busco el product product correspondiente
-                    line_form.product_id = product_product_obj.search([('product_tmpl_id', '=', product_template_id.id)])
-                    if line_form.product_id:
-                        _logger.info('agregado producto %s', line_form.product_id.name)
-                    else:
-                        _logger.error('Product not found %s', line['product_id/id'])
+                        # busco el product product correspondiente
+                        line_form.product_id = product_product_obj.search([('product_tmpl_id', '=', product_template_id.id)])
+                        if line_form.product_id:
+                            _logger.info('agregado producto %s', line_form.product_id.name)
+                        else:
+                            _logger.error('Product not found %s', line['product_id/id'])
 
                     line_form.discount = line['discount']
                     line_form.name = line['name']
@@ -88,7 +90,7 @@ class AccountMove(models.Model):
                     else:
                         _logger.info('NO account')
 
-                    _logger.info('terminado de cargar los datos de la factura')
+                    _logger.info('Finalizada la carga de la factura')
 
             # salvar la factura completa en la bd
             invoice = move_form.save()

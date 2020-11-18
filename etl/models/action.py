@@ -19,6 +19,7 @@ class Action(models.Model):
     _description = 'action'
     _order = "sequence"
     _ret = False # Variable local para acelerar la carga
+    _stop = False # Variable local para parar la carga en caso de error
 
     state = fields.Selection(
         [('to_analyze', 'To Analyze'),
@@ -417,21 +418,23 @@ class Action(models.Model):
 
             # limitamos las account invoice que vamos a traer
             domain = []
-            domain.append(('id', '>=', 1501))
-            domain.append(('id', '<=', 1600))
+            domain.append(('id', '>=', 1692))
+            domain.append(('id', '<=', 1692))
 
             am_ids = ai_obj.search(domain)
             invoice_qty = len(am_ids)
 
-            #import wdb;wdb.set_trace()
-
             # por cada id de account.move traemos todas las lineas
             for _id in am_ids:
                 invoice_qty -= 1
-                _logger.info('===============> quedan %s', invoice_qty)
+                _logger.info('===============> QUEDAN %d -- %d', invoice_qty, _id)
                 domain = [('invoice_id', '=', _id)]
                 self.source_domain = str(domain)
-                self._run_action(repeated_action=repeated_action, source_connection=source_connection, target_connection=target_connection)
+                self._run_action(repeated_action=repeated_action,
+                                 source_connection=source_connection,
+                                 target_connection=target_connection)
+                if self._stop:
+                    break
             return True
 
         self._run_action(repeated_action=repeated_action)
@@ -748,7 +751,7 @@ class Action(models.Model):
                 elif rec.target_id_type == 'builded_id':
                     target_model_data.append(['%s_%s' % (rec.target_id_prefix, str(record[0]))] + record[2:])
             try:
-                _logger.info('Loadding Data...')
+                _logger.info('Loading Data...')
 
                 # si es account.move.line tiene tratamiento especial
                 if target_model_obj._name == 'account.move.line':
@@ -800,6 +803,7 @@ class Action(models.Model):
 
     def create_invoices(self, product_data, target_c, keys, model_data):
         # corregir el producto
+        #import wdb;wdb.set_trace()
         model_data = self.product2template(product_data, keys, model_data)
         lines = list()
         for data in model_data:
@@ -810,12 +814,26 @@ class Action(models.Model):
             'lines': lines
         }
         try:
-            err = target_c.execute('account.move', 'insert_invoice', 1, args)
-            _logger.info('invoice created with lines... %s', err)
-        except Exception:
-            err = _('Etl_companion is not installed in target database')
 
-        return err
+
+            err = target_c.execute('account.move', 'insert_invoice', 1, args)
+            if err['ok']:
+                _logger.info('invoice created with lines... %s', err['msg'])
+                return err['msg']
+            else:
+                _logger.info('ERROR creating invoice lines... %s', err['msg'])
+                # paro la migracion
+                self._stop = True
+                from odoo.tools.safe_eval import safe_eval
+                # obtengo la factura que estoy procesando
+                _id = safe_eval(self.source_domain)[0][2]
+                # la devuelvo junto con el error
+                return 'invoice_id=%d Error: %s' % (_id, err['msg'])
+
+        except Exception:
+            _logger.error(_('etl_companion is not installed in target database'))
+
+        return 'etl_companion no esta intalado'
 
     def order_actions(self, exceptions=None):
         _logger.info('Lines to order %i', len(self.ids))
