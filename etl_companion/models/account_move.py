@@ -114,3 +114,39 @@ class AccountMove(models.Model):
             _logger.error('Error %s', str(ex))
             # ocurrio un error devolver el mensaje
             return {'ok': False, 'msg': str(ex)}
+
+    def post_invoices(self, param):
+        """ Postear o cancelar las facturas """
+
+        am_obj = self.env['account.move']
+        def get_value(obj, xml_id):
+            """ Dado el modelo y el xml_id devuelve el record
+            """
+            _id = self.get_id(xml_id)
+            _logger.info('Convertir %s en %d' % (xml_id, _id))
+            ret = obj.search([('id', '=', _id)])
+            _logger.info('se encontro el record %s', str(ret))
+            return ret
+
+        invoice_id = param[0]
+        state = param[1]
+
+        try:
+            invoice = get_value(am_obj, invoice_id)
+        except:
+            _logger.error('No se encontro la factura con id %s', invoice_id)
+            return {
+                'ok': True,
+                'msg': 'No encontramos la factura %s' % invoice_id
+                }
+        try:
+            if state in ['Open', 'Paid']:
+                invoice.action_post()
+                return {'ok': True, 'msg': 'Factura posteada'}
+
+            if state in ['Cancelled']:
+                invoice.button_cancel()
+                return {'ok': True, 'msg': 'Factura cancelada'}
+        except Exception as ex:
+            _logger.error(str(ex))
+            return {'ok': False, 'msg': 'ERROR %s' % str(ex)}

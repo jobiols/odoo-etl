@@ -418,7 +418,7 @@ class Action(models.Model):
 
             # limitamos las facturas que vamos a procesar.
             domain = []
-            domain.append(('id', '>=', 109))
+            domain.append(('id', '>=', 0))
             domain.append(('id', '<=', 109))
 
             am_ids = ai_obj.search(domain)
@@ -830,8 +830,8 @@ class Action(models.Model):
                 # la devuelvo junto con el error
                 return 'invoice_id=%d Error: %s' % (_id, err['msg'])
 
-        except Exception:
-            _logger.error(_('etl_companion is not installed in target database'))
+        except Exception as ex:
+            _logger.error(_('etl_companion Exception %s', str(ex)))
 
         return 'etl_companion no esta intalado'
 
