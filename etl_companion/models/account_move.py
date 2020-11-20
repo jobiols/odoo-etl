@@ -40,10 +40,20 @@ class AccountMove(models.Model):
         product_template_obj = self.env['product.template']
 
         # suponiendo que todas las facturas estan migradas abro un Form con cada una
-        # de las facturas
-        move_form = Form(get_value(am_obj, param['move_id']))
-        _logger.info('Creado el form con id %s ', param['move_id'])
+        # de las facturas.
 
+        # Sin embargo Paso que una factura no se migro, asi que verificamos si la
+        # factura esta y si no esta lo dejamos pasar calladamente.
+        # TODO Esto hay que sacarlo cuando sea la migracion final.
+        try:
+            move_form = Form(get_value(am_obj, param['move_id']))
+            _logger.info('Creando el form con id %s ', param['move_id'])
+        except:
+            _logger.error('No se encontro el form con id %s', param['move_id'])
+            return {
+                    'ok': True,
+                    'msg': 'No encontramos la factura %s' % param['move_id']
+                    }
         try:
             # recorremos las lineas de factura y procesamos cada una
             for line in param['lines']:
@@ -77,7 +87,7 @@ class AccountMove(models.Model):
                     line_form.quantity = line['quantity']
                     line_form.sequence = line['sequence']
                     line_form.price_unit = line['price_unit']
-                    line_form.date = line['date']
+                    #line_form.date = line['date']
 
                     # no se para que esta el partner aca
                     line_form.partner_id = get_value(partner_obj, line['partner_id/id'])

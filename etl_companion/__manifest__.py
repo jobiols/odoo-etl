@@ -21,7 +21,7 @@
 {
     'author': 'jeo Software',
     'category': 'Tools',
-    'version': '13.0.1.0.3',
+    'version': '13.0.1.0.4',
     'license': 'AGPL-3',
     'name': 'odoo ETL companion',
     "development_status": "Beta",  # "Alpha|Beta|Production/Stable|Mature"
