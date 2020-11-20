@@ -1,2 +1,4 @@
-select * from res_country_state
-where country_id = 10
+select * from account_tax_repartition_line;
+
+select * from account_tax
+where amount=21;

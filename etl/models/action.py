@@ -416,10 +416,10 @@ class Action(models.Model):
             source_connection, target_connection = self.manager_id.open_connections()
             ai_obj = source_connection.model('account.invoice')
 
-            # limitamos las account invoice que vamos a traer
+            # limitamos las facturas que vamos a procesar.
             domain = []
-            domain.append(('id', '>=', 1692))
-            domain.append(('id', '<=', 1692))
+            domain.append(('id', '>=', 109))
+            domain.append(('id', '<=', 109))
 
             am_ids = ai_obj.search(domain)
             invoice_qty = len(am_ids)
@@ -694,7 +694,7 @@ class Action(models.Model):
                     if source_mapping.source_field_id.ttype == 'datetime' and field_value:
                         if source_mapping.target_field_id.ttype == 'date':
                             # TODO, no estoy seguro si esta forma de truncarlo
-                            # funciona bien
+                            # funciona bien (si funciona pero sacar el doble if)
                             field_value = field_value[:10]
                     if source_mapping.source_field_id.ttype == 'date' and field_value:
                         if source_mapping.target_field_id.ttype == 'datetime':

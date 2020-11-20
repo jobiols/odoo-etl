@@ -164,25 +164,34 @@ def map_tax(source):
   """ Mapea un impuesto en una linea de factura de v8 a v13
   """
   # IVA Compras 21%
-  if source == 'ri_tax_vat_21_compras':
-    return 'account_base_config.account_tax_005'
-  if source == 'ri_tax_vat_21_compras':
-    return '__export.account_tax_745'
+  if source == 'account_base_config.account_tax_005':
+    return 'l10n_ar.ri_tax_vat_21_compras'
+
   # IVA Ventas 21%
-  if source == 'ri_tax_vat_21_ventas':
-    return '__export__.account_tax_739'
+  if source == '__export__.account_tax_739':
+    return 'l10n_ar.ri_tax_vat_21_ventas'
+
+  # IVA Compras 10.5%
+  if source == 'account_base_config.account_tax_006':
+    return 'l10n_ar.ri_tax_vat_10_compras'
+
+  # IVA Ventas 10.5%
+  if source == 'account_base_config.account_tax_004':
+    return 'l10n_ar.ri_tax_vat_10_ventas'
+
+
+
+
+
+
+  if source == 'ri_tax_vat_21_compras':
+    return '__export.account_tax_745'
   if source == 'ri_tax_vat_21_ventas':
     return '__export.account_tax_745'
-  # IVA Compras 10.5%
-  if source == 'ri_tax_vat_10_compras':
-    return 'account_base_config.account_tax_006'
   if source == 'ri_tax_vat_10_compras':
     return '__export.account_tax_784'
   if source == 'ri_tax_vat_10_compras':
     return '__export__.account_tax_767'
-  # IVA Ventas 10.5%
-  if source == 'ri_tax_vat_10_ventas':
-    return 'account_base_config.account_tax_004'
   if source == 'ri_tax_vat_10_ventas':
     return '__export.account_tax_784'
   if source == 'ri_tax_vat_10_ventas':
@@ -476,11 +485,11 @@ def map_tax(source):
 
   # ninguno de los anteriores devuelvo excepcion
   raise Exception('Identificador externo no encontrado en migration script. %s' % source)
-  #return 'account_base_config.account_tax_005'
+  #return 'l10n_ar.1_ri_tax_vat_21_ventas'
 
 # obtener el identificador externo en source
 model = source_connection.model('product.template')
-source_external_id = model.export_data([rec_id], ['supplier_taxes_id/id'])['datas'][0][0]
+source_external_id = model.export_data([rec_id], ['taxes_id/id'])['datas'][0][0]
 
 # mapear identificador externo de source a target y devolverlo
 context['result'] = map_tax(source_external_id) if source_external_id else False

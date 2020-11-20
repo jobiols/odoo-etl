@@ -77,6 +77,7 @@ class AccountMove(models.Model):
                     line_form.quantity = line['quantity']
                     line_form.sequence = line['sequence']
                     line_form.price_unit = line['price_unit']
+                    line_form.date = line['date']
 
                     # no se para que esta el partner aca
                     line_form.partner_id = get_value(partner_obj, line['partner_id/id'])

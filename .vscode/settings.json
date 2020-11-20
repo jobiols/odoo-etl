@@ -7,7 +7,7 @@
     "files.trimTrailingWhitespace": true,
     "sqltools.connections": [
         {
-            "database": "test13_prod",
+            "database": "loca_modif",
             "driver": "PostgreSQL",
             "name": "test13_prod",
             "password": "odoo",
