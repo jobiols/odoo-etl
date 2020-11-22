@@ -128,25 +128,27 @@ class AccountMove(models.Model):
             _logger.info('se encontro el record %s', str(ret))
             return ret
 
-        invoice_id = param[0]
-        state = param[1]
+        data = param['param']
 
         try:
-            invoice = get_value(am_obj, invoice_id)
+            invoice = get_value(am_obj, data[0])
         except:
-            _logger.error('No se encontro la factura con id %s', invoice_id)
+            _logger.error('No se encontro la factura con id %s', data[0])
             return {
                 'ok': True,
-                'msg': 'No encontramos la factura %s' % invoice_id
+                'msg': 'No encontramos la factura %s' % data[0]
                 }
         try:
-            if state in ['Open', 'Paid']:
+            if data[1] in ['Open', 'Paid']:
                 invoice.action_post()
                 return {'ok': True, 'msg': 'Factura posteada'}
 
-            if state in ['Cancelled']:
+            if data[1] in ['Cancelled']:
                 invoice.button_cancel()
                 return {'ok': True, 'msg': 'Factura cancelada'}
+
+            return {'ok': True, 'msg': 'Draft invoice, nothing to do'}
+
         except Exception as ex:
             _logger.error(str(ex))
-            return {'ok': False, 'msg': 'ERROR %s' % str(ex)}
+            return {'ok': False, 'msg': 'ERROR %s' % str(ex), 'invoice': invoice.name, 'date': invoice.invoice_date}

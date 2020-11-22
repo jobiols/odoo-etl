@@ -1,10 +1,10 @@
 from erppeek import Client
 
 target = {
-    'host':'https://patriciopa-odoo13-demo-main-1595300.dev.odoo.com',
-    'db': 'patriciopa-odoo13-demo-main-1595300',
+    'host':'https://githubconsultingcs-cservices2-staging02-1706737.dev.odoo.com/',
+    'db': 'githubconsultingcs-cservices2-staging02-1706737',
     'user': 'admin',
-    'password': 'elias'
+    'password': 'adminsh'
 }
 
 source = {
@@ -26,21 +26,31 @@ def get_source_data():
     conn = Client(source['host'], db=source['db'], user=source['user'], password=source['password'])
 
     model = conn.model('account.invoice')
-    rec_ids = model.search([('id', '<', 140)])
+    rec_ids = model.search([('id', '>=', 15000),
+                            ('id', '<',  1600000)])
     print(len(rec_ids))
 
-    return model.export_data(rec_ids, ['id/id','state'])['datas']
+    return model.export_data(rec_ids, ['id/id', 'state'])['datas']
 
 
 def post_invoices():
     conn = Client(target['host'], db=target['db'], user=target['user'], password=target['password'])
 
     # Draft, Pro-forma, Open, Paid, Cancelled
-
+    duplicates = []
     datas = get_source_data()
     for data in datas:
-        ret = conn.execute('account.move', 'post_invoices', 1, {'param': data})
         print(data)
+        ret = conn.execute('account.move', 'post_invoices', 1, {'param': data})
         print(ret)
+        if not ret['ok']:
+            duplicates.append([ret.get('invoice'),ret.get('date'), ret.get('msg')])
+            print(ret.get('invoice'), ret.get('date'), ret.get('msg'))
+
+    import csv
+    with open('errores.csv', mode='a') as file:
+        writer = csv.writer(file)
+        for line in duplicates:
+            writer.writerow(line)
 
 post_invoices()

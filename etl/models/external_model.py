@@ -203,6 +203,7 @@ class ExternalModel(models.Model):
                 _logger.info('%i records on model %s', rec.records, rec.display_name)
                 model_obj = connection.model(rec.model)
                 rec.records = model_obj.search_count(literal_eval(domain))
-            except Exception:
+            except Exception as ex:
                 rec.records = -1
-                _logger.warning('Model not found %s', rec.model)
+                _logger.warning('Error %s retrieving number of records in model %s',
+                                str(ex), rec.model)

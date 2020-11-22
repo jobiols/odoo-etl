@@ -1,0 +1,526 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+   <data noupdate="1">
+      <record id="__export__.res_users_70" model="res.users">
+         <field name="name">ABRE INTEGRADORES</field>
+         <field name="login">gap@abreintegradores.com.ar</field>
+         <field name="password"></field>
+         <field name="groups_id" eval="[(6,0,[])]" />
+         <field name="partner_id" ref="__export__.res_partner_1804" />
+         <field name="active" eval="True" />
+      </record>
+      <record id="__export__.res_users_5" model="res.users">
+         <field name="name">Agustina Mancini</field>
+         <field name="login">agustinam@cservices.com.ar</field>
+         <field name="password"></field>
+         <field name="groups_id" eval="[(6,0,[])]" />
+         <field name="partner_id" ref="__export__.res_partner_277" />
+         <field name="active" eval="True" />
+      </record>
+      <record id="__export__.res_users_63" model="res.users">
+         <field name="name">Alejandra Parada</field>
+         <field name="login">alejandrap@cservices.com.ar</field>
+         <field name="password"></field>
+         <field name="groups_id" eval="[(6,0,[])]" />
+         <field name="partner_id" ref="__export__.res_partner_1473" />
+         <field name="active" eval="True" />
+      </record>
+      <record id="__export__.res_users_78" model="res.users">
+         <field name="name">Alejandro Romano</field>
+         <field name="login">alejandror@cservices.com.ar</field>
+         <field name="password"></field>
+         <field name="groups_id" eval="[(6,0,[])]" />
+         <field name="partner_id" ref="__export__.res_partner_2209" />
+         <field name="active" eval="True" />
+      </record>
+      <record id="__export__.res_users_19" model="res.users">
+         <field name="name">Andreina Molleja</field>
+         <field name="login">andreinam@cservices.com.ar</field>
+         <field name="password"></field>
+         <field name="groups_id" eval="[(6,0,[])]" />
+         <field name="partner_id" ref="__export__.res_partner_382" />
+         <field name="active" eval="False" />
+      </record>
+      <record id="__export__.res_users_25" model="res.users">
+         <field name="name">Andreina Ruiz</field>
+         <field name="login">andreinar@cservices.com.ar</field>
+         <field name="password"></field>
+         <field name="groups_id" eval="[(6,0,[])]" />
+         <field name="partner_id" ref="__export__.res_partner_447" />
+         <field name="active" eval="False" />
+      </record>
+      <record id="__export__.res_users_6" model="res.users">
+         <field name="name">Angel Reale</field>
+         <field name="login">angelr@cservices.com.ar</field>
+         <field name="password"></field>
+         <field name="groups_id" eval="[(6,0,[])]" />
+         <field name="partner_id" ref="__export__.res_partner_278" />
+         <field name="active" eval="True" />
+      </record>
+      <record id="__export__.res_users_35" model="res.users">
+         <field name="name">Antonella Tedesco</field>
+         <field name="login">antonellat@cservices.com.ar</field>
+         <field name="password"></field>
+         <field name="groups_id" eval="[(6,0,[])]" />
+         <field name="partner_id" ref="__export__.res_partner_602" />
+         <field name="active" eval="False" />
+      </record>
+      <record id="__export__.res_users_28" model="res.users">
+         <field name="name">Ariel Moldes</field>
+         <field name="login">arielm@cservices.com.ar</field>
+         <field name="password"></field>
+         <field name="groups_id" eval="[(6,0,[])]" />
+         <field name="partner_id" ref="__export__.res_partner_450" />
+         <field name="active" eval="False" />
+      </record>
+      <record id="__export__.res_users_66" model="res.users">
+         <field name="name">Asociacion Civil La Educacion Integral</field>
+         <field name="login">LSantos@colegiodelsalvador.esc.edu.ar</field>
+         <field name="password"></field>
+         <field name="groups_id" eval="[(6,0,[])]" />
+         <field name="partner_id" ref="__export__.res_partner_22" />
+         <field name="active" eval="True" />
+      </record>
+      <record id="__export__.res_users_23" model="res.users">
+         <field name="name">Ayelen Debuglio</field>
+         <field name="login">ayelend@cservices.com.ar</field>
+         <field name="password"></field>
+         <field name="groups_id" eval="[(6,0,[])]" />
+         <field name="partner_id" ref="__export__.res_partner_445" />
+         <field name="active" eval="True" />
+      </record>
+      <record id="__export__.res_users_17" model="res.users">
+         <field name="name">Barbara Garcia</field>
+         <field name="login">barbarag@cservices.com.ar</field>
+         <field name="password"></field>
+         <field name="groups_id" eval="[(6,0,[])]" />
+         <field name="partner_id" ref="__export__.res_partner_380" />
+         <field name="active" eval="False" />
+      </record>
+      <record id="__export__.res_users_52" model="res.users">
+         <field name="name">Carlos Molina</field>
+         <field name="login">carlos.molina@ontimefs.com</field>
+         <field name="password"></field>
+         <field name="groups_id" eval="[(6,0,[])]" />
+         <field name="partner_id" ref="__export__.res_partner_1252" />
+         <field name="active" eval="True" />
+      </record>
+      <record id="__export__.res_users_77" model="res.users">
+         <field name="name">contabilidad@tercerizatehoy.com.ar</field>
+         <field name="login">contabilidad@tercerizatehoy.com.ar</field>
+         <field name="password"></field>
+         <field name="groups_id" eval="[(6,0,[])]" />
+         <field name="partner_id" ref="__export__.res_partner_2188" />
+         <field name="active" eval="True" />
+      </record>
+      <record id="__export__.res_users_31" model="res.users">
+         <field name="name">Daniela Araya</field>
+         <field name="login">danielaa@cservices.com.ar</field>
+         <field name="password"></field>
+         <field name="groups_id" eval="[(6,0,[])]" />
+         <field name="partner_id" ref="__export__.res_partner_454" />
+         <field name="active" eval="False" />
+      </record>
+      <record id="__export__.res_users_8" model="res.users">
+         <field name="name">Daniel Giovagnoni</field>
+         <field name="login">danielg@cservices.com.ar</field>
+         <field name="password"></field>
+         <field name="groups_id" eval="[(6,0,[])]" />
+         <field name="partner_id" ref="__export__.res_partner_280" />
+         <field name="active" eval="True" />
+      </record>
+      <record id="__export__.res_users_57" model="res.users">
+         <field name="name">Diego Arcuri - On Time</field>
+         <field name="login">diego.arcuri@ontimefs.com</field>
+         <field name="password"></field>
+         <field name="groups_id" eval="[(6,0,[])]" />
+         <field name="partner_id" ref="__export__.res_partner_1424" />
+         <field name="active" eval="False" />
+      </record>
+      <record id="__export__.res_users_81" model="res.users">
+         <field name="name">Elizabeth Soria</field>
+         <field name="login">elizabeths@cservices.com.ar</field>
+         <field name="password"></field>
+         <field name="groups_id" eval="[(6,0,[])]" />
+         <field name="partner_id" ref="__export__.res_partner_2604" />
+         <field name="active" eval="True" />
+      </record>
+      <record id="__export__.res_users_58" model="res.users">
+         <field name="name">Emilia Nascimbeni</field>
+         <field name="login">emilian@cservices.com.ar</field>
+         <field name="password"></field>
+         <field name="groups_id" eval="[(6,0,[])]" />
+         <field name="partner_id" ref="__export__.res_partner_1435" />
+         <field name="active" eval="False" />
+      </record>
+      <record id="__export__.res_users_60" model="res.users">
+         <field name="name">Fernando Saljayi</field>
+         <field name="login">fernandos@cservices.com.ar</field>
+         <field name="password"></field>
+         <field name="groups_id" eval="[(6,0,[])]" />
+         <field name="partner_id" ref="__export__.res_partner_1454" />
+         <field name="active" eval="True" />
+      </record>
+      <record id="__export__.res_users_69" model="res.users">
+         <field name="name">Francisco Gonzalez</field>
+         <field name="login">franciscog@cservices.com.ar</field>
+         <field name="password"></field>
+         <field name="groups_id" eval="[(6,0,[])]" />
+         <field name="partner_id" ref="__export__.res_partner_1723" />
+         <field name="active" eval="False" />
+      </record>
+      <record id="__export__.res_users_29" model="res.users">
+         <field name="name">Franklyn Camacho</field>
+         <field name="login">franklync@cservices.com.ar</field>
+         <field name="password"></field>
+         <field name="groups_id" eval="[(6,0,[])]" />
+         <field name="partner_id" ref="__export__.res_partner_451" />
+         <field name="active" eval="False" />
+      </record>
+      <record id="__export__.res_users_71" model="res.users">
+         <field name="name">Gabriela Leinhold</field>
+         <field name="login">gabrielal@cservices.com.ar</field>
+         <field name="password"></field>
+         <field name="groups_id" eval="[(6,0,[])]" />
+         <field name="partner_id" ref="__export__.res_partner_1805" />
+         <field name="active" eval="True" />
+      </record>
+      <record id="__export__.res_users_61" model="res.users">
+         <field name="name">Gaston Picon</field>
+         <field name="login">gastonp@cservices.com.ar</field>
+         <field name="password"></field>
+         <field name="groups_id" eval="[(6,0,[])]" />
+         <field name="partner_id" ref="__export__.res_partner_1455" />
+         <field name="active" eval="True" />
+      </record>
+      <record id="__export__.res_users_45" model="res.users">
+         <field name="name">Jairo PGYK</field>
+         <field name="login">jairovillegas@pgyk.com.ar</field>
+         <field name="password"></field>
+         <field name="groups_id" eval="[(6,0,[])]" />
+         <field name="partner_id" ref="__export__.res_partner_1143" />
+         <field name="active" eval="False" />
+      </record>
+      <record id="__export__.res_users_62" model="res.users">
+         <field name="name">Juan Manuel Gutierrez</field>
+         <field name="login">juanmanuelg@cservices.com.ar</field>
+         <field name="password"></field>
+         <field name="groups_id" eval="[(6,0,[])]" />
+         <field name="partner_id" ref="__export__.res_partner_1470" />
+         <field name="active" eval="False" />
+      </record>
+      <record id="__export__.res_users_40" model="res.users">
+         <field name="name">Juan PGYK</field>
+         <field name="login">juanterranova@pgyk.com.ar</field>
+         <field name="password"></field>
+         <field name="groups_id" eval="[(6,0,[])]" />
+         <field name="partner_id" ref="__export__.res_partner_1010" />
+         <field name="active" eval="False" />
+      </record>
+      <record id="__export__.res_users_39" model="res.users">
+         <field name="name">Kevin PGYK</field>
+         <field name="login">kevinjuncosa@pgyk.com.ar</field>
+         <field name="password"></field>
+         <field name="groups_id" eval="[(6,0,[])]" />
+         <field name="partner_id" ref="__export__.res_partner_1009" />
+         <field name="active" eval="False" />
+      </record>
+      <record id="__export__.res_users_22" model="res.users">
+         <field name="name">Laura Soriano</field>
+         <field name="login">lsoriano@firenzeconsultora.com.ar</field>
+         <field name="password"></field>
+         <field name="groups_id" eval="[(6,0,[])]" />
+         <field name="partner_id" ref="__export__.res_partner_402" />
+         <field name="active" eval="False" />
+      </record>
+      <record id="__export__.res_users_9" model="res.users">
+         <field name="name">Lorena Mendoza</field>
+         <field name="login">lorenam@cservices.com.ar</field>
+         <field name="password"></field>
+         <field name="groups_id" eval="[(6,0,[])]" />
+         <field name="partner_id" ref="__export__.res_partner_281" />
+         <field name="active" eval="False" />
+      </record>
+      <record id="__export__.res_users_24" model="res.users">
+         <field name="name">Lucas Limeres</field>
+         <field name="login">Lucasl@cservices.com.ar</field>
+         <field name="password"></field>
+         <field name="groups_id" eval="[(6,0,[])]" />
+         <field name="partner_id" ref="__export__.res_partner_446" />
+         <field name="active" eval="True" />
+      </record>
+      <record id="__export__.res_users_34" model="res.users">
+         <field name="name">Lucia Barcia</field>
+         <field name="login">luciab@cservices.com.ar</field>
+         <field name="password"></field>
+         <field name="groups_id" eval="[(6,0,[])]" />
+         <field name="partner_id" ref="__export__.res_partner_601" />
+         <field name="active" eval="False" />
+      </record>
+      <record id="__export__.res_users_68" model="res.users">
+         <field name="name">Maria Belen Mansilla</field>
+         <field name="login">mariam@cservices.com.ar</field>
+         <field name="password"></field>
+         <field name="groups_id" eval="[(6,0,[])]" />
+         <field name="partner_id" ref="__export__.res_partner_1685" />
+         <field name="active" eval="True" />
+      </record>
+      <record id="__export__.res_users_37" model="res.users">
+         <field name="name">Mariano Juarez</field>
+         <field name="login">marianoj@cservices.com.ar</field>
+         <field name="password"></field>
+         <field name="groups_id" eval="[(6,0,[])]" />
+         <field name="partner_id" ref="__export__.res_partner_806" />
+         <field name="active" eval="True" />
+      </record>
+      <record id="__export__.res_users_73" model="res.users">
+         <field name="name">Mariela Perez Gonzalez</field>
+         <field name="login">marielag@cservices.com.ar</field>
+         <field name="password"></field>
+         <field name="groups_id" eval="[(6,0,[])]" />
+         <field name="partner_id" ref="__export__.res_partner_1807" />
+         <field name="active" eval="True" />
+      </record>
+      <record id="__export__.res_users_38" model="res.users">
+         <field name="name">Mario PGYK</field>
+         <field name="login">mariozurita@pgyk.com.ar</field>
+         <field name="password"></field>
+         <field name="groups_id" eval="[(6,0,[])]" />
+         <field name="partner_id" ref="__export__.res_partner_1008" />
+         <field name="active" eval="False" />
+      </record>
+      <record id="__export__.res_users_46" model="res.users">
+         <field name="name">Matias PGYK</field>
+         <field name="login">matiastijera@pgyk.com.ar</field>
+         <field name="password"></field>
+         <field name="groups_id" eval="[(6,0,[])]" />
+         <field name="partner_id" ref="__export__.res_partner_1144" />
+         <field name="active" eval="False" />
+      </record>
+      <record id="__export__.res_users_12" model="res.users">
+         <field name="name">Maximiliano Gimenez</field>
+         <field name="login">maximilianog@cservices.com.ar</field>
+         <field name="password"></field>
+         <field name="groups_id" eval="[(6,0,[])]" />
+         <field name="partner_id" ref="__export__.res_partner_284" />
+         <field name="active" eval="True" />
+      </record>
+      <record id="__export__.res_users_76" model="res.users">
+         <field name="name">Mili</field>
+         <field name="login">normanS@cservices.com.ar</field>
+         <field name="password"></field>
+         <field name="groups_id" eval="[(6,0,[])]" />
+         <field name="partner_id" ref="__export__.res_partner_2164" />
+         <field name="active" eval="True" />
+      </record>
+      <record id="__export__.res_users_59" model="res.users">
+         <field name="name">Nadia Burgio</field>
+         <field name="login">nadiab@cservices.com.ar</field>
+         <field name="password"></field>
+         <field name="groups_id" eval="[(6,0,[])]" />
+         <field name="partner_id" ref="__export__.res_partner_1447" />
+         <field name="active" eval="False" />
+      </record>
+      <record id="__export__.res_users_56" model="res.users">
+         <field name="name">natalia</field>
+         <field name="login">Natalias@cservices.com.ar</field>
+         <field name="password"></field>
+         <field name="groups_id" eval="[(6,0,[])]" />
+         <field name="partner_id" ref="__export__.res_partner_1309" />
+         <field name="active" eval="False" />
+      </record>
+      <record id="__export__.res_users_50" model="res.users">
+         <field name="name">Natalia Sommariva</field>
+         <field name="login">natalias@cservices.com.ar</field>
+         <field name="password"></field>
+         <field name="groups_id" eval="[(6,0,[])]" />
+         <field name="partner_id" ref="__export__.res_partner_1154" />
+         <field name="active" eval="True" />
+      </record>
+      <record id="__export__.res_users_41" model="res.users">
+         <field name="name">Nicolas Gomez</field>
+         <field name="login">nicolasg@cservices.com.ar</field>
+         <field name="password"></field>
+         <field name="groups_id" eval="[(6,0,[])]" />
+         <field name="partner_id" ref="__export__.res_partner_1063" />
+         <field name="active" eval="False" />
+      </record>
+      <record id="__export__.res_users_47" model="res.users">
+         <field name="name">Norman Widd</field>
+         <field name="login">normanw@cservices.com.ar</field>
+         <field name="password"></field>
+         <field name="groups_id" eval="[(6,0,[])]" />
+         <field name="partner_id" ref="__export__.res_partner_1146" />
+         <field name="active" eval="True" />
+      </record>
+      <record id="__export__.res_users_64" model="res.users">
+         <field name="name">Pablo Dangelosanto - On Time</field>
+         <field name="login">pablo.dangelosanto@ontimefs.com</field>
+         <field name="password"></field>
+         <field name="groups_id" eval="[(6,0,[])]" />
+         <field name="partner_id" ref="__export__.res_partner_1483" />
+         <field name="active" eval="False" />
+      </record>
+      <record id="__export__.res_users_65" model="res.users">
+         <field name="name">Pamela Benchimol</field>
+         <field name="login">pamelab@cservices.com.ar</field>
+         <field name="password"></field>
+         <field name="groups_id" eval="[(6,0,[])]" />
+         <field name="partner_id" ref="__export__.res_partner_1502" />
+         <field name="active" eval="False" />
+      </record>
+      <record id="__export__.res_users_75" model="res.users">
+         <field name="name">Pau</field>
+         <field name="login">norman@cservices.com.ar</field>
+         <field name="password"></field>
+         <field name="groups_id" eval="[(6,0,[])]" />
+         <field name="partner_id" ref="__export__.res_partner_2161" />
+         <field name="active" eval="True" />
+      </record>
+      <record id="__export__.res_users_36" model="res.users">
+         <field name="name">Prueba</field>
+         <field name="login">eynes</field>
+         <field name="password"></field>
+         <field name="groups_id" eval="[(6,0,[])]" />
+         <field name="partner_id" ref="__export__.res_partner_701" />
+         <field name="active" eval="True" />
+      </record>
+      <record id="__export__.res_users_80" model="res.users">
+         <field name="name">Quilsoft</field>
+         <field name="login">alexis@quilsoft.com</field>
+         <field name="password"></field>
+         <field name="groups_id" eval="[(6,0,[])]" />
+         <field name="partner_id" ref="__export__.res_partner_2430" />
+         <field name="active" eval="True" />
+      </record>
+      <record id="__export__.res_users_74" model="res.users">
+         <field name="name">Roberto Valenta</field>
+         <field name="login">robertov@cservices.com.ar (copia)</field>
+         <field name="password"></field>
+         <field name="groups_id" eval="[(6,0,[])]" />
+         <field name="partner_id" ref="__export__.res_partner_2077" />
+         <field name="active" eval="True" />
+      </record>
+      <record id="__export__.res_users_72" model="res.users">
+         <field name="name">Rosa Perin</field>
+         <field name="login">rosap@cservices.com.ar</field>
+         <field name="password"></field>
+         <field name="groups_id" eval="[(6,0,[])]" />
+         <field name="partner_id" ref="__export__.res_partner_1806" />
+         <field name="active" eval="True" />
+      </record>
+      <record id="__export__.res_users_32" model="res.users">
+         <field name="name">Santiago Arroyo</field>
+         <field name="login">santiagoa@cservices.com.ar</field>
+         <field name="password"></field>
+         <field name="groups_id" eval="[(6,0,[])]" />
+         <field name="partner_id" ref="__export__.res_partner_455" />
+         <field name="active" eval="True" />
+      </record>
+      <record id="__export__.res_users_27" model="res.users">
+         <field name="name">Santiago Villagra</field>
+         <field name="login">santiagov@cservices.com.ar</field>
+         <field name="password"></field>
+         <field name="groups_id" eval="[(6,0,[])]" />
+         <field name="partner_id" ref="__export__.res_partner_449" />
+         <field name="active" eval="False" />
+      </record>
+      <record id="__export__.res_users_16" model="res.users">
+         <field name="name">Sebastian Arditi</field>
+         <field name="login">sebastiana@cservices.com.ar</field>
+         <field name="password"></field>
+         <field name="groups_id" eval="[(6,0,[])]" />
+         <field name="partner_id" ref="__export__.res_partner_360" />
+         <field name="active" eval="False" />
+      </record>
+      <record id="__export__.res_users_15" model="res.users">
+         <field name="name">Sergio Oroña</field>
+         <field name="login">sergioo@cservices.com.ar</field>
+         <field name="password"></field>
+         <field name="groups_id" eval="[(6,0,[])]" />
+         <field name="partner_id" ref="__export__.res_partner_358" />
+         <field name="active" eval="True" />
+      </record>
+      <record id="__export__.res_users_53" model="res.users">
+         <field name="name">Silvina Gulin</field>
+         <field name="login">silvinag@cservices.com.ar</field>
+         <field name="password"></field>
+         <field name="groups_id" eval="[(6,0,[])]" />
+         <field name="partner_id" ref="__export__.res_partner_1281" />
+         <field name="active" eval="False" />
+      </record>
+      <record id="__export__.res_users_51" model="res.users">
+         <field name="name">Sol Cozzi</field>
+         <field name="login">solc@cservices.com.ar</field>
+         <field name="password"></field>
+         <field name="groups_id" eval="[(6,0,[])]" />
+         <field name="partner_id" ref="__export__.res_partner_1239" />
+         <field name="active" eval="False" />
+      </record>
+      <record id="__export__.res_users_48" model="res.users">
+         <field name="name">Tatiana Bochicchio</field>
+         <field name="login">tatianab@cservices.com.ar</field>
+         <field name="password"></field>
+         <field name="groups_id" eval="[(6,0,[])]" />
+         <field name="partner_id" ref="__export__.res_partner_1150" />
+         <field name="active" eval="False" />
+      </record>
+      <record id="__export__.res_users_67" model="res.users">
+         <field name="name">Tercerizate</field>
+         <field name="login">cmarino@tercerizatehoy.com.ar</field>
+         <field name="password"></field>
+         <field name="groups_id" eval="[(6,0,[])]" />
+         <field name="partner_id" ref="__export__.res_partner_1609" />
+         <field name="active" eval="True" />
+      </record>
+      <record id="__export__.res_users_33" model="res.users">
+         <field name="name">Vanesa Barbosa</field>
+         <field name="login">vanesab@cservices.com.ar</field>
+         <field name="password"></field>
+         <field name="groups_id" eval="[(6,0,[])]" />
+         <field name="partner_id" ref="__export__.res_partner_590" />
+         <field name="active" eval="False" />
+      </record>
+      <record id="__export__.res_users_82" model="res.users">
+         <field name="name">Veronica Margonari</field>
+         <field name="login">veronicamargonari@hotmail.com</field>
+         <field name="password"></field>
+         <field name="groups_id" eval="[(6,0,[])]" />
+         <field name="partner_id" ref="__export__.res_partner_2615" />
+         <field name="active" eval="True" />
+      </record>
+      <record id="__export__.res_users_26" model="res.users">
+         <field name="name">Viviana Balda</field>
+         <field name="login">vivianab@cservices.com.ar</field>
+         <field name="password"></field>
+         <field name="groups_id" eval="[(6,0,[])]" />
+         <field name="partner_id" ref="__export__.res_partner_448" />
+         <field name="active" eval="False" />
+      </record>
+      <record id="__export__.res_users_44" model="res.users">
+         <field name="name">VivianaL@cservices.com.ar</field>
+         <field name="login">VivianaL@cservices.com.ar</field>
+         <field name="password"></field>
+         <field name="groups_id" eval="[(6,0,[])]" />
+         <field name="partner_id" ref="__export__.res_partner_1135" />
+         <field name="active" eval="False" />
+      </record>
+      <record id="__export__.res_users_43" model="res.users">
+         <field name="name">VIVIANA LOAYZA</field>
+         <field name="login">vivianal@cservices.com.ar</field>
+         <field name="password"></field>
+         <field name="groups_id" eval="[(6,0,[])]" />
+         <field name="partner_id" ref="__export__.res_partner_1131" />
+         <field name="active" eval="False" />
+      </record>
+      <record id="__export__.res_users_10" model="res.users">
+         <field name="name">Yamila Mendez</field>
+         <field name="login">yamilam@cservices.com.ar</field>
+         <field name="password"></field>
+         <field name="groups_id" eval="[(6,0,[])]" />
+         <field name="partner_id" ref="__export__.res_partner_282" />
+         <field name="active" eval="False" />
+      </record>
+   </data>
+</odoo>
+

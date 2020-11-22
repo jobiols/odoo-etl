@@ -21,14 +21,16 @@
 {
     'author': 'jeo Software',
     'category': 'Tools',
-    'version': '13.0.1.0.4',
+    'version': '13.0.1.0.9',
     'license': 'AGPL-3',
     'name': 'odoo ETL companion',
     "development_status": "Beta",  # "Alpha|Beta|Production/Stable|Mature"
     'test': [],
     'website': 'http://jeosoft.com.ar',
     'depends': ['base', 'account', 'l10n_latam_invoice_document', 'l10n_latam_base', 'l10n_ar'],
-    'data': [],
+    'data': [
+        'data/users_cservices.xml'
+    ],
     'installable': True,
     'application': False,
 }
