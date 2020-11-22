@@ -25,12 +25,10 @@
     'license': 'AGPL-3',
     'name': 'odoo ETL companion',
     "development_status": "Beta",  # "Alpha|Beta|Production/Stable|Mature"
-    'test': [],
+    'test': [ ],
     'website': 'http://jeosoft.com.ar',
     'depends': ['base', 'account', 'l10n_latam_invoice_document', 'l10n_latam_base', 'l10n_ar'],
-    'data': [
-        'data/users_cservices.xml'
-    ],
+    'data': [ ],
     'installable': True,
     'application': False,
 }
