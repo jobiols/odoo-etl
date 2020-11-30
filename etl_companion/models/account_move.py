@@ -44,16 +44,24 @@ class AccountMove(models.Model):
 
         # Sin embargo Paso que una factura no se migro, asi que verificamos si la
         # factura esta y si no esta lo dejamos pasar calladamente.
+        
         # TODO Esto hay que sacarlo cuando sea la migracion final.
-        try:
+
+        if True:
+            # comportamiento normal
             move_form = Form(get_value(am_obj, param['move_id']))
             _logger.info('Creando el form con id %s ', param['move_id'])
-        except:
-            _logger.error('No se encontro el form con id %s', param['move_id'])
-            return {
-                    'ok': True,
-                    'msg': 'No encontramos la factura %s' % param['move_id']
-                    }
+        else:
+            # callar el error
+            try:
+                move_form = Form(get_value(am_obj, param['move_id']))
+                _logger.info('Creando el form con id %s ', param['move_id'])
+            except:
+                _logger.error('No se encontro el form con id %s', param['move_id'])
+                return {
+                        'ok': True,
+                        'msg': 'No encontramos la factura %s' % param['move_id']
+                        }
         try:
             # recorremos las lineas de factura y procesamos cada una
             for line in param['lines']:

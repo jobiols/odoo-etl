@@ -96,13 +96,13 @@
                         </group>
                     </group>
                     <notebook>
+                        <page string="Log">
+                            <field name="log"/>
+                        </page>
                         <page string="Field Mapping">
                             <field name="field_mapping_ids" nolabel="1"
                                    context="{'target_model':target_model_id, 
                                              'source_model':source_model_id}"/>
-                        </page>
-                        <page string="Log">
-                            <field name="log"/>
                         </page>
                         <page string="Notes">
                             <field name="note"/>

@@ -271,6 +271,7 @@ class Manager(models.Model):
             # lo instlalamos de a uno porque sino se va por timeout
             for _id in target_module_ids:
                 target_module_obj.button_immediate_install([_id])
+                _logger.info('Installing module %s', _id)
 
     def run_actions(self):
         """ Run all actions (none repeating)

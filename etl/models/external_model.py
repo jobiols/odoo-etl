@@ -148,8 +148,7 @@ class ExternalModel(models.Model):
         for model in self:
             _logger.info('Reading fields from %s model: %s', model.type, model.display_name)
             if not connection:
-                source_connection, target_connection = \
-                    model.manager_id.open_connections()
+                source_connection, target_connection = model.manager_id.open_connections()
                 if model.type == 'source':
                     connection = source_connection
                 elif model.type == 'target':

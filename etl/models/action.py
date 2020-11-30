@@ -410,16 +410,18 @@ class Action(models.Model):
 
     def run_action(self, repeated_action=False):
         self.ensure_one()
+
         # si es account.move.line tiene tratamiento especial.
         if self.target_model_id.model == 'account.move.line':
             # buscamos las account.invoice
             source_connection, target_connection = self.manager_id.open_connections()
             ai_obj = source_connection.model('account.invoice')
 
-            # limitamos las facturas que vamos a procesar.
-            domain = []
-            domain.append(('id', '>=', 0))
-            domain.append(('id', '<=', 109))
+            # limitamos las facturas que vamos a procesar a fcred el dominio esta en
+            # la receta.
+            domain = [('fiscal_type_id', '=', 4), ('state', '!=', 'cancel')]
+            domain.append(('id', '>=', 9801))
+            domain.append(('id', '<=', 9800000))
 
             am_ids = ai_obj.search(domain)
             invoice_qty = len(am_ids)
